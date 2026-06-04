@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<title>NCK DEX | Swap</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0a1a0f;color:#fff;min-height:100vh;display:flex;flex-direction:column}
+nav{background:#0d1f12;border-bottom:1px solid #1e4a24;padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:64px}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+.nav-logo img{width:32px;height:32px;border-radius:50%;object-fit:cover}
+.nav-logo span{font-size:16px;font-weight:600;color:#fff}
+.nav-right{display:flex;align-items:center;gap:12px}
+.nav-addr{font-size:12px;color:#4caf6e;font-family:monospace;background:#1a3d22;padding:6px 12px;border-radius:8px;display:none}
+.btn-mm{background:#e8761b;color:#fff;border:none;padding:8px 16px;border-radius:8px;font-size:13px;cursor:pointer}
+.btn-mm:hover{background:#f08030}
+main{flex:1;display:flex;align-items:center;justify-content:center;padding:30px 2rem}
+.wrap{width:100%;max-width:480px}
+.diag{background:#0d1f12;border:1px solid #1e4a24;border-radius:10px;padding:10px 14px;margin-bottom:16px;font-size:12px;font-family:monospace;display:flex;align-items:center;gap:8px}
+.diag-dot{width:8px;height:8px;border-radius:50%;background:#6a9a76;flex-shrink:0}
+.diag-dot.ok{background:#4caf6e}.diag-dot.err{background:#f56e6e}.diag-dot.wait{background:#f5c06e}
+.swap-title{font-size:26px;font-weight:700;margin-bottom:6px;text-align:center}
+.swap-sub{font-size:13px;color:#7aaa87;text-align:center;margin-bottom:22px}
+.card{background:#0d1f12;border:1px solid #1e4a24;border-radius:20px;padding:22px}
+.box{background:#0a1a0f;border:1px solid #1e4a24;border-radius:14px;padding:16px;margin-bottom:6px}
+.box-lbl{font-size:12px;color:#6a9a76;margin-bottom:10px}
+.row{display:flex;align-items:center;gap:12px}
+.inp{flex:1;background:transparent;border:none;outline:none;font-size:26px;font-weight:600;color:#fff;width:100%;min-width:0}
+.inp::placeholder{color:#2d4a33}
+.tsel{display:flex;align-items:center;gap:8px;background:#1a3d22;border:1px solid #2d6b3a;padding:8px 14px;border-radius:10px;cursor:pointer;white-space:nowrap;position:relative;user-select:none}
+.tsel:hover{background:#23502b}
+.tic{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+.tsym{font-size:15px;font-weight:600}
+.chev{font-size:9px;color:#6a9a76}
+.balrow{display:flex;justify-content:space-between;margin-top:8px;font-size:12px;color:#6a9a76}
+.balval{color:#4caf6e;cursor:pointer}
+.arrow{text-align:center;margin:2px 0}
+.flipbtn{background:#1a3d22;border:1px solid #2d6b3a;color:#4caf6e;width:34px;height:34px;border-radius:50%;cursor:pointer;font-size:16px}
+.flipbtn:hover{background:#1e7a3c;color:#fff}
+.ratebox{background:#0a1a0f;border:1px solid #1a3d22;border-radius:10px;padding:12px 16px;margin:14px 0;font-size:13px;display:none}
+.raterow{display:flex;justify-content:space-between;padding:4px 0;color:#6a9a76}
+.raterow span:last-child{color:#c8e6cd}
+.swapbtn{width:100%;background:#1e7a3c;color:#fff;border:none;padding:16px;border-radius:14px;font-size:16px;font-weight:600;cursor:pointer;margin-top:6px}
+.swapbtn:hover{background:#25a34f}
+.swapbtn:disabled{background:#1a3d22;color:#4a6e52;cursor:not-allowed}
+.status{margin-top:14px;padding:13px;border-radius:10px;font-size:13px;display:none;text-align:center;line-height:1.6;white-space:pre-line}
+.ok{background:#1a3d22;color:#4caf6e;display:block}
+.err{background:#3d1a1a;color:#f56e6e;display:block}
+.pend{background:#3d2a0a;color:#f5c06e;display:block}
+.drop{display:none;position:absolute;top:115%;right:0;background:#0d1f12;border:1px solid #2d6b3a;border-radius:12px;min-width:210px;z-index:200;overflow:hidden;box-shadow:0 8px 24px rgba(0,0,0,0.6)}
+.drop.open{display:block}
+.ditem{display:flex;align-items:center;gap:10px;padding:12px 16px;cursor:pointer;font-size:14px}
+.ditem:hover{background:#1a3d22}
+.badge{display:inline-flex;align-items:center;gap:6px;background:#1a3d22;border:1px solid #2d6b3a;padding:4px 12px;border-radius:12px;font-size:12px;color:#6dd68a;margin-bottom:18px}
+.dot{width:6px;height:6px;border-radius:50%;background:#4caf6e;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.links{text-align:center;margin-top:16px;font-size:12px;color:#4a6e52}
+.links a{color:#4caf6e;text-decoration:none}
+footer{background:#080f09;padding:18px 2rem;text-align:center}
+footer p{font-size:12px;color:#2d4a33}
+</style>
+</head>
+<body>
+<nav>
+  <a class="nav-logo" href="/"><img src="/assets/ayetLogo.JPG" alt="AYET"><span>Akimoto Fan Tokens</span></a>
+  <div class="nav-right">
+    <span class="nav-addr" id="navAddr"></span>
+    <button class="btn-mm" id="connectBtn">Connect MetaMask</button>
+  </div>
+</nav>
+<main>
+  <div class="wrap">
+    <div style="text-align:center"><span class="badge"><span class="dot"></span> NCK Network · Fixed Rates</span></div>
+    <div class="swap-title">NCK DEX Swap</div>
+    <div class="swap-sub">Swap AYET, JPYC, MARU and MMK at fixed rates</div>
+
+    <div class="diag"><span class="diag-dot wait" id="diagDot"></span><span id="diagText">Checking chain connection…</span></div>
+
+    <div class="card">
+      <div class="box">
+        <div class="box-lbl">You pay</div>
+        <div class="row">
+          <input class="inp" id="amtIn" type="number" placeholder="0.0" inputmode="decimal">
+          <div class="tsel" id="selFrom">
+            <div class="tic" id="fromIc">AY</div>
+            <span class="tsym" id="fromSym">AYET</span>
+            <span class="chev">&#9660;</span>
+            <div class="drop" id="dropFrom"></div>
+          </div>
+        </div>
+        <div class="balrow"><span>Balance</span><span class="balval" id="fromBal">—</span></div>
+      </div>
+
+      <div class="arrow"><button class="flipbtn" id="flipBtn">&#8645;</button></div>
+
+      <div class="box">
+        <div class="box-lbl">You receive (estimated)</div>
+        <div class="row">
+          <input class="inp" id="amtOut" type="text" placeholder="0.0" readonly>
+          <div class="tsel" id="selTo">
+            <div class="tic" id="toIc" style="background:#1a3a6e;color:#7ab3f5">JP</div>
+            <span class="tsym" id="toSym">JPYC</span>
+            <span class="chev">&#9660;</span>
+            <div class="drop" id="dropTo"></div>
+          </div>
+        </div>
+        <div class="balrow"><span>Balance</span><span class="balval" id="toBal">—</span></div>
+      </div>
+
+      <div class="ratebox" id="ratebox">
+        <div class="raterow"><span>Rate</span><span id="rateDisp">—</span></div>
+        <div class="raterow"><span>Network fee</span><span>0 FME (gasless)</span></div>
+        <div class="raterow"><span>Type</span><span>Fixed rate</span></div>
+      </div>
+
+      <button class="swapbtn" id="swapBtn" disabled>Connect wallet to swap</button>
+      <div class="status" id="status"></div>
+    </div>
+
+    <div class="links">
+      <a href="/add-ayet2/">Add AYET</a> · <a href="/add-jpyc2/">Add JPYC</a> · <a href="/add-mmk2/">Add MMK</a><br>
+      <a href="/">Back to home</a> · <a href="https://l1.aucfans.com/fmescan/">Explorer</a> · <a href="/swap/admin.html">Admin</a>
+    </div>
+  </div>
+</main>
+<footer><p>© 2026 FME Inc. · NCK Network</p></footer>
+
+<script>
+"use strict";
+var RPC = "https://l1.aucfans.com/rpc/";
+var CHAIN_ID = "0x12fd1";
+var PEG = "0xa93e9a0fc3449c79b04dbfa405f9574f938698ed";
+
+var TOKENS = [
+  { s:"AYET", c:"0x6e07234932fa3daa1e91ed78f551b2b5c7c75bac", bg:"#1e7a3c", fg:"#ffffff", ic:"AY" },
+  { s:"JPYC", c:"0x6601ec3242808f300cbb9ce01aaaa1bab1cf6fea", bg:"#1a3a6e", fg:"#7ab3f5", ic:"JP" },
+  { s:"MARU", c:"0x7c6244e16143dd3f2991481545a06c847733cf56", bg:"#6e1a4a", fg:"#f5a0d0", ic:"MR" },
+  { s:"MMK",  c:"0x7e70d8e5ee41c8299227b5934ea77fdf9f3db7ff", bg:"#4a1a0a", fg:"#f5a06e", ic:"MK" },
+];
+
+var fromIdx = 0, toIdx = 1, account = null;
+function $(id){ return document.getElementById(id); }
+function sleep(ms){ return new Promise(function(r){ setTimeout(r,ms); }); }
+function pad(x){ return x.toString(16).padStart(64,"0"); }
+function padAddr(a){ return a.slice(2).toLowerCase().padStart(64,"0"); }
+function toWei(amt){
+  var s=String(amt); if(s.indexOf("e")>=0) s=Number(amt).toFixed(18);
+  var p=s.split("."); var w=p[0]||"0"; var f=(p[1]||"").slice(0,18).padEnd(18,"0");
+  return BigInt(w)*(10n**18n)+BigInt(f||"0");
+}
+function fromWei(wei){
+  var s=wei.toString().padStart(19,"0");
+  var w=s.slice(0,s.length-18), f=s.slice(s.length-18).replace(/0+$/,"");
+  return f ? (w+"."+f) : w;
+}
+
+async function rpc(method, params, retries){
+  if(retries===undefined) retries=2;
+  var last;
+  for(var a=0;a<=retries;a++){
+    try{
+      var ctrl=new AbortController(); var t=setTimeout(function(){ctrl.abort();},9000);
+      var r=await fetch(RPC,{method:"POST",headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({jsonrpc:"2.0",method:method,params:params||[],id:1}),
+        signal:ctrl.signal,cache:"no-store",mode:"cors"});
+      clearTimeout(t);
+      if(!r.ok) throw new Error("HTTP "+r.status);
+      var d=await r.json();
+      if(d.error) throw new Error(d.error.message||"RPC error");
+      return d.result;
+    }catch(e){ last=e; if(a<retries) await sleep(600); }
+  }
+  throw last;
+}
+
+function setDiag(state,text){ $("diagDot").className="diag-dot "+state; $("diagText").textContent=text; }
+async function checkConn(){
+  setDiag("wait","Checking chain connection…");
+  try{ var bn=await rpc("eth_blockNumber",[]); setDiag("ok","Connected · Block #"+parseInt(bn,16).toLocaleString()); return true; }
+  catch(e){ setDiag("err","RPC unreachable: "+(e.message||e)); return false; }
+}
+
+async function readRate(token){
+  var data="0x0ba9d8ca"+padAddr(token); // rate(address)
+  var r=await rpc("eth_call",[{to:PEG,data:data},"latest"]);
+  if(!r||r==="0x") return 0n;
+  return BigInt(r);
+}
+
+function buildDrops(){
+  [["dropFrom","from"],["dropTo","to"]].forEach(function(pair){
+    var el=$(pair[0]); var side=pair[1]; el.innerHTML="";
+    TOKENS.forEach(function(t,i){
+      var d=document.createElement("div"); d.className="ditem";
+      d.innerHTML="<div class='tic' style='background:"+t.bg+";color:"+t.fg+"'>"+t.ic+"</div>"+
+        "<div><div style='font-weight:600'>"+t.s+"</div>"+
+        "<div style='font-size:11px;color:#6a9a76'>"+t.c.slice(0,8)+"…"+t.c.slice(-4)+"</div></div>";
+      d.addEventListener("click", function(ev){ ev.stopPropagation(); choose(side,i); closeDrops(); });
+      el.appendChild(d);
+    });
+  });
+}
+function choose(side,i){
+  if(side==="from"){ if(i===toIdx) toIdx=fromIdx; fromIdx=i; }
+  else { if(i===fromIdx) fromIdx=toIdx; toIdx=i; }
+  paintTokens(); recalc(); if(account) loadBalances();
+}
+function paintTokens(){
+  var f=TOKENS[fromIdx], t=TOKENS[toIdx];
+  $("fromIc").textContent=f.ic; $("fromIc").style.background=f.bg; $("fromIc").style.color=f.fg; $("fromSym").textContent=f.s;
+  $("toIc").textContent=t.ic; $("toIc").style.background=t.bg; $("toIc").style.color=t.fg; $("toSym").textContent=t.s;
+}
+function closeDrops(){ $("dropFrom").classList.remove("open"); $("dropTo").classList.remove("open"); }
+function wireDropdowns(){
+  $("selFrom").addEventListener("click", function(ev){ ev.stopPropagation(); var o=$("dropFrom").classList.contains("open"); closeDrops(); if(!o) $("dropFrom").classList.add("open"); });
+  $("selTo").addEventListener("click", function(ev){ ev.stopPropagation(); var o=$("dropTo").classList.contains("open"); closeDrops(); if(!o) $("dropTo").classList.add("open"); });
+  document.addEventListener("click", closeDrops);
+}
+
+var recalcSeq=0;
+async function recalc(){
+  var mySeq=++recalcSeq;
+  var amt=parseFloat($("amtIn").value);
+  $("ratebox").style.display="none"; $("amtOut").value="";
+  if(!amt||amt<=0){ updateSwapBtn(); return; }
+  var tIn=TOKENS[fromIdx], tOut=TOKENS[toIdx];
+  try{
+    var rIn=await readRate(tIn.c); if(mySeq!==recalcSeq) return;
+    var rOut=await readRate(tOut.c); if(mySeq!==recalcSeq) return;
+    if(rIn===0n||rOut===0n){ setStatus("err","No rate set for "+tIn.s+" or "+tOut.s); return; }
+    var outWei=toWei(amt)*rOut/rIn;
+    var outNum=Number(fromWei(outWei));
+    $("amtOut").value=outNum.toLocaleString(undefined,{maximumFractionDigits:6});
+    var rate=outNum/amt;
+    $("rateDisp").textContent="1 "+tIn.s+" = "+rate.toLocaleString(undefined,{maximumFractionDigits:6})+" "+tOut.s;
+    $("ratebox").style.display="block";
+    clearStatus();
+  }catch(e){ if(mySeq!==recalcSeq) return; setStatus("err","Rate lookup failed: "+(e.message||e)); }
+  updateSwapBtn();
+}
+function updateSwapBtn(){
+  var amt=parseFloat($("amtIn").value); var btn=$("swapBtn");
+  if(!account){ btn.disabled=true; btn.textContent="Connect wallet to swap"; return; }
+  if(!amt||amt<=0){ btn.disabled=true; btn.textContent="Enter an amount"; return; }
+  btn.disabled=false; btn.textContent="Swap "+TOKENS[fromIdx].s+" → "+TOKENS[toIdx].s;
+}
+
+async function balanceOf(token,who){
+  var data="0x70a08231"+padAddr(who);
+  var r=await rpc("eth_call",[{to:token,data:data},"latest"]);
+  if(!r||r==="0x") return 0n; return BigInt(r);
+}
+async function loadBalances(){
+  if(!account) return;
+  try{
+    var fb=await balanceOf(TOKENS[fromIdx].c,account);
+    $("fromBal").textContent=Number(fromWei(fb)).toLocaleString(undefined,{maximumFractionDigits:4})+" "+TOKENS[fromIdx].s;
+    var tb=await balanceOf(TOKENS[toIdx].c,account);
+    $("toBal").textContent=Number(fromWei(tb)).toLocaleString(undefined,{maximumFractionDigits:4})+" "+TOKENS[toIdx].s;
+  }catch(e){}
+}
+
+async function connect(){
+  if(typeof window.ethereum==="undefined"){ setStatus("err","MetaMask not found. Please install MetaMask."); return; }
+  try{
+    var a=await window.ethereum.request({method:"eth_requestAccounts"});
+    if(!a||!a.length) return;
+    account=a[0];
+    $("navAddr").textContent=account.slice(0,6)+"…"+account.slice(-4); $("navAddr").style.display="inline-flex";
+    $("connectBtn").textContent="Connected"; $("connectBtn").style.background="#1e7a3c";
+    await ensureNetwork(); await loadBalances(); updateSwapBtn(); clearStatus();
+  }catch(e){ setStatus("err", e.code===4001?"Connection rejected.":("Connect error: "+(e.message||e))); }
+}
+async function ensureNetwork(){
+  try{ await window.ethereum.request({method:"wallet_switchEthereumChain",params:[{chainId:CHAIN_ID}]}); }
+  catch(e){ try{ await window.ethereum.request({method:"wallet_addEthereumChain",params:[{
+    chainId:CHAIN_ID,chainName:"NCK Network",nativeCurrency:{name:"FME",symbol:"FME",decimals:18},
+    rpcUrls:[RPC],blockExplorerUrls:["https://l1.aucfans.com/fmescan/"]}]}); }catch(e2){} }
+}
+
+async function doSwap(){
+  if(!account){ await connect(); return; }
+  var amt=parseFloat($("amtIn").value);
+  if(!amt||amt<=0){ setStatus("err","Enter an amount."); return; }
+  var tIn=TOKENS[fromIdx], tOut=TOKENS[toIdx];
+  try{
+    var rIn=await readRate(tIn.c), rOut=await readRate(tOut.c);
+    if(rIn===0n||rOut===0n){ setStatus("err","No rate set for this pair."); return; }
+    var amtWei=toWei(amt);
+    var outWei=amtWei*rOut/rIn;
+    var minOut=outWei*99n/100n;
+    setStatus("pend","Step 1 of 2 — approve "+tIn.s+"\nConfirm in MetaMask…");
+    var appData="0x095ea7b3"+padAddr(PEG)+pad(amtWei);
+    var appTx=await window.ethereum.request({method:"eth_sendTransaction",params:[{from:account,to:tIn.c,data:appData,gas:"0x186A0",gasPrice:"0x0"}]});
+    setStatus("pend","Step 1 of 2 — waiting for approval…");
+    await waitReceipt(appTx);
+    setStatus("pend","Step 2 of 2 — swapping "+amt+" "+tIn.s+" for ~"+Number(fromWei(outWei)).toLocaleString(undefined,{maximumFractionDigits:4})+" "+tOut.s+"\nConfirm in MetaMask…");
+    var swapData="0xfe029156"+padAddr(tIn.c)+padAddr(tOut.c)+pad(amtWei)+pad(minOut);
+    var swapTx=await window.ethereum.request({method:"eth_sendTransaction",params:[{from:account,to:PEG,data:swapData,gas:"0x493E0",gasPrice:"0x0"}]});
+    await waitReceipt(swapTx);
+    setStatus("ok","Swap complete!\nTx: "+swapTx.slice(0,18)+"…\nTap to view on Explorer");
+    $("status").style.cursor="pointer";
+    $("status").onclick=function(){ window.open("https://l1.aucfans.com/fmescan/tx/"+swapTx,"_blank"); };
+    await sleep(2500); await loadBalances(); await recalc();
+  }catch(e){ setStatus("err", e.code===4001?"Transaction rejected.":("Swap failed: "+(e.message||e))); }
+}
+async function waitReceipt(hash){
+  for(var i=0;i<40;i++){
+    await sleep(1500);
+    try{ var r=await rpc("eth_getTransactionReceipt",[hash]);
+      if(r&&r.blockNumber){ if(r.status==="0x0") throw new Error("Transaction reverted on-chain"); return r; } }
+    catch(e){ if(String(e.message||"").indexOf("revert")>=0) throw e; }
+  }
+  throw new Error("Timed out waiting for confirmation");
+}
+
+function setStatus(k,m){ var s=$("status"); s.className="status "+k; s.textContent=m; s.onclick=null; s.style.cursor="default"; }
+function clearStatus(){ var s=$("status"); s.className="status"; s.textContent=""; }
+
+function init(){
+  buildDrops(); wireDropdowns(); paintTokens();
+  $("connectBtn").addEventListener("click", connect);
+  $("flipBtn").addEventListener("click", function(){ var t=fromIdx; fromIdx=toIdx; toIdx=t; paintTokens(); recalc(); if(account) loadBalances(); });
+  $("swapBtn").addEventListener("click", doSwap);
+  var deb; $("amtIn").addEventListener("input", function(){ clearTimeout(deb); deb=setTimeout(recalc,350); });
+  checkConn();
+}
+if(document.readyState==="loading") document.addEventListener("DOMContentLoaded",init); else init();
+</script>
+</body>
+</html>
