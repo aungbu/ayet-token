@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-store">
+<title>NCK DEX | Admin · Rates</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#07120c;color:#eafff1;min-height:100vh;display:flex;flex-direction:column}
+nav{background:#0d2113;border-bottom:1px solid #194a2a;padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:64px}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+.nav-logo img{width:32px;height:32px;border-radius:50%;object-fit:cover}
+.nav-logo span{font-size:16px;font-weight:600;color:#eafff1}
+.nav-right{display:flex;align-items:center;gap:12px}
+.nav-addr{font-size:12px;color:#1fc46e;font-family:monospace;background:#15331f;padding:6px 12px;border-radius:8px;display:none}
+.btn-mm{background:#e8761b;color:#eafff1;border:none;padding:8px 16px;border-radius:8px;font-size:13px;cursor:pointer}
+.btn-mm:hover{background:#f08030}
+main{flex:1;display:flex;align-items:flex-start;justify-content:center;padding:30px 2rem}
+.wrap{width:100%;max-width:560px}
+.title{font-size:26px;font-weight:700;margin-bottom:6px;text-align:center}
+.sub{font-size:13px;color:#7da890;text-align:center;margin-bottom:18px}
+.diag{background:#0d2113;border:1px solid #194a2a;border-radius:10px;padding:10px 14px;margin-bottom:14px;font-size:12px;font-family:monospace;display:flex;align-items:center;gap:8px}
+.diag-dot{width:8px;height:8px;border-radius:50%;background:#7da890;flex-shrink:0}
+.diag-dot.ok{background:#1fc46e}.diag-dot.err{background:#f56e6e}.diag-dot.wait{background:#f5c06e}
+.ownerbar{border-radius:10px;padding:10px 14px;margin-bottom:16px;font-size:13px;display:none}
+.ownerbar.good{background:#15331f;color:#5fe39a;display:block}
+.ownerbar.bad{background:#3d2a0a;color:#f5c06e;display:block}
+.card{background:#0d2113;border:1px solid #194a2a;border-radius:18px;padding:22px}
+.note{font-size:12px;color:#7da890;margin-bottom:18px;line-height:1.6;background:#07120c;border:1px solid #15331f;border-radius:10px;padding:12px 14px}
+.rrow{background:#07120c;border:1px solid #194a2a;border-radius:14px;padding:16px;margin-bottom:12px}
+.rtop{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.tic{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
+.rname{font-size:15px;font-weight:600}
+.rcur{font-size:12px;color:#7da890;margin-left:auto}
+.eqline{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.eqtxt{font-size:14px;color:#d4f5dd;white-space:nowrap}
+.einp{flex:1;min-width:90px;background:#0d2113;border:1px solid #2d6b3a;border-radius:10px;padding:10px 12px;font-size:16px;font-weight:600;color:#eafff1;outline:none}
+.setbtn{background:#02834a;color:#eafff1;border:none;padding:10px 18px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;white-space:nowrap}
+.setbtn:hover{background:#1fc46e}
+.setbtn:disabled{background:#15331f;color:#4a6e52;cursor:not-allowed}
+.inv{font-size:11px;color:#7da890;margin-top:8px}
+.base{font-size:12px;color:#7da890}
+.status{margin-top:16px;padding:13px;border-radius:10px;font-size:13px;display:none;text-align:center;line-height:1.6;white-space:pre-line}
+.ok{background:#15331f;color:#1fc46e;display:block}
+.err{background:#3d1a1a;color:#f56e6e;display:block}
+.pend{background:#3d2a0a;color:#f5c06e;display:block}
+.links{text-align:center;margin-top:16px;font-size:12px;color:#4a6e52}
+.links a{color:#1fc46e;text-decoration:none}
+footer{background:#060f09;padding:18px 2rem;text-align:center}
+footer p{font-size:12px;color:#2d4a33}
+</style>
+</head>
+<body>
+<nav>
+  <a class="nav-logo" href="/"><img src="/assets/ayetLogo.JPG" alt="AYET"><span>Akimoto Fan Tokens</span></a>
+  <div class="nav-right">
+    <span class="nav-addr" id="navAddr"></span>
+    <button class="btn-mm" id="connectBtn">Connect MetaMask</button>
+  </div>
+</nav>
+<main>
+  <div class="wrap">
+    <div class="title">DEX Admin · Rates</div>
+    <div class="sub">Set how many of each token equal 1 JPYC</div>
+
+    <div class="diag"><span class="diag-dot wait" id="diagDot"></span><span id="diagText">Checking chain…</span></div>
+    <div class="ownerbar" id="ownerbar"></div>
+
+    <div class="card">
+      <div class="note">
+        JPYC is the base unit. For each token, set <b>how many of it equal 1 JPYC</b>.<br>
+        Example: AYET = 1 → 1 JPYC = 1 AYET. &nbsp; MARU = 10 → 1 JPYC = 10 MARU. &nbsp; MMK = 100 → 1 JPYC = 100 MMK.<br>
+        Only the owner wallet can change rates; the contract rejects anyone else.
+      </div>
+      <div id="rows"></div>
+      <div class="status" id="status"></div>
+    </div>
+
+    <div class="links">
+      <a href="/swap/">Go to Swap</a> · <a href="/">Home</a> · <a href="https://l1.aucfans.com/fmescan/">Explorer</a>
+    </div>
+  </div>
+</main>
+<footer><p>© 2026 FME Inc. · NCK Network · Admin</p></footer>
+
+<script>
+"use strict";
+var RPC = "https://l1.aucfans.com/rpc/";
+var CHAIN_ID = "0x12fd1";
+var PEG = "0xa93e9a0fc3449c79b04dbfa405f9574f938698ed";
+var OWNER = "0x054dbBB401D28E219440BFe0C6700de7C4A922D5";
+
+// JPYC is base. Editable: AYET, MARU, MMK. (JPYC shown locked at 1.)
+var TOKENS = [
+  { s:"JPYC", c:"0x6601ec3242808f300cbb9ce01aaaa1bab1cf6fea", bg:"#1a3a6e", fg:"#7ab3f5", ic:"JP", base:true },
+  { s:"AYET", c:"0x6e07234932fa3daa1e91ed78f551b2b5c7c75bac", bg:"#02834a", fg:"#ffffff", ic:"AY" },
+  { s:"MARU", c:"0x7c6244e16143dd3f2991481545a06c847733cf56", bg:"#6e1a4a", fg:"#f5a0d0", ic:"MR" },
+  { s:"MMK",  c:"0x7e70d8e5ee41c8299227b5934ea77fdf9f3db7ff", bg:"#4a1a0a", fg:"#f5a06e", ic:"MK" },
+];
+
+var account = null;
+function $(id){ return document.getElementById(id); }
+function sleep(ms){ return new Promise(function(r){ setTimeout(r,ms); }); }
+function pad(x){ return x.toString(16).padStart(64,"0"); }
+function padAddr(a){ return a.slice(2).toLowerCase().padStart(64,"0"); }
+function toWei(v){
+  var s = String(v);
+  if (s.indexOf("e")>=0) s = Number(v).toFixed(18);
+  var p = s.split("."); var w = p[0]||"0"; var f=(p[1]||"").slice(0,18).padEnd(18,"0");
+  return BigInt(w)*(10n**18n)+BigInt(f||"0");
+}
+function fromWei(wei){
+  var s = wei.toString().padStart(19,"0");
+  var w = s.slice(0,s.length-18), f = s.slice(s.length-18).replace(/0+$/,"");
+  return f ? (w+"."+f) : w;
+}
+
+async function rpc(method, params, retries){
+  if (retries===undefined) retries=2;
+  var last;
+  for (var a=0;a<=retries;a++){
+    try{
+      var ctrl=new AbortController(); var t=setTimeout(function(){ctrl.abort();},9000);
+      var r=await fetch(RPC,{method:"POST",headers:{"Content-Type":"application/json"},
+        body:JSON.stringify({jsonrpc:"2.0",method:method,params:params||[],id:1}),
+        signal:ctrl.signal,cache:"no-store",mode:"cors"});
+      clearTimeout(t);
+      if(!r.ok) throw new Error("HTTP "+r.status);
+      var d=await r.json();
+      if(d.error) throw new Error(d.error.message||"RPC error");
+      return d.result;
+    }catch(e){ last=e; if(a<retries) await sleep(600); }
+  }
+  throw last;
+}
+
+function setDiag(state,text){ $("diagDot").className="diag-dot "+state; $("diagText").textContent=text; }
+
+async function checkConn(){
+  setDiag("wait","Checking chain…");
+  try{ var bn=await rpc("eth_blockNumber",[]); setDiag("ok","Connected · Block #"+parseInt(bn,16).toLocaleString()); return true; }
+  catch(e){ setDiag("err","RPC unreachable: "+(e.message||e)); return false; }
+}
+
+async function readRate(token){
+  var data="0x0ba9d8ca"+padAddr(token); // rate(address)
+  var r=await rpc("eth_call",[{to:PEG,data:data},"latest"]);
+  if(!r||r==="0x") return 0n;
+  return BigInt(r);
+}
+
+function buildRows(){
+  var box=$("rows"); box.innerHTML="";
+  TOKENS.forEach(function(t,i){
+    var row=document.createElement("div"); row.className="rrow";
+    if(t.base){
+      row.innerHTML =
+        "<div class='rtop'><div class='tic' style='background:"+t.bg+";color:"+t.fg+"'>"+t.ic+"</div>"+
+        "<div class='rname'>"+t.s+"</div><div class='rcur'>base unit</div></div>"+
+        "<div class='base'>1 JPYC = 1 JPYC (this is the reference all rates are set against)</div>";
+    } else {
+      row.innerHTML =
+        "<div class='rtop'><div class='tic' style='background:"+t.bg+";color:"+t.fg+"'>"+t.ic+"</div>"+
+        "<div class='rname'>"+t.s+"</div><div class='rcur' id='cur_"+i+"'>current: …</div></div>"+
+        "<div class='eqline'><span class='eqtxt'>1 JPYC =</span>"+
+        "<input class='einp' id='inp_"+i+"' type='number' step='any' inputmode='decimal'>"+
+        "<span class='eqtxt'>"+t.s+"</span>"+
+        "<button class='setbtn' id='btn_"+i+"' disabled>Set</button></div>"+
+        "<div class='inv' id='inv_"+i+"'></div>";
+    }
+    box.appendChild(row);
+  });
+  TOKENS.forEach(function(t,i){
+    if(t.base) return;
+    $("btn_"+i).addEventListener("click", function(){ doSet(i); });
+    $("inp_"+i).addEventListener("input", function(){ updateInv(i); });
+  });
+}
+
+function updateInv(i){
+  var v=parseFloat($("inp_"+i).value);
+  var el=$("inv_"+i);
+  if(v&&v>0){ el.textContent="→ 1 "+TOKENS[i].s+" = "+(1/v).toLocaleString(undefined,{maximumFractionDigits:8})+" JPYC"; }
+  else { el.textContent=""; }
+}
+
+async function loadRates(){
+  for (var i=0;i<TOKENS.length;i++){
+    var t=TOKENS[i]; if(t.base) continue;
+    try{
+      var r=await readRate(t.c);
+      var val=fromWei(r);
+      $("cur_"+i).textContent="current: 1 JPYC = "+Number(val).toLocaleString(undefined,{maximumFractionDigits:8})+" "+t.s;
+      if($("inp_"+i).value==="") { $("inp_"+i).value=val; updateInv(i); }
+    }catch(e){ $("cur_"+i).textContent="current: (read failed)"; }
+  }
+}
+
+async function connect(){
+  if(typeof window.ethereum==="undefined"){ setStatus("err","MetaMask not found."); return; }
+  try{
+    var a=await window.ethereum.request({method:"eth_requestAccounts"});
+    if(!a||!a.length) return;
+    account=a[0];
+    $("navAddr").textContent=account.slice(0,6)+"…"+account.slice(-4);
+    $("navAddr").style.display="inline-flex";
+    $("connectBtn").textContent="Connected"; $("connectBtn").style.background="#02834a";
+    await ensureNetwork();
+    var isOwner = account.toLowerCase()===OWNER.toLowerCase();
+    var ob=$("ownerbar");
+    if(isOwner){ ob.className="ownerbar good"; ob.textContent="✓ You are connected as the owner. You can change rates."; }
+    else { ob.className="ownerbar bad"; ob.textContent="⚠ This wallet is not the owner. You can view rates, but the contract will reject changes."; }
+    TOKENS.forEach(function(t,i){ if(!t.base) $("btn_"+i).disabled = !isOwner; });
+    await loadRates();
+    clearStatus();
+  }catch(e){ setStatus("err", e.code===4001?"Connection rejected.":("Connect error: "+(e.message||e))); }
+}
+
+async function ensureNetwork(){
+  try{ await window.ethereum.request({method:"wallet_switchEthereumChain",params:[{chainId:CHAIN_ID}]}); }
+  catch(e){
+    try{ await window.ethereum.request({method:"wallet_addEthereumChain",params:[{
+      chainId:CHAIN_ID,chainName:"NCK Network",
+      nativeCurrency:{name:"FME",symbol:"FME",decimals:18},
+      rpcUrls:[RPC],blockExplorerUrls:["https://l1.aucfans.com/fmescan/"]}]}); }catch(e2){}
+  }
+}
+
+async function doSet(i){
+  if(!account){ await connect(); return; }
+  var t=TOKENS[i];
+  var v=parseFloat($("inp_"+i).value);
+  if(!v||v<=0){ setStatus("err","Enter a value greater than 0 for "+t.s); return; }
+  var rateWei=toWei(v);
+  try{
+    setStatus("pend","Setting 1 JPYC = "+v+" "+t.s+"\nConfirm in MetaMask…");
+    var data="0x2bdb7097"+padAddr(t.c)+pad(rateWei); // setRate(address,uint256)
+    var tx=await window.ethereum.request({method:"eth_sendTransaction",params:[{
+      from:account,to:PEG,data:data,gas:"0x186A0",gasPrice:"0x0"}]});
+    setStatus("pend","Waiting for confirmation…");
+    await waitReceipt(tx);
+    setStatus("ok","Updated! 1 JPYC = "+v+" "+t.s+"\nTx: "+tx.slice(0,18)+"…");
+    await loadRates();
+  }catch(e){
+    setStatus("err", e.code===4001?"Transaction rejected.":("Failed: "+(e.message||e)+"\n(Are you the owner wallet?)"));
+  }
+}
+
+async function waitReceipt(hash){
+  for(var i=0;i<40;i++){
+    await sleep(1500);
+    try{ var r=await rpc("eth_getTransactionReceipt",[hash]);
+      if(r&&r.blockNumber){ if(r.status==="0x0") throw new Error("Transaction reverted (not owner?)"); return r; } }
+    catch(e){ if(String(e.message||"").indexOf("revert")>=0) throw e; }
+  }
+  throw new Error("Timed out waiting for confirmation");
+}
+
+function setStatus(k,m){ var s=$("status"); s.className="status "+k; s.textContent=m; }
+function clearStatus(){ var s=$("status"); s.className="status"; s.textContent=""; }
+
+function init(){
+  buildRows();
+  $("connectBtn").addEventListener("click", connect);
+  checkConn();
+  loadRates(); // show current rates even before connecting
+}
+if(document.readyState==="loading") document.addEventListener("DOMContentLoaded",init); else init();
+</script>
+</body>
+</html>
