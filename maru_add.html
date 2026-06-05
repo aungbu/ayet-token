@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-store">
+<title>Add MARU | NCK DEX</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#07120c;color:#eafff1;min-height:100vh;display:flex;flex-direction:column}
+nav{background:#0a1a10;border-bottom:1px solid #194a2a;padding:0 2rem;display:flex;align-items:center;justify-content:space-between;height:64px}
+.nav-logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+.nav-logo img{width:32px;height:32px;border-radius:50%;object-fit:cover}
+.nav-logo span{font-size:16px;font-weight:600;color:#fff}
+main{flex:1;display:flex;align-items:center;justify-content:center;padding:40px 2rem}
+.card{background:#0d2113;border:1px solid #194a2a;border-radius:20px;padding:40px;max-width:480px;width:100%;text-align:center}
+.tic{width:80px;height:80px;border-radius:50%;background:#6e1a4a;color:#f5a0d0;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;margin:0 auto 20px}
+h1{font-size:26px;font-weight:700;margin-bottom:8px}
+.desc{font-size:14px;color:#7da890;margin-bottom:28px;line-height:1.5}
+table{width:100%;border-collapse:collapse;margin-bottom:28px;text-align:left}
+td{padding:10px 12px;font-size:13px;border-bottom:1px solid #194a2a}
+td:first-child{color:#7da890;width:40%}
+td:last-child{color:#c8e6cd;font-family:monospace;word-break:break-all}
+tr:last-child td{border-bottom:none}
+.btn-net{width:100%;background:#02834a;color:#fff;border:none;padding:14px;border-radius:12px;font-size:15px;cursor:pointer;margin-bottom:12px}
+.btn-net:hover{background:#1fc46e}
+.btn-add{width:100%;background:#e8761b;color:#fff;border:none;padding:16px;border-radius:12px;font-size:16px;font-weight:600;cursor:pointer;margin-bottom:12px}
+.btn-add:hover{background:#f08030}
+.btn-swap{width:100%;background:#0d2113;color:#1fc46e;border:1px solid #2d6b3a;padding:12px;border-radius:12px;font-size:14px;cursor:pointer;text-decoration:none;display:block;margin-bottom:8px}
+.back{display:block;text-align:center;color:#4a6e52;font-size:13px;text-decoration:none;margin-top:8px}
+.status{margin-top:16px;padding:12px;border-radius:8px;font-size:13px;display:none;line-height:1.6}
+.ok{background:#15331f;color:#1fc46e;display:block}
+.err{background:#3d1a1a;color:#f56e6e;display:block}
+footer{background:#060f09;padding:20px 2rem;text-align:center}
+footer p{font-size:12px;color:#2d4a33}
+</style>
+</head>
+<body>
+<nav>
+  <a class="nav-logo" href="/"><img src="/assets/ayetLogo.JPG" alt="AYET"><span>Akimoto Fan Tokens</span></a>
+  <a href="/swap/" style="color:#1fc46e;font-size:13px;text-decoration:none">Go to DEX Swap</a>
+</nav>
+<main>
+  <div class="card">
+    <div class="tic">MR</div>
+    <h1>Add MARU to MetaMask</h1>
+    <p class="desc">Maruhan Token — DEX token on NCK Network. Used for on-chain swaps on NCK DEX.</p>
+    <table>
+      <tr><td>Network</td><td>NCK Network</td></tr>
+      <tr><td>Chain ID</td><td>77777</td></tr>
+      <tr><td>Token Name</td><td>MARU DEX Token</td></tr>
+      <tr><td>Symbol</td><td>MARU</td></tr>
+      <tr><td>Decimals</td><td>18</td></tr>
+      <tr><td>Contract</td><td>0x7c6244e16143dd3f2991481545a06c847733cf56</td></tr>
+    </table>
+    <button class="btn-net" onclick="addNet()">1. Add NCK Network to MetaMask</button>
+    <button class="btn-add" onclick="addToken()">2. Add MARU to MetaMask</button>
+    <a class="btn-swap" href="/swap/">Go to DEX Swap</a>
+    <div id="status" class="status"></div>
+    <a class="back" href="/">Back to home</a>
+  </div>
+</main>
+<footer><p>© 2026 FME Inc. · NCK Network DEX</p></footer>
+<script>
+var C="0x7c6244e16143dd3f2991481545a06c847733cf56",S="MARU",D=18,CID="0x12fd1";
+async function addNet(){
+  if(!window.ethereum){show("MetaMask not found.","err");return;}
+  try{
+    await window.ethereum.request({method:"wallet_addEthereumChain",params:[{chainId:CID,chainName:"NCK Network",nativeCurrency:{name:"FME",symbol:"FME",decimals:18},rpcUrls:["https://l1.aucfans.com/rpc/"],blockExplorerUrls:["https://l1.aucfans.com/fmescan/"]}]});
+    show("NCK Network added!","ok");
+  }catch(e){
+    var unsupported = e && (e.code===4200 || e.code===-32601 || /does not exist|not available|unsupported/i.test(e.message||""));
+    if(unsupported){
+      var s=document.getElementById("status"); s.className="status err";
+      s.innerHTML="This browser/wallet can't add the network automatically. Add NCK Network manually:<br><br>Network name: NCK Network<br>RPC URL: https://l1.aucfans.com/rpc/<br>Chain ID: 77777<br>Currency symbol: FME<br>Block explorer: https://l1.aucfans.com/fmescan/<br><br>Tip: open this page inside the MetaMask app's built-in browser and this button works.";
+    } else if(e && e.code===4001){
+      show("You rejected the request.","err");
+    } else {
+      show("Error: "+(e.message||e),"err");
+    }
+  }
+}
+async function addToken(){
+  if(!window.ethereum){show("MetaMask not found.","err");return;}
+  try{await window.ethereum.request({method:"wallet_watchAsset",params:{type:"ERC20",options:{address:C,symbol:S,decimals:D}}});show(S+" added to MetaMask!","ok");}catch(e){show("Error: "+(e.message||e),"err");}
+}
+function show(m,t){var s=document.getElementById("status");s.textContent=m;s.className="status "+t;}
+</script>
+</body>
+</html>
