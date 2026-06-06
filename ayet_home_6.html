@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate">
+<title>AYET — Akimoto Yasushi Entertainment Token</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Bebas+Neue&display=swap');
+:root{
+  --bg:#07120c; --bg2:#0a1a10; --panel:#0d2113; --line:#194a2a;
+  --rose:#02834a; --rose2:#1fc46e; --gold:#f5c451; --ink:#eafff1; --mut:#7da890;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--ink);overflow-x:hidden}
+a{text-decoration:none;color:inherit}
+.wrap{max-width:1180px;margin:0 auto;padding:0 24px}
+.disp{font-family:'Bebas Neue','Noto Sans JP',sans-serif;letter-spacing:1px}
+h1,h2{font-weight:900;line-height:1.05}
+
+/* nav */
+nav{position:sticky;top:0;z-index:60;background:rgba(11,7,16,.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.nav-in{display:flex;align-items:center;justify-content:space-between;height:66px}
+.logo{display:flex;align-items:center;gap:10px}
+.logo img{width:34px;height:34px;border-radius:50%;object-fit:cover;border:1px solid var(--line)}
+.logo span{font-weight:900;font-size:17px;letter-spacing:.5px}
+.navlinks{display:flex;gap:24px;align-items:center}
+.navlinks a{font-size:14px;color:var(--mut);transition:color .2s}
+.navlinks a:hover{color:var(--rose2)}
+.langtog{border:1px solid var(--line);background:var(--panel);color:var(--ink);padding:6px 12px;border-radius:20px;font-size:12px;cursor:pointer;font-family:inherit}
+.langtog:hover{border-color:var(--rose)}
+.cta{background:var(--rose);color:#fff;padding:9px 18px;border-radius:24px;font-weight:700;font-size:14px;transition:transform .15s,box-shadow .2s}
+.cta:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(2,131,74,.45)}
+.burger{display:none;background:none;border:none;color:var(--ink);font-size:24px;cursor:pointer}
+
+/* hero */
+.hero{position:relative;padding:96px 0 64px;overflow:hidden}
+.hero::before{content:"";position:absolute;inset:0;z-index:0;background:
+  radial-gradient(55% 50% at 78% 8%,rgba(2,131,74,.22),transparent 60%),
+  radial-gradient(45% 45% at 8% 92%,rgba(245,196,81,.12),transparent 60%)}
+.glow-ring{position:absolute;right:-160px;top:-80px;width:520px;height:520px;border-radius:50%;
+  background:conic-gradient(from 0deg,rgba(31,196,110,.22),rgba(245,196,81,.18),rgba(31,196,110,.22));
+  filter:blur(60px);z-index:0;opacity:.5;animation:spin 26s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.hero-in{position:relative;z-index:2;max-width:840px}
+.kicker{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--panel);
+  padding:7px 15px;border-radius:24px;font-size:12.5px;color:var(--rose2);margin-bottom:24px}
+.kicker .dot{width:7px;height:7px;border-radius:50%;background:var(--rose);animation:pulse 1.8s infinite}
+@keyframes pulse{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(31,196,110,.5)}50%{opacity:.5;box-shadow:0 0 0 7px rgba(31,196,110,0)}}
+.hero h1{font-size:clamp(34px,6.4vw,68px);margin-bottom:22px}
+.hero h1 .accent{color:var(--rose)}
+.hero .lead{max-width:660px;color:var(--mut);font-size:clamp(15px,1.9vw,18px);line-height:1.75;margin-bottom:32px}
+.hero-btns{display:flex;gap:13px;flex-wrap:wrap}
+.btn-g{background:var(--rose);color:#fff;padding:14px 28px;border-radius:28px;font-weight:700;font-size:15px;transition:transform .15s,box-shadow .2s}
+.btn-g:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(2,131,74,.45)}
+.btn-o{border:1px solid var(--line);background:var(--panel);color:var(--ink);padding:14px 28px;border-radius:28px;font-weight:700;font-size:15px;transition:border-color .2s}
+.btn-o:hover{border-color:var(--rose)}
+
+/* stat band */
+.stats{position:relative;z-index:2;margin-top:60px}
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.stat{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:24px 18px;text-align:center;position:relative;overflow:hidden}
+.stat::after{content:"";position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--rose),transparent);opacity:.7}
+.stat .num{font-family:'Bebas Neue','Noto Sans JP';font-size:clamp(30px,4.4vw,46px);color:var(--rose2);line-height:1;letter-spacing:1px}
+.stat .lbl{margin-top:8px;font-size:12.5px;color:var(--mut)}
+
+/* partners */
+.partners{padding:46px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:var(--bg2)}
+.partners .pt{text-align:center;color:var(--mut);font-size:13px;letter-spacing:2px;text-transform:uppercase;margin-bottom:24px}
+.plogos{display:flex;gap:40px;justify-content:center;align-items:center;flex-wrap:wrap}
+.plogos span{font-weight:900;font-size:clamp(16px,2.4vw,24px);color:#6b5575;letter-spacing:.5px;transition:color .2s}
+.plogos span:hover{color:var(--ink)}
+
+/* sections */
+section{padding:80px 0;position:relative}
+.eyebrow{color:var(--rose);font-size:12.5px;letter-spacing:3px;text-transform:uppercase;margin-bottom:14px;font-weight:700}
+.sec-h{font-size:clamp(28px,4.6vw,46px);margin-bottom:16px}
+.sec-sub{color:var(--mut);max-width:640px;font-size:16px;line-height:1.7;margin-bottom:44px}
+
+/* token cards */
+.tok-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.tcard{background:linear-gradient(160deg,var(--panel),var(--bg2));border:1px solid var(--line);border-radius:20px;padding:24px;transition:transform .2s,border-color .2s}
+.tcard:hover{transform:translateY(-6px);border-color:var(--rose)}
+.tcard .ic{width:50px;height:50px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Bebas Neue';font-size:18px;margin-bottom:16px}
+.tcard h3{font-size:22px;font-weight:900}
+.tcard .full{color:var(--mut);font-size:12.5px;margin:4px 0 16px;min-height:32px}
+.tcard .rate{font-size:14px;border-top:1px solid var(--line);padding-top:13px}
+.tcard .rate b{color:var(--rose2)}
+.tcard a.add{display:inline-block;margin-top:14px;font-size:13px;color:var(--rose2)}
+
+/* initiatives / features */
+.feat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.feat{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:28px;transition:border-color .2s}
+.feat:hover{border-color:var(--rose)}
+.feat .no{font-family:'Bebas Neue';font-size:30px;color:var(--rose);opacity:.6}
+.feat h3{font-size:18px;margin:8px 0 10px;font-weight:700}
+.feat p{color:var(--mut);font-size:14px;line-height:1.65}
+.feat .tags{margin-top:14px;display:flex;gap:7px;flex-wrap:wrap}
+.feat .tags span{font-size:11px;color:var(--gold);border:1px solid var(--line);border-radius:20px;padding:3px 10px}
+
+/* specs */
+.spec-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.spec{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:22px}
+.spec h4{font-size:13px;color:var(--mut);font-weight:500;margin-bottom:6px}
+.spec .v{font-size:18px;font-weight:900;color:var(--ink)}
+
+/* tokenomics */
+.tk-highlight{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:32px}
+.tk-hi{background:linear-gradient(160deg,#1d1020,#140b1a);border:1px solid var(--line);border-radius:18px;padding:26px;text-align:center}
+.tk-hi .n{font-family:'Bebas Neue';font-size:clamp(30px,5vw,48px);color:var(--gold);line-height:1}
+.tk-hi .l{color:var(--mut);font-size:13px;margin-top:8px}
+.tbl{width:100%;border-collapse:collapse;background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden;font-size:14px}
+.tbl th,.tbl td{padding:13px 14px;text-align:left;border-bottom:1px solid var(--line)}
+.tbl th{background:var(--bg2);color:var(--mut);font-weight:700;font-size:12.5px;letter-spacing:1px}
+.tbl td:nth-child(2),.tbl td:nth-child(3){color:var(--rose2);font-weight:700;white-space:nowrap}
+.tbl tr:last-child td{border-bottom:none;font-weight:900;background:var(--bg2)}
+.vest{margin-top:28px;display:grid;gap:12px}
+.vrow{display:grid;grid-template-columns:130px 1fr;gap:18px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px}
+.vrow .when{color:var(--gold);font-weight:900;font-size:14px}
+.vrow .what{color:var(--mut);font-size:14px;line-height:1.6}
+.disclaimer{margin-top:30px;border:1px dashed var(--line);border-radius:14px;padding:18px 20px;color:var(--mut);font-size:13px;line-height:1.7;text-align:center}
+
+/* roadmap */
+.road{position:relative;padding-left:26px}
+.road::before{content:"";position:absolute;left:7px;top:6px;bottom:6px;width:2px;background:linear-gradient(var(--rose),var(--gold))}
+.ritem{position:relative;margin-bottom:26px}
+.ritem::before{content:"";position:absolute;left:-26px;top:4px;width:14px;height:14px;border-radius:50%;background:var(--rose);box-shadow:0 0 0 4px rgba(31,196,110,.15)}
+.ritem .date{color:var(--gold);font-weight:900;font-size:14px;margin-bottom:5px}
+.ritem .txt{color:var(--mut);font-size:14.5px;line-height:1.6}
+
+/* team */
+.team-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px}
+.tm{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:24px}
+.tm .role{color:var(--rose2);font-size:12.5px;letter-spacing:1px;text-transform:uppercase;margin-bottom:7px;font-weight:700}
+.tm .name{font-size:19px;font-weight:900;margin-bottom:4px}
+.tm .org{color:var(--gold);font-size:13px;margin-bottom:12px}
+.tm .bio{color:var(--mut);font-size:13.5px;line-height:1.65}
+
+/* cta */
+.ctaband{background:linear-gradient(120deg,#23122a,#160c1c);border:1px solid var(--line);border-radius:26px;padding:54px;text-align:center;position:relative;overflow:hidden}
+.ctaband::before{content:"";position:absolute;inset:0;background:radial-gradient(50% 90% at 50% 0%,rgba(2,131,74,.2),transparent)}
+.ctaband h2{font-size:clamp(26px,4.6vw,42px);margin-bottom:14px;position:relative}
+.ctaband p{color:var(--mut);margin-bottom:26px;position:relative}
+
+/* footer */
+footer{border-top:1px solid var(--line);background:var(--bg2);padding:54px 0 28px}
+.foot-grid{display:grid;grid-template-columns:1.7fr 1fr 1fr 1fr;gap:30px;margin-bottom:36px}
+.foot-brand p{color:var(--mut);font-size:13.5px;line-height:1.65;max-width:300px;margin-top:14px}
+.fcol h4{font-size:12.5px;letter-spacing:2px;text-transform:uppercase;margin-bottom:15px}
+.fcol a{display:block;color:var(--mut);font-size:13.5px;margin-bottom:10px;transition:color .2s}
+.fcol a:hover{color:var(--rose2)}
+.foot-disc{border-top:1px solid var(--line);padding-top:22px;color:var(--mut);font-size:12.5px;line-height:1.7;text-align:center}
+
+.learn-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.lcard{background:linear-gradient(160deg,var(--panel),var(--bg2));border:1px solid var(--line);border-radius:20px;padding:30px;position:relative;overflow:hidden;transition:border-color .2s,transform .2s}
+.lcard:hover{border-color:var(--rose);transform:translateY(-4px)}
+.lcard .bignum{font-family:'Bebas Neue';font-size:60px;line-height:1;color:var(--rose);opacity:.4}
+.lcard h3{font-size:20px;margin:8px 0 12px;font-weight:700}
+.lcard p{color:var(--mut);font-size:14.5px;line-height:1.7}
+.join-wrap{background:linear-gradient(120deg,#0c2415,#08180d);border:1px solid var(--line);border-radius:26px;padding:48px;position:relative;overflow:hidden}
+.join-wrap::before{content:"";position:absolute;inset:0;background:radial-gradient(50% 90% at 50% 0%,rgba(2,131,74,.2),transparent)}
+.join-wrap>*{position:relative}
+.iam-row{display:flex;gap:10px;flex-wrap:wrap;margin:16px 0 24px}
+.iam{padding:10px 18px;border:1px solid var(--line);background:var(--panel);border-radius:24px;font-size:14px;color:var(--mut);cursor:pointer;transition:all .2s;font-family:inherit}
+.iam:hover{border-color:var(--rose);color:var(--ink)}
+.iam.sel{background:var(--rose);color:#fff;border-color:var(--rose)}
+.join-fields{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px}
+.join-fields input,.join-fields select{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:13px 14px;color:var(--ink);font-size:14px;font-family:inherit;outline:none}
+.join-fields input:focus,.join-fields select:focus{border-color:var(--rose)}
+.consent{display:flex;align-items:flex-start;gap:10px;color:var(--mut);font-size:13px;line-height:1.5;margin-bottom:18px;cursor:pointer}
+.consent input{margin-top:3px;accent-color:var(--rose)}
+.join-submit{background:var(--rose);color:#fff;border:none;padding:14px 34px;border-radius:28px;font-weight:700;font-size:15px;cursor:pointer;transition:transform .15s,box-shadow .2s;font-family:inherit}
+.join-submit:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(2,131,74,.4)}
+.join-msg{margin-top:14px;font-size:13.5px;min-height:18px}
+.join-msg.err{color:#f56e6e}
+.join-thanks{text-align:center;padding:24px 0}
+.join-thanks .big{font-size:26px;font-weight:900;color:var(--rose2);margin-bottom:8px}
+.join-thanks p{color:var(--mut)}
+.news-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.ncard{background:var(--panel);border:1px solid var(--line);border-radius:18px;overflow:hidden;transition:transform .2s,border-color .2s;display:flex;flex-direction:column}
+.ncard:hover{transform:translateY(-6px);border-color:var(--rose)}
+.ncard .banner{height:130px;display:flex;align-items:flex-end;padding:14px}
+.ncard .tag{font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;background:rgba(0,0,0,.4);color:#fff;padding:4px 11px;border-radius:20px}
+.ncard .body{padding:20px;display:flex;flex-direction:column;flex:1}
+.ncard .date{font-size:12px;color:var(--gold);margin-bottom:8px}
+.ncard h3{font-size:17px;font-weight:700;line-height:1.45;margin-bottom:10px}
+.ncard p{color:var(--mut);font-size:13.5px;line-height:1.6;flex:1}
+.ncard a.more{margin-top:14px;color:var(--rose2);font-size:13.5px;font-weight:600}
+.reveal{opacity:0;transform:translateY(22px);transition:opacity .7s,transform .7s}
+.reveal.in{opacity:1;transform:none}
+
+@media(max-width:880px){
+  .navlinks a:not(.cta):not(.langtog){display:none}
+  .stat-grid{grid-template-columns:repeat(2,1fr)}
+  .tok-grid{grid-template-columns:repeat(2,1fr)}
+  .feat-grid,.spec-grid,.tk-highlight,.team-grid,.learn-grid,.join-fields,.news-grid{grid-template-columns:1fr}
+  .foot-grid{grid-template-columns:1fr 1fr}
+  .ctaband{padding:36px 20px}
+  .tbl{font-size:12.5px}.tbl th,.tbl td{padding:9px 8px}
+}
+@media(max-width:520px){.tok-grid{grid-template-columns:1fr}.foot-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<nav>
+  <div class="wrap nav-in">
+    <a class="logo" href="/"><img src="/assets/ayetLogo.JPG" alt="AYET"><span>AYET</span></a>
+    <div class="navlinks">
+      <a href="#tokens" data-i18n="nav_tokens">トークン</a>
+      <a href="#learn" data-i18n="nav_learn">学ぶ</a>
+      <a href="#initiatives" data-i18n="nav_init">取り組み</a>
+      <a href="#tokenomics" data-i18n="nav_tknm">トークノミクス</a>
+      <a href="#roadmap" data-i18n="nav_road">ロードマップ</a>
+      <a href="#team" data-i18n="nav_team">チーム</a>
+      <a href="#news" data-i18n="nav_news">ニュース</a>
+      <button class="langtog" id="langBtn">EN</button>
+      <a class="cta" href="/swap/" data-i18n="nav_launch">アプリを開く</a>
+    </div>
+    <button class="burger" onclick="this.previousElementSibling.querySelectorAll('a').forEach(function(a){a.style.display='block'})">&#9776;</button>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="glow-ring"></div>
+  <div class="wrap hero-in">
+    <span class="kicker"><span class="dot"></span> NCK Network · Chain ID 77777 · <span data-i18n="hero_kick">ガスレス</span></span>
+    <h1><span data-i18n="hero_h1a">新しいエンタメ文化を、</span><br><span class="accent" data-i18n="hero_h1b">ブロックチェーンで。</span></h1>
+    <p class="lead" data-i18n="hero_lead">AYET（Akimoto Yasushi Entertainment Token）は、次世代のエンタメ経済圏を実現するWeb3.0ファントークンです。NCK Network 上で、推し活・投票・オークション・決済を、手数料ゼロで。</p>
+    <div class="hero-btns">
+      <a class="btn-g" href="/swap/" data-i18n="hero_btn1">DEXを開く</a>
+      <a class="btn-o" href="https://l1.aucfans.com/fmescan/" target="_blank" data-i18n="hero_btn2">エクスプローラー</a>
+    </div>
+    <div class="stats">
+      <div class="stat-grid">
+        <div class="stat"><div class="num">12.2M</div><div class="lbl" data-i18n="st_cust">顧客基盤（日本直販）</div></div>
+        <div class="stat"><div class="num">40億</div><div class="lbl" data-i18n="st_supply">AYET総発行数量</div></div>
+        <div class="stat"><div class="num" id="stBlock">—</div><div class="lbl" data-i18n="st_block">最新ブロック高</div></div>
+        <div class="stat"><div class="num">0</div><div class="lbl" data-i18n="st_gas">ガス代（FME）</div></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="partners">
+  <div class="wrap">
+    <div class="pt" data-i18n="pt_title">プロジェクト推進・開発パートナー</div>
+    <div class="plogos">
+      <span>株式会社AKBT</span><span>日本直販</span><span>FME Inc.</span><span>Blockchain at UCLA</span>
+    </div>
+  </div>
+</div>
+
+<section id="tokens">
+  <div class="wrap">
+    <div class="reveal">
+      <div class="eyebrow" data-i18n="tk_eye">エコシステムトークン</div>
+      <h2 class="sec-h" data-i18n="tk_h">NCK Network のファントークン</h2>
+      <p class="sec-sub" data-i18n="tk_sub">オンチェーンの固定レート（PegSwap）からリアルタイムで取得。レートはチームがオンチェーンで設定し、変更は即時に反映されます。</p>
+    </div>
+    <div class="tok-grid" id="tokGrid"></div>
+  </div>
+</section>
+
+<section id="initiatives" style="background:var(--bg2)">
+  <div class="wrap">
+    <div class="reveal">
+      <div class="eyebrow" data-i18n="in_eye">取り組み</div>
+      <h2 class="sec-h" data-i18n="in_h">6つの主要施策</h2>
+      <p class="sec-sub" data-i18n="in_sub">プラットフォーム開発からマーケットプレイスまで、ファンエコノミーを実現するための取り組み。</p>
+    </div>
+    <div class="feat-grid" id="initGrid"></div>
+  </div>
+</section>
+
+<section id="learn">
+  <div class="wrap">
+    <div class="reveal">
+      <div class="eyebrow" data-i18n="le_eye">はじめに</div>
+      <h2 class="sec-h" data-i18n="le_h">ファントークンを知る</h2>
+    </div>
+    <div class="learn-grid" id="learnGrid"></div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="reveal">
+      <div class="eyebrow" data-i18n="sp_eye">技術仕様</div>
+      <h2 class="sec-h" data-i18n="sp_h">NCK Network</h2>
+      <p class="sec-sub" data-i18n="sp_sub">エンタープライズグレードのEVM互換Layer1。将来的にPolygon（POL）など他チェーンへの展開も計画しています。</p>
+    </div>
+    <div class="spec-grid" id="specGrid"></div>
+  </div>
+</section>
+
+<section id="tokenomics" style="background:var(--bg2)">
+  <div class="wrap">
+    <div class="reveal">
+      <div class="eyebrow" data-i18n="to_eye">トークノミクス</div>
+      <h2 class="sec-h" data-i18n="to_h">AYET トークノミクス概要</h2>
+      <p class="sec-sub" data-i18n="to_sub">総発行数量はブロックチェーン上で全量発行済み。追加発行は一切ありません。</p>
+    </div>
+    <div class="tk-highlight">
+      <div class="tk-hi"><div class="n">40億</div><div class="l" data-i18n="to_hi1">総発行数量（追加発行なし）</div></div>
+      <div class="tk-hi"><div class="n">55%</div><div class="l" data-i18n="to_hi2">ロックアップ対象</div></div>
+      <div class="tk-hi"><div class="n">22億</div><div class="l" data-i18n="to_hi3">ロックアップ数量</div></div>
+    </div>
+    <div style="overflow-x:auto">
+      <table class="tbl" id="allocTbl"></table>
+    </div>
+    <div class="vest" id="vestList"></div>
+    <div class="disclaimer" data-i18n="to_disc">本資料は情報提供を目的としており、投資勧誘を目的とするものではありません。 / This material is for informational purposes only and does not constitute investment solicitation.</div>
+  </div>
+</section>
+
+<section id="roadmap">
+  <div class="wrap">
+    <div class="reveal">
+      <div class="eyebrow" data-i18n="rd_eye">ロードマップ</div>
+      <h2 class="sec-h" data-i18n="rd_h">これまでとこれから</h2>
+    </div>
+    <div class="road" id="roadList"></div>
+  </div>
+</section>
+
+<section id="team" style="background:var(--bg2)">
+  <div class="wrap">
+    <div class="reveal">
+      <div class="eyebrow" data-i18n="tm_eye">運営チーム</div>
+      <h2 class="sec-h" data-i18n="tm_h">プロジェクトを支えるチーム</h2>
+    </div>
+    <div class="team-grid" id="teamGrid"></div>
+  </div>
+</section>
+
+<section id="news">
+  <div class="wrap">
+    <div class="reveal">
+      <div class="eyebrow" data-i18n="nw_eye">ニュース</div>
+      <h2 class="sec-h" data-i18n="nw_h">ニュース & アップデート</h2>
+      <p class="sec-sub" data-i18n="nw_sub">AYETとNCK Networkの最新情報。</p>
+    </div>
+    <div class="news-grid" id="newsGrid"></div>
+  </div>
+</section>
+
+<section id="join">
+  <div class="wrap">
+    <div class="join-wrap reveal" id="joinCard">
+      <div class="eyebrow" data-i18n="jn_eye">参加する</div>
+      <h2 class="sec-h" data-i18n="jn_h">AYETコミュニティに参加</h2>
+      <p class="sec-sub" data-i18n="jn_sub" style="margin-bottom:14px">あなたに合った形で、エンタメの未来に参加しましょう。</p>
+      <div style="font-size:14px;color:var(--mut)" data-i18n="jn_iam">私は…</div>
+      <div class="iam-row">
+        <button class="iam" data-role="fan" data-i18n="jn_role_fan">ファン</button>
+        <button class="iam" data-role="creator" data-i18n="jn_role_creator">クリエイター</button>
+        <button class="iam" data-role="brand" data-i18n="jn_role_brand">ブランド</button>
+        <button class="iam" data-role="idol" data-i18n="jn_role_idol">アイドルプロジェクト</button>
+        <button class="iam" data-role="dev" data-i18n="jn_role_dev">開発者</button>
+      </div>
+      <div class="join-fields">
+        <input type="email" id="joinEmail" data-i18n-ph="jn_email" placeholder="メールアドレス">
+        <select id="joinCountry">
+          <option value="" disabled selected data-i18n="jn_country">居住国</option>
+          <option>Japan</option><option>United States</option><option>South Korea</option><option>China</option><option>Taiwan</option><option>Singapore</option><option>United Kingdom</option><option>France</option><option>Germany</option><option>Australia</option><option>Canada</option><option>Other</option>
+        </select>
+      </div>
+      <label class="consent"><input type="checkbox" id="joinConsent"><span data-i18n="jn_consent">最新情報やお知らせの受信に同意します。配信はいつでも解除できます。</span></label>
+      <button class="join-submit" id="joinSubmit" data-i18n="jn_submit">送信</button>
+      <div class="join-msg" id="joinMsg"></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="ctaband reveal">
+      <h2 data-i18n="cta_h">推し活を、ブロックチェーンで。</h2>
+      <p data-i18n="cta_p">MetaMaskを接続し、NCK Network を追加して、数秒でスワップ。</p>
+      <a class="btn-g" href="/swap/" style="position:relative" data-i18n="cta_btn">DEXを開く</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <a class="logo" href="/"><img src="/assets/ayetLogo.JPG" alt="AYET"><span>AYET</span></a>
+        <p data-i18n="ft_about">Akimoto Yasushi Entertainment Token。新しいエンタメ文化を実現するWeb3.0ファントークン。発行：株式会社AKBT。</p>
+      </div>
+      <div class="fcol">
+        <h4 data-i18n="ft_use">USE AYET</h4>
+        <a href="/swap/" data-i18n="ft_swap">DEX スワップ</a>
+        <a href="https://l1.aucfans.com/fmescan/" target="_blank" data-i18n="ft_exp">エクスプローラー</a>
+        <a href="/add-ayet/" data-i18n="ft_add">AYETを追加</a>
+      </div>
+      <div class="fcol">
+        <h4 data-i18n="ft_net">NETWORK</h4>
+        <a href="#">Chain ID 77777</a>
+        <a href="https://l1.aucfans.com/rpc/" target="_blank">RPC</a>
+        <a href="#tokenomics" data-i18n="nav_tknm">トークノミクス</a>
+      </div>
+      <div class="fcol">
+        <h4 data-i18n="ft_proj">PROJECT</h4>
+        <a href="#initiatives" data-i18n="nav_init">取り組み</a>
+        <a href="#roadmap" data-i18n="nav_road">ロードマップ</a>
+        <a href="#team" data-i18n="nav_team">チーム</a>
+      </div>
+    </div>
+    <div class="foot-disc">
+      <span data-i18n="to_disc">本資料は情報提供を目的としており、投資勧誘を目的とするものではありません。</span><br>
+      © 2026 株式会社AKBT / Nihon Chokuhan Inc. · AYET on NCK Network
+    </div>
+  </div>
+</footer>
+
+<script>
+"use strict";
+var RPC="https://l1.aucfans.com/rpc/";
+var PEG="0xa93e9a0fc3449c79b04dbfa405f9574f938698ed";
+var JPYC="0x6601ec3242808f300cbb9ce01aaaa1bab1cf6fea";
+var TOKENS=[
+  {s:"AYET",c:"0x6e07234932fa3daa1e91ed78f551b2b5c7c75bac",bg:"#02834a",fg:"#fff",ic:"AY",add:"/add-ayet/",full:{ja:"Akimoto Yasushi Entertainment Token",en:"Akimoto Yasushi Entertainment Token"}},
+  {s:"JPYC",c:"0x6601ec3242808f300cbb9ce01aaaa1bab1cf6fea",bg:"#1a3a6e",fg:"#7ab3f5",ic:"JP",add:"/add-jpyc/",full:{ja:"JPYコイン（円ペッグ）",en:"JPY Coin (Yen-pegged)"}},
+  {s:"MARU",c:"0x7c6244e16143dd3f2991481545a06c847733cf56",bg:"#6e1a4a",fg:"#f5a0d0",ic:"MR",add:"/add-maru/",full:{ja:"Maruhan Token",en:"Maruhan Token"}},
+  {s:"MMK",c:"0x7e70d8e5ee41c8299227b5934ea77fdf9f3db7ff",bg:"#4a1a0a",fg:"#f5a06e",ic:"MK",add:"/add-mmk/",full:{ja:"チャット・ステーブルコイン",en:"Kyat Stablecoin"}}
+];
+
+var T={
+ja:{nav_tokens:"トークン",nav_init:"取り組み",nav_tknm:"トークノミクス",nav_road:"ロードマップ",nav_team:"チーム",nav_launch:"アプリを開く",nav_learn:"学ぶ",nav_news:"ニュース",nw_eye:"ニュース",nw_h:"ニュース & アップデート",nw_sub:"AYETとNCK Networkの最新情報。",nw_more:"続きを読む →",le_eye:"はじめに",le_h:"ファントークンを知る",jn_eye:"参加する",jn_h:"AYETコミュニティに参加",jn_sub:"あなたに合った形で、エンタメの未来に参加しましょう。",jn_iam:"私は…",jn_role_fan:"ファン",jn_role_creator:"クリエイター",jn_role_brand:"ブランド",jn_role_idol:"アイドルプロジェクト",jn_role_dev:"開発者",jn_email:"メールアドレス",jn_country:"居住国",jn_consent:"最新情報やお知らせの受信に同意します。配信はいつでも解除できます。",jn_submit:"送信",jn_err_role:"ひとつ選択してください。",jn_err_email:"有効なメールアドレスを入力してください。",jn_err_consent:"同意にチェックしてください。",jn_thanks_h:"ありがとうございます！",jn_thanks_p:"最新情報をお届けします。コミュニティでお会いしましょう。",
+hero_kick:"ガスレス",hero_h1a:"新しいエンタメ文化を、",hero_h1b:"ブロックチェーンで。",
+hero_lead:"AYET（Akimoto Yasushi Entertainment Token）は、次世代のエンタメ経済圏を実現するWeb3.0ファントークンです。NCK Network 上で、推し活・投票・オークション・決済を、手数料ゼロで。",
+hero_btn1:"DEXを開く",hero_btn2:"エクスプローラー",
+st_cust:"顧客基盤（日本直販）",st_supply:"AYET総発行数量",st_block:"最新ブロック高",st_gas:"ガス代（FME）",
+pt_title:"プロジェクト推進・開発パートナー",
+tk_eye:"エコシステムトークン",tk_h:"NCK Network のファントークン",tk_sub:"オンチェーンの固定レート（PegSwap）からリアルタイムで取得。レートはチームがオンチェーンで設定し、変更は即時に反映されます。",tk_base:"基準通貨",tk_add:"＋ MetaMaskに追加",
+in_eye:"取り組み",in_h:"6つの主要施策",in_sub:"プラットフォーム開発からマーケットプレイスまで、ファンエコノミーを実現するための取り組み。",
+sp_eye:"技術仕様",sp_h:"NCK Network",sp_sub:"エンタープライズグレードのEVM互換Layer1。将来的にPolygon（POL）など他チェーンへの展開も計画しています。",
+to_eye:"トークノミクス",to_h:"AYET トークノミクス概要",to_sub:"総発行数量はブロックチェーン上で全量発行済み。追加発行は一切ありません。",
+to_hi1:"総発行数量（追加発行なし）",to_hi2:"ロックアップ対象",to_hi3:"ロックアップ数量",
+to_disc:"本資料は情報提供を目的としており、投資勧誘を目的とするものではありません。 / This material is for informational purposes only and does not constitute investment solicitation.",
+rd_eye:"ロードマップ",rd_h:"これまでとこれから",
+tm_eye:"運営チーム",tm_h:"プロジェクトを支えるチーム",
+cta_h:"推し活を、ブロックチェーンで。",cta_p:"MetaMaskを接続し、NCK Network を追加して、数秒でスワップ。",cta_btn:"DEXを開く",
+ft_about:"Akimoto Yasushi Entertainment Token。新しいエンタメ文化を実現するWeb3.0ファントークン。発行：株式会社AKBT。",
+ft_use:"AYETを使う",ft_swap:"DEX スワップ",ft_exp:"エクスプローラー",ft_add:"AYETを追加",ft_net:"ネットワーク",ft_proj:"プロジェクト",
+th_cat:"配分先",th_pct:"比率",th_amt:"数量（枚）",th_use:"ロックアップ・用途",row_total:"合計"},
+en:{nav_tokens:"Tokens",nav_init:"Initiatives",nav_tknm:"Tokenomics",nav_road:"Roadmap",nav_team:"Team",nav_launch:"Launch App",nav_learn:"Learn",nav_news:"News",nw_eye:"News",nw_h:"News & Updates",nw_sub:"The latest from AYET and NCK Network.",nw_more:"Read more →",le_eye:"Get Started",le_h:"Understanding Fan Tokens",jn_eye:"Get Involved",jn_h:"Join the AYET community",jn_sub:"Be part of the future of entertainment — in the way that fits you.",jn_iam:"I am a…",jn_role_fan:"Fan",jn_role_creator:"Creator",jn_role_brand:"Brand",jn_role_idol:"Idol project",jn_role_dev:"Developer",jn_email:"Email address",jn_country:"Country of residence",jn_consent:"I agree to receive updates and news. I can unsubscribe anytime.",jn_submit:"Submit",jn_err_role:"Please select one.",jn_err_email:"Please enter a valid email address.",jn_err_consent:"Please check the consent box.",jn_thanks_h:"Thank you!",jn_thanks_p:"We\u0027ll keep you posted — see you in the community.",
+hero_kick:"Gasless",hero_h1a:"A new entertainment culture,",hero_h1b:"on the blockchain.",
+hero_lead:"AYET (Akimoto Yasushi Entertainment Token) is a Web3.0 fan token powering the next-generation entertainment economy. On NCK Network — support your idols, vote, bid and pay, with zero fees.",
+hero_btn1:"Open the DEX",hero_btn2:"Explorer",
+st_cust:"Customer base (Nippon Direct Sales)",st_supply:"Total AYET supply",st_block:"Latest block height",st_gas:"Gas fee (FME)",
+pt_title:"Project & development partners",
+tk_eye:"Ecosystem Tokens",tk_h:"Fan Tokens on NCK Network",tk_sub:"Live fixed rates straight from the on-chain PegSwap contract. Rates are set on-chain by the team and update instantly.",tk_base:"Base unit",tk_add:"+ Add to MetaMask",
+in_eye:"Initiatives",in_h:"Six key initiatives",in_sub:"From platform development to the marketplace — the building blocks of the fan economy.",
+sp_eye:"Tech Specs",sp_h:"NCK Network",sp_sub:"An enterprise-grade EVM-compatible Layer-1. Expansion to other chains such as Polygon (POL) is planned for the future.",
+to_eye:"Tokenomics",to_h:"AYET Tokenomics Overview",to_sub:"The entire supply is already minted on-chain. There is no additional issuance whatsoever.",
+to_hi1:"Total supply (no further minting)",to_hi2:"Subject to lockup",to_hi3:"Locked amount",
+to_disc:"This material is for informational purposes only and does not constitute investment solicitation. / 本資料は情報提供を目的としており、投資勧誘を目的とするものではありません。",
+rd_eye:"Roadmap",rd_h:"Past & upcoming",
+tm_eye:"The Team",tm_h:"The team behind the project",
+cta_h:"Bring your fandom on-chain.",cta_p:"Connect MetaMask, add NCK Network, and swap in seconds.",cta_btn:"Open the DEX",
+ft_about:"Akimoto Yasushi Entertainment Token — a Web3.0 fan token for a new entertainment culture. Issued by AKBT Co., Ltd.",
+ft_use:"Use AYET",ft_swap:"DEX Swap",ft_exp:"Explorer",ft_add:"Add AYET",ft_net:"Network",ft_proj:"Project",
+th_cat:"Allocation",th_pct:"Share",th_amt:"Amount",th_use:"Lockup / Purpose",row_total:"Total"}
+};
+
+var INIT=[
+{no:"01",ja:{h:"Web3.0プラットフォーム開発",p:"ウォレット連携の決済、トークン保有量確認と投票機能、NFT配布、ユーザー参加型コミュニティを開発。",t:["Wallet","Governance","NFT","UGC"]},en:{h:"Web3.0 platform",p:"Wallet-linked payments, token-holding verification and voting, NFT distribution, and a participatory community framework.",t:["Wallet","Governance","NFT","UGC"]}},
+{no:"02",ja:{h:"多様なエンタメコンテンツ",p:"TV・映画に加え、ショート動画（ドラマ・アニメ）やライブアーカイブ配信などインタラクティブコンテンツを提供。",t:["Short","Anime","Drama","Live"]},en:{h:"Entertainment content",p:"Beyond TV and film: interactive short videos (drama, anime) and live archive distribution.",t:["Short","Anime","Drama","Live"]}},
+{no:"03",ja:{h:"新ユニット・派生IP化",p:"既知のタレントから新ユニットを編成。派生キャラクターを2D・デジタルアバターのIPとして育成。",t:["IP","Avatar","2D","Fandom"]},en:{h:"New units & derivative IP",p:"Forming new units from known talent; nurturing derivative characters as 2D and digital-avatar IP.",t:["IP","Avatar","2D","Fandom"]}},
+{no:"04",ja:{h:"クリエイター育成環境",p:"UCLA開発チームと連携し、国際的なクリエイター育成の場を構築。公募・評価・アワードで創作を支援。",t:["UCLA","Global","Creator"]},en:{h:"Creator training",p:"With the UCLA team, an international creator-development program — open calls, evaluation and awards.",t:["UCLA","Global","Creator"]}},
+{no:"05",ja:{h:"コミュニティ・ファンエコノミー",p:"掲示板・チャット・イベント告知、ファンによるIP活用の動画/グッズ制作・配布を支援するポータル。",t:["Community","Portal","Fan Economy"]},en:{h:"Community & fan economy",p:"A portal with boards, chat and events, supporting fan-made videos and goods using IP materials.",t:["Community","Portal","Fan Economy"]}},
+{no:"06",ja:{h:"マーケットプレイス・トークン決済",p:"日本直販と連携し、AYETを含む各種トークンで決済可能なマーケットプレイスを構築。保有者に優先購入環境を提供。",t:["EC","Token Pay","Marketplace"]},en:{h:"Marketplace & token payments",p:"With Nippon Direct Sales, a marketplace accepting AYET and other tokens, with priority access for holders.",t:["EC","Token Pay","Marketplace"]}}
+];
+
+var SPECS=[
+{ja:{h:"ブロックチェーン",v:"NCK Network (Layer1)"},en:{h:"Blockchain",v:"NCK Network (Layer 1)"}},
+{ja:{h:"コンセンサス",v:"QBFT PoA"},en:{h:"Consensus",v:"QBFT PoA"}},
+{ja:{h:"トークン規格",v:"ERC-20 互換"},en:{h:"Token standard",v:"ERC-20 compatible"}},
+{ja:{h:"ガス代",v:"0 FME（ガスレス）"},en:{h:"Gas fee",v:"0 FME (gasless)"}},
+{ja:{h:"ブロック生成",v:"約2秒"},en:{h:"Block time",v:"~2 seconds"}},
+{ja:{h:"ウォレット",v:"MetaMask 他"},en:{h:"Wallet",v:"MetaMask & more"}}
+];
+
+var EXPLAIN=[
+{no:"01",ja:{h:"ファントークンとは？",p:"AYETファントークンは、ファンとアイドル・エンタメIPを直接つなぐオンチェーンのデジタル資産です。保有することで投票・限定コミュニティ・コンテンツへの参加や、応援する推しの支援が可能になります。"},en:{h:"What are fan tokens?",p:"AYET fan tokens are official on-chain digital assets that link fans directly to idols and entertainment IP. Holding them unlocks voting, exclusive communities, content, and the chance to support the creators you love."}},
+{no:"02",ja:{h:"なぜ必要なのか？",p:"NCK Network上で発行され、ガスレスかつ即時。1,220万人の顧客基盤を背景に、ファンはエンタメ経済の主役となり、クリエイターはコミュニティと新しい形でつながり、還元できます。"},en:{h:"Why do you need them?",p:"Issued on NCK Network \u2014 gasless and instant. Backed by a 12.2M customer base, fan tokens give supporters a real role in the entertainment economy, and give creators new ways to engage and reward their communities."}},
+{no:"03",ja:{h:"次のステップは？",p:"MetaMaskにトークンを追加し、NCK DEXでスワップして、コミュニティに参加。開発者はEVM互換チェーン上で、新しいファン体験を実現できます。"},en:{h:"What next?",p:"Add a token to MetaMask, swap on the NCK DEX, and join the community. Developers can build on the EVM-compatible chain and bring new fan experiences to life."}}
+];
+var ALLOC=[
+{pct:"30.0%",amt:"1,200,000,000",ja:{c:"① 利用者（プロ投資家）販売分",u:"有・上場までロックアップ"},en:{c:"① User (pro investor) sale",u:"Locked until listing"}},
+{pct:"25.0%",amt:"1,000,000,000",ja:{c:"② パートナー・運営報酬",u:"有・上場180日後から段階解除"},en:{c:"② Partner & team rewards",u:"Vesting from 180d after listing"}},
+{pct:"15.0%",amt:"600,000,000",ja:{c:"③ 予備",u:"無・緊急時/IEO原資"},en:{c:"③ Reserve",u:"None · contingency / IEO"}},
+{pct:"7.5%",amt:"300,000,000",ja:{c:"④ 流動性供給",u:"無・取引所流動性/MM"},en:{c:"④ Liquidity",u:"None · exchange liquidity / MM"}},
+{pct:"7.5%",amt:"300,000,000",ja:{c:"⑤ 受託販売/上場手数料",u:"無・交換業者手数料等"},en:{c:"⑤ Sales / listing fees",u:"None · exchange fees"}},
+{pct:"7.5%",amt:"300,000,000",ja:{c:"⑥ エコシステム維持",u:"無・コミュニティ特典/付与"},en:{c:"⑥ Ecosystem",u:"None · community rewards"}},
+{pct:"7.5%",amt:"300,000,000",ja:{c:"⑦ マーケティング",u:"無・プロモ/エアドロップ"},en:{c:"⑦ Marketing",u:"None · promo / airdrops"}}
+];
+
+var VEST=[
+{ja:{w:"上場 Day 0",t:"利用者販売分（30%）即時ロックアップ解除。運営・パートナー（25%）は移転制限継続。"},en:{w:"Listing Day 0",t:"User sale (30%) unlocks immediately. Team & partner (25%) remain restricted."}},
+{ja:{w:"180日後",t:"運営・パートナー分の初回解除：全体の12.5%が解除（約6ヶ月）。"},en:{w:"After 180 days",t:"First team/partner unlock: 12.5% released (~6 months)."}},
+{ja:{w:"270日後〜",t:"以降90日ごとに12.5%ずつ順次解除。"},en:{w:"From 270 days",t:"Then 12.5% released every 90 days."}},
+{ja:{w:"810日後",t:"最終解除：全数量（100%）のロックアップが解除（約2年3ヶ月）。"},en:{w:"After 810 days",t:"Final unlock: 100% released (~2 years 3 months)."}}
+];
+
+var ROAD=[
+{ja:{d:"2025年11月",t:"プレスリリース — 本プロジェクト始動を発表。"},en:{d:"Nov 2025",t:"Press release announcing the project launch."}},
+{ja:{d:"2026年1月〜",t:"プロジェクト正式始動・プラットフォーム開発開始。"},en:{d:"From Jan 2026",t:"Official launch and start of platform development."}},
+{ja:{d:"2026年6月〜",t:"国内適格機関投資家向け（プロ向け）販売を計画・実施。"},en:{d:"From Jun 2026",t:"Domestic professional-investor sale planned."}},
+{ja:{d:"2026〜2027年",t:"国内取引所上場（IEO/リスティング）予定。"},en:{d:"2026–2027",t:"Domestic exchange listing (IEO/listing) planned."}},
+{ja:{d:"2026〜2027年",t:"海外取引所上場（グローバル）予定。"},en:{d:"2026–2027",t:"Global exchange listing planned."}},
+{ja:{d:"2026〜2027年",t:"新ユニット活動開始・マーケットプレイスでのAYET決済スタート。"},en:{d:"2026–2027",t:"New unit debut; AYET payments go live in the marketplace."}}
+];
+
+var TEAM=[
+{ja:{r:"総合プロデューサー",n:"秋元 康",o:"General Producer",b:"日本屈指の作詞家・音楽プロデューサー。数多くのヒット曲とアイドルプロジェクトを手がける。本プロジェクトではIP創出・クリエイター育成を統括。"},en:{r:"General Producer",n:"Yasushi Akimoto",o:"General Producer",b:"One of Japan's foremost lyricists and music producers, behind countless hits and idol projects. Leads IP creation and creator development for the project."}},
+{ja:{r:"プロジェクト推進",n:"日本直販株式会社",o:"本社：東京都港区",b:"1977年創業の通信販売大手。1,200万人の登録顧客を擁し、事業提携により本プロジェクトの推進と実務を統括。"},en:{r:"Project Promotion",n:"Nippon Direct Sales Co., Ltd.",o:"HQ: Minato, Tokyo",b:"A major mail-order company founded 1977 with 12M+ registered customers, driving project promotion and operations."}},
+{ja:{r:"プロジェクトリーダー",n:"水谷 彰孝",o:"日本直販株式会社 代表取締役",b:"野村證券・みずほ証券でコーポレートファイナンス業務に従事。投資事業・M&Aに携わり、現在は日本直販代表取締役。"},en:{r:"Project Leader",n:"Akitaka Mizutani",o:"CEO, Nippon Direct Sales",b:"Corporate-finance background at Nomura and Mizuho Securities; experience in investment and M&A. Now CEO of Nippon Direct Sales."}},
+{ja:{r:"共同リーダー",n:"Cheryl Asahi",o:"FME Inc. / Blockchain at UCLA",b:"UCLA Anderson ブロックチェーン開発チーム代表。FME, Inc. Executive Director として日米のブロックチェーン・AIプロジェクトを牽引。"},en:{r:"Co-Leader",n:"Cheryl Asahi",o:"FME Inc. / Blockchain at UCLA",b:"Lead of the UCLA Anderson blockchain team and Executive Director at FME, Inc., driving US–Japan blockchain and AI projects."}},
+{ja:{r:"トークン・Web3.0開発",n:"FME Inc.",o:"米国カリフォルニア州 / CEO: George Asahi",b:"1989年東京で設立、現在はロサンゼルス拠点。カスタムサーバー・GPU設計、ブロックチェーン・AIプロダクトを開発。日米のエコシステムを橋渡し。"},en:{r:"Token & Web3.0 Dev",n:"FME Inc.",o:"California, USA / CEO: George Asahi",b:"Founded in Tokyo in 1989, now based in Los Angeles. Builds custom servers, GPU systems and blockchain/AI products, bridging US and Japan."}},
+{ja:{r:"AYET発行・管理",n:"佐藤 義仁",o:"株式会社AKBT 代表取締役",b:"大手ネット証券の経営に長年従事。Nippon Idol Token（NIDT）を発行する株式会社オーバース代表として国内4例目のIEOを実施。"},en:{r:"AYET Issuance",n:"Yoshihito Sato",o:"CEO, AKBT Co., Ltd.",b:"Long career in online-brokerage management; led Japan's 4th IEO as head of the issuer of Nippon Idol Token (NIDT)."}}
+];
+
+var lang="ja";
+function $(id){return document.getElementById(id);}
+function applyLang(){
+  document.documentElement.lang=lang;
+  document.querySelectorAll("[data-i18n]").forEach(function(el){
+    var k=el.getAttribute("data-i18n"); if(T[lang][k]!==undefined) el.textContent=T[lang][k];
+  });
+  document.querySelectorAll("[data-i18n-ph]").forEach(function(el){var k=el.getAttribute("data-i18n-ph"); if(T[lang][k]!==undefined) el.placeholder=T[lang][k];});
+  $("langBtn").textContent = lang==="ja" ? "EN" : "日本語";
+  renderTokens(); renderInit(); renderSpecs(); renderAlloc(); renderVest(); renderRoad(); renderTeam(); renderExplain(); renderNews();
+}
+function renderInit(){
+  var g=$("initGrid"); g.innerHTML="";
+  INIT.forEach(function(it){
+    var d=it[lang];
+    var el=document.createElement("div"); el.className="feat reveal";
+    el.innerHTML="<div class='no'>"+it.no+"</div><h3>"+d.h+"</h3><p>"+d.p+"</p><div class='tags'>"+d.t.map(function(x){return "<span>"+x+"</span>";}).join("")+"</div>";
+    g.appendChild(el);
+  });
+  observe();
+}
+function renderSpecs(){
+  var g=$("specGrid"); g.innerHTML="";
+  SPECS.forEach(function(it){var d=it[lang];var el=document.createElement("div");el.className="spec reveal";el.innerHTML="<h4>"+d.h+"</h4><div class='v'>"+d.v+"</div>";g.appendChild(el);});
+  observe();
+}
+function renderAlloc(){
+  var t=$("allocTbl");
+  var head="<tr><th>"+T[lang].th_cat+"</th><th>"+T[lang].th_pct+"</th><th>"+T[lang].th_amt+"</th><th>"+T[lang].th_use+"</th></tr>";
+  var rows="";
+  ALLOC.forEach(function(r){rows+="<tr><td>"+r[lang].c+"</td><td>"+r.pct+"</td><td>"+r.amt+"</td><td>"+r[lang].u+"</td></tr>";});
+  rows+="<tr><td>"+T[lang].row_total+"</td><td>100%</td><td>4,000,000,000</td><td>—</td></tr>";
+  t.innerHTML=head+rows;
+}
+function renderVest(){
+  var g=$("vestList"); g.innerHTML="";
+  VEST.forEach(function(v){var d=v[lang];var el=document.createElement("div");el.className="vrow";el.innerHTML="<div class='when'>"+d.w+"</div><div class='what'>"+d.t+"</div>";g.appendChild(el);});
+}
+function renderRoad(){
+  var g=$("roadList"); g.innerHTML="";
+  ROAD.forEach(function(r){var d=r[lang];var el=document.createElement("div");el.className="ritem reveal";el.innerHTML="<div class='date'>"+d.d+"</div><div class='txt'>"+d.t+"</div>";g.appendChild(el);});
+  observe();
+}
+function renderTeam(){
+  var g=$("teamGrid"); g.innerHTML="";
+  TEAM.forEach(function(m){var d=m[lang];var el=document.createElement("div");el.className="tm reveal";el.innerHTML="<div class='role'>"+d.r+"</div><div class='name'>"+d.n+"</div><div class='org'>"+d.o+"</div><div class='bio'>"+d.b+"</div>";g.appendChild(el);});
+  observe();
+}
+
+function renderExplain(){
+  var g=$("learnGrid"); g.innerHTML="";
+  EXPLAIN.forEach(function(it){var d=it[lang];var el=document.createElement("div");el.className="lcard reveal";el.innerHTML="<div class='bignum'>"+it.no+"</div><h3>"+d.h+"</h3><p>"+d.p+"</p>";g.appendChild(el);});
+  observe();
+}
+function wireJoin(){
+  var role=null;
+  document.querySelectorAll(".iam").forEach(function(b){
+    b.addEventListener("click",function(){
+      document.querySelectorAll(".iam").forEach(function(x){x.classList.remove("sel");});
+      b.classList.add("sel"); role=b.getAttribute("data-role");
+    });
+  });
+  var btn=document.getElementById("joinSubmit");
+  if(btn) btn.addEventListener("click",function(){
+    var email=(document.getElementById("joinEmail")||{}).value||"";
+    var consent=(document.getElementById("joinConsent")||{}).checked;
+    var msg=document.getElementById("joinMsg");
+    if(!role){ msg.className="join-msg err"; msg.textContent=T[lang].jn_err_role; return; }
+    if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){ msg.className="join-msg err"; msg.textContent=T[lang].jn_err_email; return; }
+    if(!consent){ msg.className="join-msg err"; msg.textContent=T[lang].jn_err_consent; return; }
+    document.getElementById("joinCard").innerHTML="<div class='join-thanks'><div class='big'>"+T[lang].jn_thanks_h+"</div><p>"+T[lang].jn_thanks_p+"</p></div>";
+  });
+}
+var NEWS=[
+{date:"2025.11",url:"#initiatives",bg:"linear-gradient(135deg,#02834a,#0a1a10)",ja:{tag:"プレスリリース",h:"AYETプロジェクト始動を発表",p:"株式会社AKBTが「新しいエンタメ文化の創造」を掲げ、AYETプロジェクトの始動を正式発表しました。"},en:{tag:"Press Release",h:"AYET project officially announced",p:"AKBT Co., Ltd. announced the launch of the AYET project under the vision of creating a new entertainment culture."}},
+{date:"2026.01",url:"#tokenomics",bg:"linear-gradient(135deg,#1fc46e,#073a20)",ja:{tag:"ネットワーク",h:"NCK Network 稼働開始",p:"ガスレス・2秒ブロックのEVM互換Layer1「NCK Network」が稼働を開始しました。"},en:{tag:"Network",h:"NCK Network goes live",p:"NCK Network, a gasless EVM-compatible Layer-1 with 2-second blocks, is now live and producing blocks."}},
+{date:"2026.06",url:"/swap/",bg:"linear-gradient(135deg,#f5c451,#3a2a06)",ja:{tag:"DEX",h:"NCK DEX 公開",p:"固定レートでAYET・JPYC・MARU・MMKをスワップできるNCK DEXを公開しました。"},en:{tag:"DEX",h:"NCK DEX now live",p:"Swap AYET, JPYC, MARU and MMK at fixed rates on the newly launched NCK DEX."}}
+];
+function renderNews(){
+  var g=$("newsGrid"); g.innerHTML="";
+  NEWS.forEach(function(it){var d=it[lang];var el=document.createElement("div");el.className="ncard reveal";el.innerHTML="<div class='banner' style='background:"+it.bg+"'><span class='tag'>"+d.tag+"</span></div><div class='body'><div class='date'>"+it.date+"</div><h3>"+d.h+"</h3><p>"+d.p+"</p><a class='more' href='"+it.url+"'>"+T[lang].nw_more+"</a></div>";g.appendChild(el);});
+  observe();
+}
+function padAddr(a){return a.slice(2).toLowerCase().padStart(64,"0");}
+function fromWei(w){var s=w.toString().padStart(19,"0");var i=s.slice(0,s.length-18),f=s.slice(s.length-18).replace(/0+$/,"");return f?i+"."+f:i;}
+async function rpc(method,params){
+  try{
+    var c=new AbortController();var t=setTimeout(function(){c.abort();},9000);
+    var r=await fetch(RPC,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({jsonrpc:"2.0",method:method,params:params||[],id:1}),signal:c.signal,cache:"no-store",mode:"cors"});
+    clearTimeout(t);var d=await r.json();return d.result;
+  }catch(e){return null;}
+}
+async function readRate(tok){var r=await rpc("eth_call",[{to:PEG,data:"0x0ba9d8ca"+padAddr(tok)},"latest"]);if(!r||r==="0x")return 0n;try{return BigInt(r);}catch(e){return 0n;}}
+var ratesCache={};
+async function renderTokens(){
+  var g=$("tokGrid"); g.innerHTML="";
+  for(var i=0;i<TOKENS.length;i++){
+    var t=TOKENS[i];
+    var rateLine="—";
+    try{
+      if(ratesCache[t.c]===undefined) ratesCache[t.c]=await readRate(t.c);
+      if(ratesCache[JPYC]===undefined) ratesCache[JPYC]=await readRate(JPYC);
+      var rT=ratesCache[t.c];
+      if(t.s==="JPYC"){ rateLine="<span style='color:var(--mut)'>"+T[lang].tk_base+"</span>"; }
+      else if(rT>0n){ rateLine="1 JPYC = <b>"+Number(fromWei(rT)).toLocaleString(undefined,{maximumFractionDigits:6})+" "+t.s+"</b>"; }
+    }catch(e){}
+    var addLink = t.add && t.add!=="#" ? "<a class='add' href='"+t.add+"'>"+T[lang].tk_add+"</a>" : "";
+    var el=document.createElement("div"); el.className="tcard reveal";
+    el.innerHTML="<div class='ic' style='background:"+t.bg+";color:"+t.fg+"'>"+t.ic+"</div><h3>"+t.s+"</h3><div class='full'>"+t.full[lang]+"</div><div class='rate'>"+rateLine+"</div>"+addLink;
+    g.appendChild(el);
+  }
+  observe();
+}
+
+var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},{threshold:.1});
+function observe(){document.querySelectorAll('.reveal:not(.in)').forEach(function(el){io.observe(el);});}
+
+async function loadChain(){
+  var bn=await rpc("eth_blockNumber",[]);
+  if(bn){$("stBlock").textContent=parseInt(bn,16).toLocaleString();}
+}
+
+$("langBtn").addEventListener("click",function(){ lang = lang==="ja"?"en":"ja"; applyLang(); });
+applyLang();
+wireJoin();
+observe();
+loadChain();
+setInterval(loadChain,5000);
+</script>
+</body>
+</html>
