@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-store">
+<title>AYET 運営チーム | Team</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Bebas+Neue&display=swap');
+:root{--bg:#07120c;--bg2:#0a1a10;--panel:#0d2113;--line:#194a2a;--grn:#02834a;--grn2:#1fc46e;--gold:#f5c451;--ink:#eafff1;--mut:#7da890;}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--ink)}
+a{text-decoration:none;color:inherit}
+.wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+h1,h2{font-weight:900;line-height:1.1}
+nav{position:sticky;top:0;z-index:50;background:rgba(7,18,12,.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.nav-in{display:flex;align-items:center;justify-content:space-between;height:64px}
+.logo{display:flex;align-items:center;gap:10px}
+.logo img{width:32px;height:32px;border-radius:50%;object-fit:cover;border:1px solid var(--line)}
+.logo span{font-weight:900;font-size:17px}
+.nav-right{display:flex;gap:16px;align-items:center}
+.nav-right a{font-size:14px;color:var(--mut)}
+.nav-right a:hover{color:var(--grn2)}
+.langtog{border:1px solid var(--line);background:var(--panel);color:var(--ink);padding:6px 12px;border-radius:20px;font-size:12px;cursor:pointer;font-family:inherit}
+.langtog:hover{border-color:var(--grn)}
+.head{padding:64px 0 36px;position:relative;overflow:hidden}
+.head::before{content:"";position:absolute;inset:0;background:radial-gradient(60% 60% at 80% 0%,rgba(2,131,74,.18),transparent 60%);z-index:0}
+.head-in{position:relative;z-index:2}
+.eyebrow{color:var(--grn2);font-size:13px;letter-spacing:3px;text-transform:uppercase;margin-bottom:14px;font-weight:700}
+.head h1{font-size:clamp(34px,6vw,60px);margin-bottom:16px}
+.head p{color:var(--mut);font-size:16px;line-height:1.7;max-width:640px}
+.team-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;padding-bottom:40px}
+.tm{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:26px;transition:border-color .2s}
+.tm:hover{border-color:var(--grn)}
+.tm .role{color:var(--grn2);font-size:12.5px;letter-spacing:1px;text-transform:uppercase;margin-bottom:8px;font-weight:700}
+.tm .name{font-size:20px;font-weight:900;margin-bottom:4px}
+.tm .org{color:var(--gold);font-size:13px;margin-bottom:13px}
+.tm .bio{color:var(--mut);font-size:14px;line-height:1.7}
+footer{border-top:1px solid var(--line);background:var(--bg2);padding:36px 0;text-align:center;color:var(--mut);font-size:13px;margin-top:20px}
+footer a{color:var(--grn2)}
+@media(max-width:820px){.team-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<nav>
+  <div class="wrap nav-in">
+    <a class="logo" href="/"><img src="/assets/ayetLogo.JPG" alt="AYET"><span>AYET</span></a>
+    <div class="nav-right">
+      <a href="/" data-i18n="nav_home">ホーム</a>
+      <a href="/tokenomics/" data-i18n="nav_tknm">トークノミクス</a>
+      <button class="langtog" id="langBtn">EN</button>
+    </div>
+  </div>
+</nav>
+<header class="head">
+  <div class="wrap head-in">
+    <div class="eyebrow" data-i18n="eyebrow">運営チーム</div>
+    <h1 data-i18n="title">プロジェクトを支えるチーム</h1>
+    <p data-i18n="intro">エンタメ・金融・ブロックチェーンの各領域から集まった、AYETプロジェクトの運営・開発メンバー。</p>
+  </div>
+</header>
+<div class="wrap"><div class="team-grid" id="teamGrid"></div></div>
+<footer>
+  <span data-i18n="disc">本資料は情報提供を目的としており、投資勧誘を目的とするものではありません。</span><br>
+  © 2026 株式会社AKBT · <a href="/">AYET on NCK Network</a>
+</footer>
+<script>
+"use strict";
+var lang="ja";
+function $(id){return document.getElementById(id);}
+var T={
+ja:{nav_home:"ホーム",nav_tknm:"トークノミクス",eyebrow:"運営チーム",title:"プロジェクトを支えるチーム",
+intro:"エンタメ・金融・ブロックチェーンの各領域から集まった、AYETプロジェクトの運営・開発メンバー。",
+disc:"本資料は情報提供を目的としており、投資勧誘を目的とするものではありません。"},
+en:{nav_home:"Home",nav_tknm:"Tokenomics",eyebrow:"The Team",title:"The team behind the project",
+intro:"The people running and building AYET — drawn from entertainment, finance, and blockchain.",
+disc:"This material is for informational purposes only and does not constitute investment solicitation."}
+};
+var TEAM=[
+{ja:{r:"総合プロデューサー",n:"秋元 康",o:"General Producer",b:"日本屈指の作詞家・放送作家・音楽プロデューサー。数多くのヒット曲を手がけ、多くのアイドルプロジェクトの総合プロデューサーを務める。本プロジェクトではIP創出・クリエイター育成を統括。"},en:{r:"General Producer",n:"Yasushi Akimoto",o:"General Producer",b:"One of Japan's foremost lyricists, writers and music producers, behind countless hits and major idol projects. Leads IP creation and creator development for AYET."}},
+{ja:{r:"プロジェクト推進",n:"日本直販株式会社",o:"本社：東京都港区",b:"1977年創業の通信販売大手。1,200万人の登録顧客を擁し、発行者との事業提携により本プロジェクトの推進と実務を統括する。"},en:{r:"Project Promotion",n:"Nippon Direct Sales Co., Ltd.",o:"HQ: Minato, Tokyo",b:"A major mail-order company founded in 1977 with 12M+ registered customers, driving project promotion and overseeing operations through its partnership with the issuer."}},
+{ja:{r:"プロジェクトリーダー",n:"水谷 彰孝",o:"日本直販株式会社 代表取締役",b:"野村證券にてIPO支援業務、みずほ証券にてエクイティ・デリバティブ等のコーポレートファイナンス業務に従事。投資事業やM&Aに携わり、現在は日本直販株式会社の代表取締役。"},en:{r:"Project Leader",n:"Akitaka Mizutani",o:"CEO, Nippon Direct Sales",b:"IPO advisory at Nomura Securities and corporate finance (equity derivatives, etc.) at Mizuho Securities; experience across investment and M&A. Now CEO of Nippon Direct Sales."}},
+{ja:{r:"共同プロジェクトリーダー",n:"Cheryl Asahi",o:"FME Inc. / Blockchain at UCLA",b:"米国UCLA（Anderson FEMBA）ブロックチェーン開発チーム代表。FME, Inc. Executive Director（2018年〜）として日米間のブロックチェーン・AI領域のプロジェクトを牽引。"},en:{r:"Co-Project Leader",n:"Cheryl Asahi",o:"FME Inc. / Blockchain at UCLA",b:"Lead of the UCLA Anderson (FEMBA) blockchain team and Executive Director at FME, Inc. (since 2018), driving US–Japan blockchain and AI projects."}},
+{ja:{r:"トークン開発・Web3.0開発",n:"FME Inc.",o:"米国カリフォルニア州 / CEO: George Asahi",b:"1989年東京にて設立、1999年にFME, Inc.へ改称。現在はロサンゼルスを拠点に、カスタムサーバー・GPUシステム設計、エンタープライズIT、ブロックチェーン・AIプロダクトを開発。日米のエコシステムを橋渡しする。"},en:{r:"Token & Web3.0 Development",n:"FME Inc.",o:"California, USA / CEO: George Asahi",b:"Founded in Tokyo in 1989 (renamed FME, Inc. in 1999), now based in Los Angeles. Builds custom servers and GPU systems, enterprise IT, and blockchain/AI products, bridging the US and Japan."}},
+{ja:{r:"AYET発行 / プロジェクト管理",n:"佐藤 義仁",o:"株式会社AKBT 代表取締役",b:"松井証券・SBI証券等の大手ネット証券の経営・業務運営に長年携わる。2022年よりNippon Idol Token（NIDT）を発行する企業の代表取締役に就任し、2023年4月に国内4例目のIEOを実施。"},en:{r:"AYET Issuance / Management",n:"Yoshihito Sato",o:"CEO, AKBT Co., Ltd.",b:"Long career in the management of major online brokerages (Matsui, SBI). From 2022, CEO of the issuer of Nippon Idol Token (NIDT); led Japan's 4th IEO in April 2023."}}
+];
+function renderTeam(){var g=$("teamGrid");g.innerHTML="";TEAM.forEach(function(m){var d=m[lang];var e=document.createElement("div");e.className="tm";e.innerHTML="<div class='role'>"+d.r+"</div><div class='name'>"+d.n+"</div><div class='org'>"+d.o+"</div><div class='bio'>"+d.b+"</div>";g.appendChild(e);});}
+function applyLang(){document.documentElement.lang=lang;document.querySelectorAll("[data-i18n]").forEach(function(el){var k=el.getAttribute("data-i18n");if(T[lang][k]!==undefined)el.textContent=T[lang][k];});$("langBtn").textContent=lang==="ja"?"EN":"日本語";renderTeam();}
+$("langBtn").addEventListener("click",function(){lang=lang==="ja"?"en":"ja";applyLang();});
+applyLang();
+</script>
+</body>
+</html>
