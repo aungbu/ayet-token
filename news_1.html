@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-store">
+<title>AYET ニュース | News</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Bebas+Neue&display=swap');
+:root{--bg:#07120c;--bg2:#0a1a10;--panel:#0d2113;--line:#194a2a;--grn:#02834a;--grn2:#1fc46e;--gold:#f5c451;--ink:#eafff1;--mut:#7da890;}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--ink)}
+a{text-decoration:none;color:inherit}
+.wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+h1,h2{font-weight:900;line-height:1.1}
+nav{position:sticky;top:0;z-index:50;background:rgba(7,18,12,.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.nav-in{display:flex;align-items:center;justify-content:space-between;height:64px}
+.logo{display:flex;align-items:center;gap:10px}
+.logo img{width:32px;height:32px;border-radius:50%;object-fit:cover;border:1px solid var(--line)}
+.logo span{font-weight:900;font-size:17px}
+.nav-right{display:flex;gap:16px;align-items:center}
+.nav-right a{font-size:14px;color:var(--mut)}
+.nav-right a:hover{color:var(--grn2)}
+.langtog{border:1px solid var(--line);background:var(--panel);color:var(--ink);padding:6px 12px;border-radius:20px;font-size:12px;cursor:pointer;font-family:inherit}
+.langtog:hover{border-color:var(--grn)}
+.head{padding:64px 0 30px;position:relative;overflow:hidden}
+.head::before{content:"";position:absolute;inset:0;background:radial-gradient(60% 60% at 80% 0%,rgba(2,131,74,.18),transparent 60%);z-index:0}
+.head-in{position:relative;z-index:2}
+.eyebrow{color:var(--grn2);font-size:13px;letter-spacing:3px;text-transform:uppercase;margin-bottom:14px;font-weight:700}
+.head h1{font-size:clamp(34px,6vw,60px);margin-bottom:16px}
+.head p{color:var(--mut);font-size:16px;line-height:1.7;max-width:640px}
+.news-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;padding:20px 0 50px}
+.ncard{background:var(--panel);border:1px solid var(--line);border-radius:18px;overflow:hidden;transition:transform .2s,border-color .2s;display:flex;flex-direction:column}
+.ncard:hover{transform:translateY(-6px);border-color:var(--grn)}
+.ncard .banner{height:120px;display:flex;align-items:flex-end;padding:14px}
+.ncard .tag{font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;background:rgba(0,0,0,.4);color:#fff;padding:4px 11px;border-radius:20px}
+.ncard .body{padding:20px;display:flex;flex-direction:column;flex:1}
+.ncard .date{font-size:12px;color:var(--gold);margin-bottom:8px}
+.ncard h3{font-size:17px;font-weight:700;line-height:1.45;margin-bottom:10px}
+.ncard p{color:var(--mut);font-size:13.5px;line-height:1.65;flex:1}
+footer{border-top:1px solid var(--line);background:var(--bg2);padding:36px 0;text-align:center;color:var(--mut);font-size:13px}
+footer a{color:var(--grn2)}
+@media(max-width:820px){.news-grid{grid-template-columns:1fr}}
+@media(max-width:620px){.nav-in{flex-wrap:wrap;height:auto;min-height:60px;padding:8px 0;gap:8px}.nav-right{gap:12px;flex-wrap:wrap}.nav-right a{font-size:13px}}
+</style>
+</head>
+<body>
+<nav>
+  <div class="wrap nav-in">
+    <a class="logo" href="/"><img src="/assets/ayetLogo.JPG" alt="AYET"><span>AYET</span></a>
+    <div class="nav-right">
+      <a href="/" data-i18n="nav_home">ホーム</a>
+      <a href="/tokenomics/" data-i18n="nav_tknm">トークノミクス</a>
+      <a href="/roadmap/" data-i18n="nav_road">ロードマップ</a>
+      <a href="/team/" data-i18n="nav_team">チーム</a>
+      <a href="/news/" data-i18n="nav_news">ニュース</a>
+      <a href="/swap/" data-i18n="nav_swap">スワップ</a>
+      <button class="langtog" id="langBtn">EN</button>
+    </div>
+  </div>
+</nav>
+<header class="head">
+  <div class="wrap head-in">
+    <div class="eyebrow" data-i18n="eyebrow">ニュース</div>
+    <h1 data-i18n="title">ニュース & アップデート</h1>
+    <p data-i18n="intro">AYETプロジェクトとNCK Networkに関する最新のお知らせ。</p>
+  </div>
+</header>
+<div class="wrap"><div class="news-grid" id="newsGrid"></div></div>
+<footer>
+  <span data-i18n="disc">本資料は情報提供を目的としており、投資勧誘を目的とするものではありません。</span><br>
+  © 2026 株式会社AKBT · <a href="/">AYET on NCK Network</a>
+</footer>
+<script>
+"use strict";
+var lang="ja";
+function $(id){return document.getElementById(id);}
+var T={
+ja:{nav_home:"ホーム",nav_tknm:"トークノミクス",nav_road:"ロードマップ",nav_team:"チーム",nav_news:"ニュース",nav_swap:"スワップ",
+eyebrow:"ニュース",title:"ニュース & アップデート",intro:"AYETプロジェクトとNCK Networkに関する最新のお知らせ。",
+disc:"本資料は情報提供を目的としており、投資勧誘を目的とするものではありません。"},
+en:{nav_home:"Home",nav_tknm:"Tokenomics",nav_road:"Roadmap",nav_team:"Team",nav_news:"News",nav_swap:"Swap",
+eyebrow:"News",title:"News & Updates",intro:"The latest announcements about the AYET project and NCK Network.",
+disc:"This material is for informational purposes only and does not constitute investment solicitation."}
+};
+var NEWS=[
+{date:"2025.11",bg:"linear-gradient(135deg,#02834a,#0a1a10)",ja:{tag:"プロジェクト",h:"AYETプロジェクト始動",p:"株式会社AKBTが「新しいエンタメ文化の創造」を掲げ、Akimoto Yasushi Entertainment Token（AYET）プロジェクトの始動を発表しました。"},en:{tag:"Project",h:"AYET project launched",p:"AKBT Co., Ltd. announced the launch of the Akimoto Yasushi Entertainment Token (AYET) project under the vision of creating a new entertainment culture."}},
+{date:"2025.11",bg:"linear-gradient(135deg,#1fc46e,#073a20)",ja:{tag:"プロデュース",h:"秋元 康 総合プロデューサー就任",p:"作詞家・音楽プロデューサーの秋元康氏が総合プロデューサーに就任。IPの創出、クリエイター育成、コミュニティ構築を統括します。"},en:{tag:"Production",h:"Yasushi Akimoto as General Producer",p:"Lyricist and music producer Yasushi Akimoto joins as General Producer, leading IP creation, creator development, and community building."}},
+{date:"2026.01",bg:"linear-gradient(135deg,#f5c451,#3a2a06)",ja:{tag:"パートナー",h:"日本直販とのパートナーシップ",p:"1,220万人の顧客基盤を有する日本直販株式会社との事業提携により、マーケットプレイスでのAYET決済とファンエコノミーの構築を推進します。"},en:{tag:"Partnership",h:"Partnership with Nippon Direct Sales",p:"Through a partnership with Nippon Direct Sales (12.2M customers), the project advances AYET payments in the marketplace and the build-out of the fan economy."}},
+{date:"2026.01",bg:"linear-gradient(135deg,#02834a,#0a1a10)",ja:{tag:"ネットワーク",h:"NCK Network 稼働開始",p:"AYETの基盤となるEVM互換Layer1「NCK Network」が稼働開始。ガスレス・約2秒のブロック生成で、ファン向けの軽快な体験を実現します。"},en:{tag:"Network",h:"NCK Network goes live",p:"NCK Network — the EVM-compatible Layer-1 underpinning AYET — is live, with gasless transactions and ~2-second blocks for a smooth fan experience."}},
+{date:"2026.06",bg:"linear-gradient(135deg,#1fc46e,#073a20)",ja:{tag:"DEX",h:"NCK DEX 公開",p:"AYET・JPYC・MARU・MMKを固定レートでスワップできるNCK DEXを公開。手数料ゼロで、ウォレットから直接トークンを交換できます。"},en:{tag:"DEX",h:"NCK DEX now live",p:"The NCK DEX is live, letting you swap AYET, JPYC, MARU and MMK at fixed rates — fee-free, directly from your wallet."}}
+];
+function renderNews(){
+  var g=$("newsGrid");g.innerHTML="";
+  NEWS.forEach(function(it){var d=it[lang];var e=document.createElement("div");e.className="ncard";
+    e.innerHTML="<div class='banner' style='background:"+it.bg+"'><span class='tag'>"+d.tag+"</span></div><div class='body'><div class='date'>"+it.date+"</div><h3>"+d.h+"</h3><p>"+d.p+"</p></div>";
+    g.appendChild(e);});
+}
+function applyLang(){document.documentElement.lang=lang;document.querySelectorAll("[data-i18n]").forEach(function(el){var k=el.getAttribute("data-i18n");if(T[lang][k]!==undefined)el.textContent=T[lang][k];});$("langBtn").textContent=lang==="ja"?"EN":"日本語";renderNews();}
+$("langBtn").addEventListener("click",function(){lang=lang==="ja"?"en":"ja";applyLang();});
+applyLang();
+</script>
+</body>
+</html>
