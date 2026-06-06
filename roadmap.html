@@ -40,6 +40,7 @@ nav{position:sticky;top:0;z-index:50;background:rgba(7,18,12,.85);backdrop-filte
 footer{border-top:1px solid var(--line);background:var(--bg2);padding:36px 0;text-align:center;color:var(--mut);font-size:13px;margin-top:20px}
 footer a{color:var(--grn2)}
 @media(max-width:820px){.ritem .title{font-size:16px}}
+@media(max-width:620px){.nav-in{flex-wrap:wrap;height:auto;min-height:60px;padding:8px 0;gap:8px}.nav-right{gap:12px;flex-wrap:wrap}.nav-right a{font-size:13px}}
 </style>
 </head>
 <body>
@@ -49,6 +50,10 @@ footer a{color:var(--grn2)}
     <div class="nav-right">
       <a href="/" data-i18n="nav_home">ホーム</a>
       <a href="/tokenomics/" data-i18n="nav_tknm">トークノミクス</a>
+      <a href="/roadmap/" data-i18n="nav_road">ロードマップ</a>
+      <a href="/team/" data-i18n="nav_team">チーム</a>
+      <a href="/news/" data-i18n="nav_news">ニュース</a>
+      <a href="/swap/" data-i18n="nav_swap">スワップ</a>
       <button class="langtog" id="langBtn">EN</button>
     </div>
   </div>
@@ -70,10 +75,10 @@ footer a{color:var(--grn2)}
 var lang="ja";
 function $(id){return document.getElementById(id);}
 var T={
-ja:{nav_home:"ホーム",nav_tknm:"トークノミクス",eyebrow:"ロードマップ",title:"AYET ロードマップ",
+ja:{nav_home:"ホーム",nav_tknm:"トークノミクス",nav_road:"ロードマップ",nav_team:"チーム",nav_news:"ニュース",nav_swap:"スワップ",eyebrow:"ロードマップ",title:"AYET ロードマップ",
 intro:"プレスリリースからプラットフォーム開発、国内外上場、新ユニット始動まで。AYETプロジェクトのこれまでとこれから。",
 disc:"本資料は情報提供を目的としており、投資勧誘を目的とするものではありません。"},
-en:{nav_home:"Home",nav_tknm:"Tokenomics",eyebrow:"Roadmap",title:"AYET Roadmap",
+en:{nav_home:"Home",nav_tknm:"Tokenomics",nav_road:"Roadmap",nav_team:"Team",nav_news:"News",nav_swap:"Swap",eyebrow:"Roadmap",title:"AYET Roadmap",
 intro:"From press release to platform development, domestic and global listings, and the debut of a new unit — the past and future of the AYET project.",
 disc:"This material is for informational purposes only and does not constitute investment solicitation."}
 };

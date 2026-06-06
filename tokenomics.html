@@ -54,6 +54,7 @@ section{padding:34px 0}
 footer{border-top:1px solid var(--line);background:var(--bg2);padding:36px 0;text-align:center;color:var(--mut);font-size:13px;margin-top:40px}
 footer a{color:var(--grn2)}
 @media(max-width:820px){.hi-grid,.kp-grid{grid-template-columns:1fr}.tbl{font-size:12.5px}.tbl th,.tbl td{padding:9px 8px}.vrow{grid-template-columns:1fr;gap:6px}}
+@media(max-width:620px){.nav-in{flex-wrap:wrap;height:auto;min-height:60px;padding:8px 0;gap:8px}.nav-right{gap:12px;flex-wrap:wrap}.nav-right a{font-size:13px}}
 </style>
 </head>
 <body>
@@ -62,6 +63,10 @@ footer a{color:var(--grn2)}
     <a class="logo" href="/"><img src="/assets/ayetLogo.JPG" alt="AYET"><span>AYET</span></a>
     <div class="nav-right">
       <a href="/" data-i18n="nav_home">ホーム</a>
+      <a href="/tokenomics/" data-i18n="nav_tknm">トークノミクス</a>
+      <a href="/roadmap/" data-i18n="nav_road">ロードマップ</a>
+      <a href="/team/" data-i18n="nav_team">チーム</a>
+      <a href="/news/" data-i18n="nav_news">ニュース</a>
       <a href="/swap/" data-i18n="nav_swap">スワップ</a>
       <button class="langtog" id="langBtn">EN</button>
     </div>
@@ -113,14 +118,14 @@ footer a{color:var(--grn2)}
 var lang="ja";
 function $(id){return document.getElementById(id);}
 var T={
-ja:{nav_home:"ホーム",nav_swap:"スワップ",eyebrow:"トークノミクス",title:"AYET トークノミクス",
+ja:{nav_home:"ホーム",nav_tknm:"トークノミクス",nav_road:"ロードマップ",nav_team:"チーム",nav_news:"ニュース",nav_swap:"スワップ",eyebrow:"トークノミクス",title:"AYET トークノミクス",
 intro:"総発行数量はブロックチェーン上で全量発行済み。追加発行は一切ありません。市場の安定化を重視した、段階的なロックアップ・ベスティング設計です。",
 s1:"概要",s2:"初期配分（アロケーション）",s3:"ロックアップ・解除スケジュール",s4:"解除プロセスのポイント",
 hi1:"総発行数量（追加発行なし）",hi2:"ロックアップ対象",hi3:"ロックアップ数量",
 th_cat:"配分先",th_pct:"比率",th_amt:"数量（枚）",th_use:"ロックアップ・用途",row_total:"合計",
 disc:"本資料は情報提供を目的としており、投資勧誘を目的とするものではありません。 / This material is for informational purposes only and does not constitute investment solicitation.",
 disc2:"本資料は情報提供を目的としており、投資勧誘を目的とするものではありません。"},
-en:{nav_home:"Home",nav_swap:"Swap",eyebrow:"Tokenomics",title:"AYET Tokenomics",
+en:{nav_home:"Home",nav_tknm:"Tokenomics",nav_road:"Roadmap",nav_team:"Team",nav_news:"News",nav_swap:"Swap",eyebrow:"Tokenomics",title:"AYET Tokenomics",
 intro:"The entire supply is already minted on-chain, with no additional issuance. A staged lockup and vesting design prioritizes market stability.",
 s1:"Overview",s2:"Initial Allocation",s3:"Lockup & Vesting Schedule",s4:"Key Points",
 hi1:"Total supply (no further minting)",hi2:"Subject to lockup",hi3:"Locked amount",
