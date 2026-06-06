@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-store">
+<title>AYET トークノミクス | Tokenomics</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Bebas+Neue&display=swap');
+:root{--bg:#07120c;--bg2:#0a1a10;--panel:#0d2113;--line:#194a2a;--grn:#02834a;--grn2:#1fc46e;--gold:#f5c451;--ink:#eafff1;--mut:#7da890;}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--ink)}
+a{text-decoration:none;color:inherit}
+.wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+h1,h2{font-weight:900;line-height:1.1}
+nav{position:sticky;top:0;z-index:50;background:rgba(7,18,12,.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.nav-in{display:flex;align-items:center;justify-content:space-between;height:64px}
+.logo{display:flex;align-items:center;gap:10px}
+.logo img{width:32px;height:32px;border-radius:50%;object-fit:cover;border:1px solid var(--line)}
+.logo span{font-weight:900;font-size:17px}
+.nav-right{display:flex;gap:16px;align-items:center}
+.nav-right a{font-size:14px;color:var(--mut)}
+.nav-right a:hover{color:var(--grn2)}
+.langtog{border:1px solid var(--line);background:var(--panel);color:var(--ink);padding:6px 12px;border-radius:20px;font-size:12px;cursor:pointer;font-family:inherit}
+.langtog:hover{border-color:var(--grn)}
+.head{padding:64px 0 36px;position:relative;overflow:hidden}
+.head::before{content:"";position:absolute;inset:0;background:radial-gradient(60% 60% at 80% 0%,rgba(2,131,74,.18),transparent 60%);z-index:0}
+.head-in{position:relative;z-index:2}
+.eyebrow{color:var(--grn2);font-size:13px;letter-spacing:3px;text-transform:uppercase;margin-bottom:14px;font-weight:700}
+.head h1{font-size:clamp(34px,6vw,60px);margin-bottom:16px}
+.head p{color:var(--mut);font-size:16px;line-height:1.7;max-width:640px}
+section{padding:34px 0}
+.sec-h{font-size:clamp(22px,3.4vw,32px);margin-bottom:22px;display:flex;align-items:center;gap:12px}
+.sec-h .idx{font-family:'Bebas Neue';color:var(--grn2);font-size:.9em}
+.hi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:10px}
+.hi{background:linear-gradient(160deg,#102a18,#0a1a10);border:1px solid var(--line);border-radius:18px;padding:30px;text-align:center}
+.hi .n{font-family:'Bebas Neue';font-size:clamp(34px,5vw,54px);color:var(--gold);line-height:1}
+.hi .l{color:var(--mut);font-size:13px;margin-top:10px}
+.tbl{width:100%;border-collapse:collapse;background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden;font-size:14px}
+.tbl th,.tbl td{padding:13px 14px;text-align:left;border-bottom:1px solid var(--line)}
+.tbl th{background:var(--bg2);color:var(--mut);font-weight:700;font-size:12.5px;letter-spacing:1px}
+.tbl td:nth-child(2),.tbl td:nth-child(3){color:var(--grn2);font-weight:700;white-space:nowrap}
+.tbl tr:last-child td{border-bottom:none;font-weight:900;background:var(--bg2)}
+.vest{display:grid;gap:12px}
+.vrow{display:grid;grid-template-columns:150px 1fr;gap:18px;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px}
+.vrow .when{color:var(--gold);font-weight:900;font-size:14px}
+.vrow .what{color:var(--mut);font-size:14px;line-height:1.6}
+.kp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.kp{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:24px}
+.kp h3{font-size:16px;margin-bottom:10px;font-weight:700}
+.kp p{color:var(--mut);font-size:13.5px;line-height:1.65}
+.disclaimer{margin-top:28px;border:1px dashed var(--line);border-radius:14px;padding:18px 20px;color:var(--mut);font-size:13px;line-height:1.7;text-align:center}
+footer{border-top:1px solid var(--line);background:var(--bg2);padding:36px 0;text-align:center;color:var(--mut);font-size:13px;margin-top:40px}
+footer a{color:var(--grn2)}
+@media(max-width:820px){.hi-grid,.kp-grid{grid-template-columns:1fr}.tbl{font-size:12.5px}.tbl th,.tbl td{padding:9px 8px}.vrow{grid-template-columns:1fr;gap:6px}}
+</style>
+</head>
+<body>
+<nav>
+  <div class="wrap nav-in">
+    <a class="logo" href="/"><img src="/assets/ayetLogo.JPG" alt="AYET"><span>AYET</span></a>
+    <div class="nav-right">
+      <a href="/" data-i18n="nav_home">ホーム</a>
+      <a href="/swap/" data-i18n="nav_swap">スワップ</a>
+      <button class="langtog" id="langBtn">EN</button>
+    </div>
+  </div>
+</nav>
+
+<header class="head">
+  <div class="wrap head-in">
+    <div class="eyebrow" data-i18n="eyebrow">トークノミクス</div>
+    <h1 data-i18n="title">AYET トークノミクス</h1>
+    <p data-i18n="intro">総発行数量はブロックチェーン上で全量発行済み。追加発行は一切ありません。市場の安定化を重視した、段階的なロックアップ・ベスティング設計です。</p>
+  </div>
+</header>
+
+<div class="wrap">
+  <section>
+    <h2 class="sec-h"><span class="idx">01</span><span data-i18n="s1">概要</span></h2>
+    <div class="hi-grid">
+      <div class="hi"><div class="n">40億</div><div class="l" data-i18n="hi1">総発行数量（追加発行なし）</div></div>
+      <div class="hi"><div class="n">55%</div><div class="l" data-i18n="hi2">ロックアップ対象</div></div>
+      <div class="hi"><div class="n">22億</div><div class="l" data-i18n="hi3">ロックアップ数量</div></div>
+    </div>
+  </section>
+
+  <section>
+    <h2 class="sec-h"><span class="idx">02</span><span data-i18n="s2">初期配分（アロケーション）</span></h2>
+    <div style="overflow-x:auto"><table class="tbl" id="allocTbl"></table></div>
+  </section>
+
+  <section>
+    <h2 class="sec-h"><span class="idx">03</span><span data-i18n="s3">ロックアップ・解除スケジュール</span></h2>
+    <div class="vest" id="vestList"></div>
+  </section>
+
+  <section>
+    <h2 class="sec-h"><span class="idx">04</span><span data-i18n="s4">解除プロセスのポイント</span></h2>
+    <div class="kp-grid" id="kpGrid"></div>
+    <div class="disclaimer" data-i18n="disc">本資料は情報提供を目的としており、投資勧誘を目的とするものではありません。 / This material is for informational purposes only and does not constitute investment solicitation.</div>
+  </section>
+</div>
+
+<footer>
+  <span data-i18n="disc2">本資料は情報提供を目的としており、投資勧誘を目的とするものではありません。</span><br>
+  © 2026 株式会社AKBT · <a href="/">AYET on NCK Network</a>
+</footer>
+
+<script>
+"use strict";
+var lang="ja";
+function $(id){return document.getElementById(id);}
+var T={
+ja:{nav_home:"ホーム",nav_swap:"スワップ",eyebrow:"トークノミクス",title:"AYET トークノミクス",
+intro:"総発行数量はブロックチェーン上で全量発行済み。追加発行は一切ありません。市場の安定化を重視した、段階的なロックアップ・ベスティング設計です。",
+s1:"概要",s2:"初期配分（アロケーション）",s3:"ロックアップ・解除スケジュール",s4:"解除プロセスのポイント",
+hi1:"総発行数量（追加発行なし）",hi2:"ロックアップ対象",hi3:"ロックアップ数量",
+th_cat:"配分先",th_pct:"比率",th_amt:"数量（枚）",th_use:"ロックアップ・用途",row_total:"合計",
+disc:"本資料は情報提供を目的としており、投資勧誘を目的とするものではありません。 / This material is for informational purposes only and does not constitute investment solicitation.",
+disc2:"本資料は情報提供を目的としており、投資勧誘を目的とするものではありません。"},
+en:{nav_home:"Home",nav_swap:"Swap",eyebrow:"Tokenomics",title:"AYET Tokenomics",
+intro:"The entire supply is already minted on-chain, with no additional issuance. A staged lockup and vesting design prioritizes market stability.",
+s1:"Overview",s2:"Initial Allocation",s3:"Lockup & Vesting Schedule",s4:"Key Points",
+hi1:"Total supply (no further minting)",hi2:"Subject to lockup",hi3:"Locked amount",
+th_cat:"Allocation",th_pct:"Share",th_amt:"Amount",th_use:"Lockup / Purpose",row_total:"Total",
+disc:"This material is for informational purposes only and does not constitute investment solicitation. / 本資料は情報提供を目的としており、投資勧誘を目的とするものではありません。",
+disc2:"This material is for informational purposes only and does not constitute investment solicitation."}
+};
+var ALLOC=[
+{pct:"30.0%",amt:"1,200,000,000",ja:{c:"① 利用者（プロ投資家）販売分",u:"有・上場までロックアップ"},en:{c:"① User (pro investor) sale",u:"Locked until listing"}},
+{pct:"25.0%",amt:"1,000,000,000",ja:{c:"② パートナー・運営報酬",u:"有・上場180日後から段階解除"},en:{c:"② Partner & team rewards",u:"Vesting from 180d after listing"}},
+{pct:"15.0%",amt:"600,000,000",ja:{c:"③ 予備",u:"無・緊急時/IEO原資"},en:{c:"③ Reserve",u:"None · contingency / IEO"}},
+{pct:"7.5%",amt:"300,000,000",ja:{c:"④ 流動性供給",u:"無・取引所流動性/MM"},en:{c:"④ Liquidity",u:"None · exchange liquidity / MM"}},
+{pct:"7.5%",amt:"300,000,000",ja:{c:"⑤ 受託販売/上場手数料",u:"無・交換業者手数料等"},en:{c:"⑤ Sales / listing fees",u:"None · exchange fees"}},
+{pct:"7.5%",amt:"300,000,000",ja:{c:"⑥ エコシステム維持",u:"無・コミュニティ特典/付与"},en:{c:"⑥ Ecosystem",u:"None · community rewards"}},
+{pct:"7.5%",amt:"300,000,000",ja:{c:"⑦ マーケティング",u:"無・プロモ/エアドロップ"},en:{c:"⑦ Marketing",u:"None · promo / airdrops"}}
+];
+var VEST=[
+{ja:{w:"上場 Day 0",t:"利用者販売分（30%）即時ロックアップ解除。運営・パートナー（25%）は移転制限継続。"},en:{w:"Listing Day 0",t:"User sale (30%) unlocks immediately. Team & partner (25%) remain restricted."}},
+{ja:{w:"上場180日後",t:"運営・パートナー分の初回解除：全体の12.5%が解除（約6ヶ月）。"},en:{w:"After 180 days",t:"First team/partner unlock: 12.5% released (~6 months)."}},
+{ja:{w:"上場270日後〜",t:"以降90日ごとに12.5%ずつ順次解除（累計25.0%〜）。"},en:{w:"From 270 days",t:"Then 12.5% released every 90 days (cumulative 25.0%+)."}},
+{ja:{w:"上場810日後",t:"最終解除：全数量（100%）のロックアップが解除（約2年3ヶ月）。"},en:{w:"After 810 days",t:"Final unlock: 100% released (~2 years 3 months)."}}
+];
+var KP=[
+{ja:{h:"上場時（初期流通）",p:"プロ投資家向けの30%分と、ロックアップのない45%分（流動性供給やマーケティング等）が機動的に動かせる状態になります。"},en:{h:"At listing (initial float)",p:"The 30% pro-investor allocation plus the 45% without lockup (liquidity, marketing, etc.) become freely movable."}},
+{ja:{h:"運営・パートナーの猶予期間",p:"上場後半年間（180日間）は、運営・パートナー保有分は市場に一切流出しません。"},en:{h:"Team & partner cliff",p:"For the first 180 days after listing, no team or partner holdings reach the market at all."}},
+{ja:{h:"段階的な供給（ベスティング）",p:"半年経過後は約3ヶ月（90日）ごとに12.5%ずつ均等に解除され、市場へのインパクトを最小限に抑える設計です。"},en:{h:"Gradual vesting",p:"After six months, 12.5% unlocks evenly every ~90 days, designed to minimize market impact."}}
+];
+function renderAlloc(){
+  var head="<tr><th>"+T[lang].th_cat+"</th><th>"+T[lang].th_pct+"</th><th>"+T[lang].th_amt+"</th><th>"+T[lang].th_use+"</th></tr>";
+  var rows="";
+  ALLOC.forEach(function(r){rows+="<tr><td>"+r[lang].c+"</td><td>"+r.pct+"</td><td>"+r.amt+"</td><td>"+r[lang].u+"</td></tr>";});
+  rows+="<tr><td>"+T[lang].row_total+"</td><td>100%</td><td>4,000,000,000</td><td>—</td></tr>";
+  $("allocTbl").innerHTML=head+rows;
+}
+function renderVest(){var g=$("vestList");g.innerHTML="";VEST.forEach(function(v){var d=v[lang];var e=document.createElement("div");e.className="vrow";e.innerHTML="<div class='when'>"+d.w+"</div><div class='what'>"+d.t+"</div>";g.appendChild(e);});}
+function renderKP(){var g=$("kpGrid");g.innerHTML="";KP.forEach(function(k){var d=k[lang];var e=document.createElement("div");e.className="kp";e.innerHTML="<h3>"+d.h+"</h3><p>"+d.p+"</p>";g.appendChild(e);});}
+function applyLang(){
+  document.documentElement.lang=lang;
+  document.querySelectorAll("[data-i18n]").forEach(function(el){var k=el.getAttribute("data-i18n");if(T[lang][k]!==undefined)el.textContent=T[lang][k];});
+  $("langBtn").textContent=lang==="ja"?"EN":"日本語";
+  renderAlloc();renderVest();renderKP();
+}
+$("langBtn").addEventListener("click",function(){lang=lang==="ja"?"en":"ja";applyLang();});
+applyLang();
+</script>
+</body>
+</html>
