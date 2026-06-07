@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AYET 本人確認（KYC）サンプル | KYC Sample</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&display=swap');
+:root{--bg:#07120c;--bg2:#0a1a10;--panel:#0d2113;--line:#194a2a;--grn:#02834a;--grn2:#1fc46e;--gold:#f5c451;--ink:#eafff1;--mut:#7da890;--red:#f56e6e;}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--ink)}
+.wrap{max-width:640px;margin:0 auto;padding:0 20px 60px}
+a{color:var(--grn2);text-decoration:none}
+nav{border-bottom:1px solid var(--line);background:rgba(7,18,12,.9)}
+.nav-in{max-width:640px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:60px;padding:0 20px}
+.logo{display:flex;align-items:center;gap:10px;font-weight:900}
+.logo img{width:30px;height:30px;border-radius:50%;object-fit:cover;border:1px solid var(--line)}
+.langtog{border:1px solid var(--line);background:var(--panel);color:var(--ink);padding:6px 12px;border-radius:20px;font-size:12px;cursor:pointer;font-family:inherit}
+.sample-flag{background:rgba(245,196,81,.1);border:1px solid var(--gold);border-radius:12px;padding:12px 16px;margin:20px 0;font-size:13px;line-height:1.6;color:var(--gold)}
+h1{font-size:26px;font-weight:900;margin:24px 0 6px}
+.sub{color:var(--mut);font-size:14px;line-height:1.7;margin-bottom:18px}
+.step{font-size:12px;color:var(--grn2);font-weight:700;letter-spacing:1px;text-transform:uppercase;margin:26px 0 10px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:20px;margin-bottom:16px}
+label{display:block;font-size:12.5px;color:var(--mut);margin-bottom:6px;margin-top:12px}
+label:first-child{margin-top:0}
+input[type=text],input[type=date],select{width:100%;background:var(--bg);border:1px solid var(--line);border-radius:10px;color:var(--ink);padding:11px;font-family:inherit;font-size:14px}
+.req::after{content:" *";color:var(--red)}
+.wallet{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.btn-mm{background:#e8761b;color:#fff;border:none;padding:10px 16px;border-radius:10px;font-size:13px;cursor:pointer;font-family:inherit}
+.btn-mm.on{background:var(--grn)}
+.addr{font-family:monospace;font-size:13px;color:var(--grn2)}
+.warn{background:rgba(245,110,110,.08);border:1px solid #5a2a2a;border-left:4px solid var(--red);border-radius:10px;padding:11px 14px;margin:10px 0;font-size:12.5px;line-height:1.6;color:#ffd9d9;display:none}
+.warn.show{display:block}
+.warn b{color:var(--red)}
+.upload{border:1px dashed var(--line);border-radius:12px;padding:16px;text-align:center;cursor:pointer;margin-top:8px}
+.upload:hover{border-color:var(--grn)}
+.upload input{display:none}
+.upload .hint{font-size:12.5px;color:var(--mut)}
+.preview{margin-top:10px;max-width:100%;border-radius:10px;display:none;border:1px solid var(--line)}
+.consent{display:flex;gap:10px;align-items:flex-start;margin-top:14px;font-size:12.5px;color:var(--mut);line-height:1.5}
+.consent input{margin-top:3px}
+.submit{width:100%;background:var(--grn);color:#fff;border:none;padding:15px;border-radius:14px;font-size:16px;font-weight:700;cursor:pointer;font-family:inherit;margin-top:10px}
+.submit:hover{background:var(--grn2)}
+.note{font-size:12px;color:var(--mut);line-height:1.6;margin-top:16px}
+.msg{margin-top:14px;padding:13px;border-radius:10px;font-size:13px;display:none;line-height:1.6}
+.msg.show{display:block;background:#1a3d22;color:var(--grn2)}
+</style>
+</head>
+<body>
+<nav><div class="nav-in"><div class="logo"><img src="/assets/ayetLogo.JPG" alt="AYET"><span>AYET KYC</span></div><button class="langtog" id="langBtn">EN</button></div></nav>
+<div class="wrap">
+  <div class="sample-flag" id="sampleFlag">⚠️ これは設計サンプルです。データは送信・保存されません。本番では認可されたeKYC事業者が安全に処理します。</div>
+
+  <h1 data-i18n="title">本人確認（KYC）</h1>
+  <p class="sub" data-i18n="sub">AYETのご利用には本人確認が必要です。ウォレットを接続し、以下の情報をご登録ください。本人確認は認可されたeKYC事業者により安全に行われます。</p>
+
+  <div class="step" data-i18n="s1">ステップ1 · ウォレット接続</div>
+  <div class="card">
+    <div class="wallet">
+      <span class="addr" id="addr" data-i18n="notconn">未接続</span>
+      <button class="btn-mm" id="connectBtn">Connect MetaMask</button>
+    </div>
+  </div>
+
+  <div class="step" data-i18n="s2">ステップ2 · 基本情報</div>
+  <div class="card">
+    <label class="req" data-i18n="f_name">氏名（漢字）</label>
+    <input type="text" id="name">
+    <label class="req" data-i18n="f_kana">フリガナ（カナ）</label>
+    <input type="text" id="kana">
+    <label class="req" data-i18n="f_dob">生年月日</label>
+    <input type="date" id="dob">
+    <label class="req" data-i18n="f_nat">国籍</label>
+    <input type="text" id="nat" value="日本">
+    <label class="req" data-i18n="f_addr">住所</label>
+    <input type="text" id="addr1">
+  </div>
+
+  <div class="step" data-i18n="s3">ステップ3 · 本人確認書類</div>
+  <div class="card">
+    <label class="req" data-i18n="f_doc">書類の種類</label>
+    <select id="docType">
+      <option value="mynumber" data-i18n="d_mn">マイナンバーカード（表面のみ）</option>
+      <option value="license" data-i18n="d_dl">運転免許証</option>
+      <option value="passport" data-i18n="d_pp">パスポート</option>
+      <option value="residence" data-i18n="d_rc">在留カード</option>
+    </select>
+    <div class="warn show" id="mnWarn"><b data-i18n="mn_warn_b">重要：</b><span data-i18n="mn_warn">マイナンバーカードは「表面」のみアップロードしてください。マイナンバー（12桁）が記載された「裏面」は、絶対にアップロードしないでください。</span></div>
+
+    <label class="req" data-i18n="f_front">書類（表面）の写真</label>
+    <div class="upload" id="up1"><div class="hint" data-i18n="up_hint">タップして写真を選択</div><input type="file" accept="image/*" id="file1"><img class="preview" id="prev1"></div>
+
+    <label class="req" data-i18n="f_selfie">本人の写真（セルフィー）</label>
+    <div class="upload" id="up2"><div class="hint" data-i18n="up_hint2">タップして写真を選択</div><input type="file" accept="image/*" id="file2"><img class="preview" id="prev2"></div>
+  </div>
+
+  <div class="card">
+    <label class="consent"><input type="checkbox" id="c1"><span data-i18n="con1">個人情報の取扱いおよびプライバシーポリシーに同意します。</span></label>
+    <label class="consent"><input type="checkbox" id="c2"><span data-i18n="con2">本人確認は認可されたeKYC事業者により処理されることに同意します。</span></label>
+    <button class="submit" id="submitBtn" data-i18n="submit">本人確認を開始</button>
+    <div class="msg" id="msg"></div>
+  </div>
+
+  <p class="note" data-i18n="note">本ページはサンプルです。実際の本人確認では、書類画像と個人情報は認可されたeKYC事業者の安全な環境で処理され、本サーバーには保存されません。マイナンバー（個人番号）は本人確認の目的で収集・保存しません。</p>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/ethers@6.13.2/dist/ethers.umd.min.js"></script>
+<script>
+"use strict";
+var lang="ja", account=null;
+function $(id){return document.getElementById(id);}
+var T={
+ja:{title:"本人確認（KYC）",sub:"AYETのご利用には本人確認が必要です。ウォレットを接続し、以下の情報をご登録ください。本人確認は認可されたeKYC事業者により安全に行われます。",
+s1:"ステップ1 · ウォレット接続",s2:"ステップ2 · 基本情報",s3:"ステップ3 · 本人確認書類",notconn:"未接続",
+f_name:"氏名（漢字）",f_kana:"フリガナ（カナ）",f_dob:"生年月日",f_nat:"国籍",f_addr:"住所",
+f_doc:"書類の種類",d_mn:"マイナンバーカード（表面のみ）",d_dl:"運転免許証",d_pp:"パスポート",d_rc:"在留カード",
+mn_warn_b:"重要：",mn_warn:"マイナンバーカードは「表面」のみアップロードしてください。マイナンバー（12桁）が記載された「裏面」は、絶対にアップロードしないでください。",
+f_front:"書類（表面）の写真",f_selfie:"本人の写真（セルフィー）",up_hint:"タップして写真を選択",up_hint2:"タップして写真を選択",
+con1:"個人情報の取扱いおよびプライバシーポリシーに同意します。",con2:"本人確認は認可されたeKYC事業者により処理されることに同意します。",
+submit:"本人確認を開始",
+sample:"⚠️ これは設計サンプルです。データは送信・保存されません。本番では認可されたeKYC事業者が安全に処理します。",
+note:"本ページはサンプルです。実際の本人確認では、書類画像と個人情報は認可されたeKYC事業者の安全な環境で処理され、本サーバーには保存されません。マイナンバー（個人番号）は本人確認の目的で収集・保存しません。",
+needconn:"先にウォレットを接続してください。",needconsent:"同意事項にチェックしてください。",
+samplemsg:"これは設計サンプルです。実際の送信は行われません。本番ではeKYC事業者の安全なフローに接続します。"},
+en:{title:"Identity Verification (KYC)",sub:"KYC is required to use AYET. Connect your wallet and provide the details below. Verification is handled securely by a licensed eKYC provider.",
+s1:"Step 1 · Connect wallet",s2:"Step 2 · Basic information",s3:"Step 3 · Identity document",notconn:"Not connected",
+f_name:"Full name (Kanji)",f_kana:"Name (Kana)",f_dob:"Date of birth",f_nat:"Nationality",f_addr:"Address",
+f_doc:"Document type",d_mn:"My Number Card (front only)",d_dl:"Driver's license",d_pp:"Passport",d_rc:"Residence card",
+mn_warn_b:"Important: ",mn_warn:"Upload only the FRONT of the My Number Card. Never upload the BACK, which shows your 12-digit My Number.",
+f_front:"Document photo (front)",f_selfie:"Selfie photo",up_hint:"Tap to choose a photo",up_hint2:"Tap to choose a photo",
+con1:"I agree to the handling of personal data and the privacy policy.",con2:"I agree that verification is processed by a licensed eKYC provider.",
+submit:"Start verification",
+sample:"⚠️ This is a design sample. No data is sent or stored. In production a licensed eKYC provider handles everything securely.",
+note:"This page is a sample. In production, document images and personal data are processed in the licensed eKYC provider's secure environment and are not stored on this server. The My Number (Individual Number) is not collected or stored for verification.",
+needconn:"Please connect your wallet first.",needconsent:"Please check the consent boxes.",
+samplemsg:"This is a design sample — nothing is actually submitted. Production will connect to the eKYC provider's secure flow."}
+};
+function applyLang(){
+  document.documentElement.lang=lang;
+  document.querySelectorAll("[data-i18n]").forEach(function(el){var k=el.getAttribute("data-i18n");if(T[lang][k]!==undefined)el.textContent=T[lang][k];});
+  $("sampleFlag").textContent=T[lang].sample;
+  if(!account)$("addr").textContent=T[lang].notconn;
+  $("langBtn").textContent=lang==="ja"?"EN":"日本語";
+}
+$("langBtn").addEventListener("click",function(){lang=lang==="ja"?"en":"ja";applyLang();});
+
+function toggleMnWarn(){ $("mnWarn").classList.toggle("show", $("docType").value==="mynumber"); }
+$("docType").addEventListener("change",toggleMnWarn);
+
+function wireUpload(upId,fileId,prevId){
+  $(upId).addEventListener("click",function(){ $(fileId).click(); });
+  $(fileId).addEventListener("change",function(e){
+    var f=e.target.files[0]; if(!f)return;
+    var r=new FileReader();
+    r.onload=function(ev){ var img=$(prevId); img.src=ev.target.result; img.style.display="block"; };
+    r.readAsDataURL(f); // local preview only — NOT uploaded anywhere
+  });
+}
+wireUpload("up1","file1","prev1");
+wireUpload("up2","file2","prev2");
+
+async function connect(){
+  if(typeof window.ethereum==="undefined"){ alert("MetaMask not found"); return; }
+  try{
+    var p=new ethers.BrowserProvider(window.ethereum);
+    await p.send("eth_requestAccounts",[]);
+    var s=await p.getSigner(); account=await s.getAddress();
+    $("addr").textContent=account.slice(0,8)+"…"+account.slice(-6);
+    $("connectBtn").textContent="Connected"; $("connectBtn").classList.add("on");
+  }catch(e){}
+}
+$("connectBtn").addEventListener("click",connect);
+
+$("submitBtn").addEventListener("click",function(){
+  var m=$("msg");
+  if(!account){ m.className="msg show"; m.style.background="#3d1a1a"; m.style.color="#f56e6e"; m.textContent=T[lang].needconn; return; }
+  if(!$("c1").checked||!$("c2").checked){ m.className="msg show"; m.style.background="#3d1a1a"; m.style.color="#f56e6e"; m.textContent=T[lang].needconsent; return; }
+  m.className="msg show"; m.style.background="#1a3d22"; m.style.color="#1fc46e"; m.textContent=T[lang].samplemsg;
+});
+
+applyLang(); toggleMnWarn();
+</script>
+</body>
+</html>
