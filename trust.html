@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="Cache-Control" content="no-store">
+<title>AYET トラストセンター | Trust Center</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;900&family=Bebas+Neue&display=swap');
+:root{--bg:#07120c;--bg2:#0a1a10;--panel:#0d2113;--line:#194a2a;--grn:#02834a;--grn2:#1fc46e;--gold:#f5c451;--ink:#eafff1;--mut:#7da890;}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--ink)}
+a{text-decoration:none;color:inherit}
+.wrap{max-width:1080px;margin:0 auto;padding:0 24px}
+h1,h2{font-weight:900;line-height:1.1}
+nav{position:sticky;top:0;z-index:50;background:rgba(7,18,12,.85);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+.nav-in{display:flex;align-items:center;justify-content:space-between;height:64px}
+.logo{display:flex;align-items:center;gap:10px}
+.logo img{width:32px;height:32px;border-radius:50%;object-fit:cover;border:1px solid var(--line)}
+.logo span{font-weight:900;font-size:17px}
+.nav-right{display:flex;gap:16px;align-items:center}
+.nav-right a{font-size:14px;color:var(--mut)}
+.nav-right a:hover{color:var(--grn2)}
+.langtog{border:1px solid var(--line);background:var(--panel);color:var(--ink);padding:6px 12px;border-radius:20px;font-size:12px;cursor:pointer;font-family:inherit}
+.langtog:hover{border-color:var(--grn)}
+.head{padding:64px 0 30px;position:relative;overflow:hidden}
+.head::before{content:"";position:absolute;inset:0;background:radial-gradient(60% 60% at 80% 0%,rgba(2,131,74,.18),transparent 60%);z-index:0}
+.head-in{position:relative;z-index:2}
+.eyebrow{color:var(--grn2);font-size:13px;letter-spacing:3px;text-transform:uppercase;margin-bottom:14px;font-weight:700}
+.head h1{font-size:clamp(34px,6vw,60px);margin-bottom:16px}
+.head p{color:var(--mut);font-size:16px;line-height:1.7;max-width:680px}
+.op{background:linear-gradient(160deg,#102a18,#0a1a10);border:1px solid var(--line);border-radius:20px;padding:30px;margin:10px 0 26px}
+.op h2{font-size:20px;margin-bottom:6px}
+.op .role{color:var(--grn2);font-size:12.5px;letter-spacing:1px;text-transform:uppercase;font-weight:700;margin-bottom:12px}
+.op p{color:var(--mut);font-size:14px;line-height:1.7}
+.op a{color:var(--grn2)}
+.tc-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;padding-bottom:30px}
+.tc{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:24px}
+.tc .tl{font-size:13px;letter-spacing:1px;text-transform:uppercase;color:var(--grn2);font-weight:700;margin-bottom:10px;display:flex;align-items:center;flex-wrap:wrap}
+.tc .tv{color:var(--mut);font-size:14px;line-height:1.7}
+.tc .tv a{color:var(--grn2)}
+.badge{display:inline-block;font-size:11px;padding:2px 9px;border-radius:20px;margin-left:8px}
+.b-live{background:rgba(31,196,110,.15);color:var(--grn2)}
+.b-prog{background:rgba(245,196,81,.15);color:var(--gold)}
+.b-plan{background:rgba(125,168,144,.15);color:var(--mut)}
+.disclaimer{border:1px dashed var(--line);border-radius:14px;padding:18px 20px;color:var(--mut);font-size:13px;line-height:1.7;text-align:center;margin-bottom:30px}
+footer{border-top:1px solid var(--line);background:var(--bg2);padding:36px 0;text-align:center;color:var(--mut);font-size:13px}
+footer a{color:var(--grn2)}
+@media(max-width:820px){.tc-grid{grid-template-columns:1fr}}
+@media(max-width:620px){.nav-in{flex-wrap:wrap;height:auto;min-height:60px;padding:8px 0;gap:8px}.nav-right{gap:12px;flex-wrap:wrap}.nav-right a{font-size:13px}}
+</style>
+</head>
+<body>
+<nav>
+  <div class="wrap nav-in">
+    <a class="logo" href="/"><img src="/assets/ayetLogo.JPG" alt="AYET"><span>AYET</span></a>
+    <div class="nav-right">
+      <a href="/" data-i18n="nav_home">ホーム</a>
+      <a href="/tokenomics/" data-i18n="nav_tknm">トークノミクス</a>
+      <a href="/roadmap/" data-i18n="nav_road">ロードマップ</a>
+      <a href="/team/" data-i18n="nav_team">チーム</a>
+      <a href="/trust/" data-i18n="nav_trust">信頼</a>
+      <a href="/news/" data-i18n="nav_news">ニュース</a>
+      <a href="/swap/" data-i18n="nav_swap">スワップ</a>
+      <button class="langtog" id="langBtn">EN</button>
+    </div>
+  </div>
+</nav>
+<header class="head">
+  <div class="wrap head-in">
+    <div class="eyebrow" data-i18n="eyebrow">信頼と透明性</div>
+    <h1 data-i18n="title">トラストセンター</h1>
+    <p data-i18n="intro">運営者、コンプライアンス、セキュリティ、トークン情報を一か所に。取引所・パートナー・ファンが正当性を確認できる場所です。公式リンクは公開後に掲載します。</p>
+  </div>
+</header>
+<div class="wrap">
+  <div class="op">
+    <div class="role" data-i18n="op_role">運営者 / OPERATOR</div>
+    <h2 data-i18n="op_name">NCKチーム / 日本直販株式会社</h2>
+    <p><span data-i18n="op_addr">〒105-0001 東京都港区虎ノ門3-20-5 伊藤佑ビル虎ノ門3F / Itoyu Building Toranomon 3F, 3-20-5 Toranomon, Minato-ku, Tokyo 105-0001, Japan</span><br>
+    <a href="https://corporate.666-666.jp/" target="_blank" data-i18n="op_site">日本直販 コーポレートサイト →</a></p>
+  </div>
+  <div class="tc-grid" id="tcGrid"></div>
+  <div class="disclaimer" data-i18n="disc">本サイトは情報提供のみを目的とし、投資勧誘を目的とするものではありません。AYETはローンチ準備中です。トークンおよび規制に関するリスク、国・地域によるサービス提供可否にご留意ください。 / This site is for information only and is not investment solicitation. AYET is in launch preparation. Please note token and regulatory risks, and that availability may vary by country/region.</div>
+</div>
+<footer>
+  <span data-i18n="foot">NCK Team, Nihon Chokuhan, Inc. · Itoyu Building Toranomon 3F, 3-20-5 Toranomon, Minato-ku, Tokyo 105-0001</span><br>
+  © 2026 · <a href="/">AYET on NCK Network</a>
+</footer>
+<script>
+"use strict";
+var lang="ja";
+function $(id){return document.getElementById(id);}
+var T={
+ja:{nav_home:"ホーム",nav_tknm:"トークノミクス",nav_road:"ロードマップ",nav_team:"チーム",nav_trust:"信頼",nav_news:"ニュース",nav_swap:"スワップ",
+eyebrow:"信頼と透明性",title:"トラストセンター",
+intro:"運営者、コンプライアンス、セキュリティ、トークン情報を一か所に。取引所・パートナー・ファンが正当性を確認できる場所です。公式リンクは公開後に掲載します。",
+op_role:"運営者 / OPERATOR",op_name:"NCKチーム / 日本直販株式会社",
+op_addr:"〒105-0001 東京都港区虎ノ門3-20-5 伊藤佑ビル虎ノ門3F",
+op_site:"日本直販 コーポレートサイト →",
+disc:"本サイトは情報提供のみを目的とし、投資勧誘を目的とするものではありません。AYETはローンチ準備中です。トークンおよび規制に関するリスク、国・地域によるサービス提供可否にご留意ください。",
+foot:"運営：NCKチーム / 日本直販株式会社 · 東京都港区虎ノ門3-20-5 伊藤佑ビル虎ノ門3F"},
+en:{nav_home:"Home",nav_tknm:"Tokenomics",nav_road:"Roadmap",nav_team:"Team",nav_trust:"Trust",nav_news:"News",nav_swap:"Swap",
+eyebrow:"Trust & Transparency",title:"Trust Center",
+intro:"Operator, compliance, security and token information in one place — so exchanges, partners and fans can verify legitimacy. Official links will be published after launch.",
+op_role:"OPERATOR",op_name:"NCK Team, Nihon Chokuhan, Inc.",
+op_addr:"Itoyu Building Toranomon 3F, 3-20-5 Toranomon, Minato-ku, Tokyo 105-0001, Japan",
+op_site:"Nihon Chokuhan corporate site →",
+disc:"This site is for information only and is not investment solicitation. AYET is in launch preparation. Please note token and regulatory risks, and that service availability may vary by country/region.",
+foot:"Operator: NCK Team, Nihon Chokuhan, Inc. · Itoyu Building Toranomon 3F, 3-20-5 Toranomon, Minato-ku, Tokyo 105-0001"}
+};
+var ITEMS=[
+{b:"live",bt_ja:"正会員",bt_en:"Member",link:"https://cryptocurrency-association.org/member/nihonchokuhan/",ja:{l:"JCBA",v:"日本直販株式会社は、日本暗号資産ビジネス協会（JCBA）の正会員です。会員ページはこちら。"},en:{l:"JCBA",v:"Nihon Chokuhan, Inc. is a regular member of the Japan Cryptoasset Business Association (JCBA). See the member listing."}},
+{b:"prog",bt_ja:"準備中",bt_en:"In progress",ja:{l:"CertiK セキュリティ監査",v:"スマートコントラクトのセキュリティ監査を準備中です。公式の証明書URLは、公開後にこのページへ掲載します。"},en:{l:"CertiK Security Audit",v:"A smart-contract security certification is in progress. The official certificate URL will be linked here once public."}},
+{b:"plan",bt_ja:"対応予定",bt_en:"Planned",ja:{l:"Polygon ネットワーク",v:"Polygonネットワーク対応を準備中です。公開後に、コントラクトアドレス・シンボル・小数桁・エクスプローラーリンクを掲載します。"},en:{l:"Polygon Network",v:"Polygon network support is planned. Contract address, symbol, decimals and explorer link will be shown once live."}},
+{b:"live",bt_ja:"稼働中",bt_en:"Live",ja:{l:"NCK Network",v:"Chain ID 77777・ガスレス・約2秒ブロックで稼働中。RPC: https://l1.aucfans.com/rpc/ ／ エクスプローラーで確認できます。",link:"https://l1.aucfans.com/fmescan/",lt_ja:"エクスプローラー →",lt_en:"Explorer →"},en:{l:"NCK Network",v:"Live now — Chain ID 77777, gasless, ~2-second blocks. RPC: https://l1.aucfans.com/rpc/ — verifiable on the explorer."}},
+{ja:{l:"トークノミクス",v:"総発行数量40億枚・追加発行なし・55%（22億枚）ロックアップ。配分とベスティングの詳細はトークノミクスをご覧ください。",link:"/tokenomics/",lt_ja:"トークノミクスを見る →",lt_en:"View tokenomics →"},en:{l:"Tokenomics",v:"4B total supply, no further minting, 55% (2.2B) locked. See the tokenomics page for allocation and vesting."}},
+{ja:{l:"トレジャリー / ロックアップ",v:"総供給はブロックチェーン上で全量発行済み。ロックアップは公開スケジュールに従って段階的に解除されます。マルチシグ等のガバナンス強化を準備中です。"},en:{l:"Treasury / Lockup",v:"The full supply is minted on-chain; lockups release in stages per the published schedule. Strengthened governance (e.g. multisig) is in preparation."}},
+{ja:{l:"リスク開示",v:"本サイトは情報提供のみを目的とし、投資勧誘ではありません。価格・収益の保証は一切ありません。規制・サービス提供可否は国・地域により異なります。"},en:{l:"Risk Disclosure",v:"Information only; not investment solicitation. No guarantee of price or returns. Regulation and availability vary by country/region."}},
+{ja:{l:"セキュリティ連絡先",v:"脆弱性・セキュリティに関するご報告は、公式コミュニティ窓口までお願いします（公式URLを必ずご確認ください）。"},en:{l:"Security Contact",v:"Please report vulnerabilities or security concerns via the official community channel (always verify the official URL)."}}
+];
+function renderItems(){
+  var g=$("tcGrid");g.innerHTML="";
+  ITEMS.forEach(function(it){var d=it[lang];
+    var bt=lang==="ja"?it.bt_ja:it.bt_en;
+    var badge=it.b?" <span class='badge b-"+it.b+"'>"+bt+"</span>":"";
+    var link=it.link?" <a href='"+it.link+"' target='_blank'>"+(lang==="ja"?(d.lt_ja||it.lt_ja||"リンク →"):(d.lt_en||it.lt_en||"Link →"))+"</a>":"";
+    var e=document.createElement("div");e.className="tc";
+    e.innerHTML="<div class='tl'>"+d.l+badge+"</div><div class='tv'>"+d.v+link+"</div>";
+    g.appendChild(e);});
+}
+function applyLang(){document.documentElement.lang=lang;document.querySelectorAll("[data-i18n]").forEach(function(el){var k=el.getAttribute("data-i18n");if(T[lang][k]!==undefined)el.textContent=T[lang][k];});$("langBtn").textContent=lang==="ja"?"EN":"日本語";renderItems();}
+$("langBtn").addEventListener("click",function(){lang=lang==="ja"?"en":"ja";applyLang();});
+applyLang();
+</script>
+</body>
+</html>
