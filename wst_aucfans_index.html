@@ -1,0 +1,1105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WST — World Supply Token | FME L1 Logistics Proof Layer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0B1B3F;
+  --ink-2:#11244F;
+  --ink-3:#0a1733;
+  --paper:#F7F8FB;
+  --paper-2:#EEF1F7;
+  --teal:#1FB6A6;
+  --teal-dk:#0E8B7E;
+  --teal-gl:rgba(31,182,166,.14);
+  --mikan:#F08A24;
+  --mikan-dk:#D6730F;
+  --slate:#5A6886;
+  --slate-2:#8A95AD;
+  --line:rgba(11,27,63,.10);
+  --line-2:rgba(11,27,63,.06);
+  --white:#fff;
+  --r:14px;
+  --shadow:0 1px 2px rgba(11,27,63,.04),0 8px 30px rgba(11,27,63,.06);
+  --shadow-lg:0 30px 70px rgba(11,27,63,.14);
+  --display:'Space Grotesk',sans-serif;
+  --body:'Inter',sans-serif;
+  --mono:'JetBrains Mono',monospace;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  font-family:var(--body);
+  background:var(--paper);
+  color:var(--ink);
+  line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:1180px;margin:0 auto;padding:0 28px}
+
+/* ---------- nav ---------- */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  background:rgba(247,248,251,.82);
+  backdrop-filter:blur(18px);
+  border-bottom:1px solid var(--line-2);
+}
+.nav-in{max-width:1180px;margin:0 auto;padding:15px 28px;display:flex;align-items:center;justify-content:space-between}
+.brand{display:flex;align-items:center;gap:11px;font-family:var(--display);font-weight:700;font-size:19px;letter-spacing:-.01em}
+.brand .mark{
+  width:30px;height:30px;border-radius:8px;
+  background:linear-gradient(135deg,var(--teal),var(--ink));
+  display:grid;place-items:center;position:relative;flex-shrink:0;
+}
+.brand .mark::after{content:"";position:absolute;width:11px;height:11px;border:2px solid #fff;border-radius:50%}
+.brand .mark::before{content:"";position:absolute;width:2px;height:7px;background:#fff;bottom:5px}
+.nav-links{display:flex;gap:30px;align-items:center}
+.nav-links a{font-size:14px;font-weight:500;color:var(--slate);transition:color .2s}
+.nav-links a:hover{color:var(--ink)}
+.nav-cta{
+  font-family:var(--mono);font-size:12.5px;font-weight:500;
+  padding:8px 15px;border:1px solid var(--line);border-radius:8px;
+  color:var(--ink)!important;background:var(--white);transition:all .2s;
+}
+.nav-cta:hover{border-color:var(--teal);box-shadow:0 0 0 3px var(--teal-gl)}
+@media(max-width:820px){.nav-links{display:none}}
+
+/* ---------- hero ---------- */
+.hero{padding:140px 0 70px;position:relative}
+.hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:54px;align-items:center}
+@media(max-width:920px){.hero-grid{grid-template-columns:1fr;gap:40px}}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:9px;
+  font-family:var(--mono);font-size:12px;font-weight:500;letter-spacing:.04em;
+  color:var(--teal-dk);background:var(--teal-gl);
+  padding:7px 13px;border-radius:100px;margin-bottom:24px;
+}
+.eyebrow .dot{width:6px;height:6px;border-radius:50%;background:var(--teal);box-shadow:0 0 0 0 var(--teal);animation:pulse 2.4s infinite}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(31,182,166,.5)}70%{box-shadow:0 0 0 7px rgba(31,182,166,0)}100%{box-shadow:0 0 0 0 rgba(31,182,166,0)}}
+h1{
+  font-family:var(--display);font-weight:700;
+  font-size:clamp(38px,5.4vw,62px);line-height:1.04;letter-spacing:-.025em;
+  margin-bottom:22px;
+}
+h1 .em{position:relative;white-space:nowrap}
+h1 .em::after{content:"";position:absolute;left:0;right:0;bottom:-.04em;height:.12em;background:var(--mikan);opacity:.85;border-radius:2px}
+.lede{font-size:18.5px;color:var(--slate);max-width:520px;margin-bottom:18px;line-height:1.62}
+.lede strong{color:var(--ink);font-weight:600}
+.hero-sub{font-size:14.5px;color:var(--slate-2);max-width:500px;margin-bottom:30px}
+.hero-btns{display:flex;gap:13px;flex-wrap:wrap;align-items:center}
+.btn{
+  font-family:var(--body);font-weight:600;font-size:14.5px;
+  padding:13px 22px;border-radius:11px;transition:all .22s;cursor:pointer;border:none;
+  display:inline-flex;align-items:center;gap:9px;
+}
+.btn-primary{background:var(--ink);color:#fff}
+.btn-primary:hover{background:var(--ink-2);transform:translateY(-2px);box-shadow:0 14px 30px rgba(11,27,63,.22)}
+.btn-ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.btn-ghost:hover{border-color:var(--ink);background:var(--white)}
+.btn svg{width:16px;height:16px}
+
+/* trust strip */
+.trust{margin-top:46px;padding-top:26px;border-top:1px solid var(--line-2)}
+.trust-label{font-family:var(--mono);font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:var(--slate-2);margin-bottom:14px}
+.trust-row{display:flex;gap:26px;flex-wrap:wrap;align-items:center}
+.trust-row .t{font-family:var(--display);font-weight:600;font-size:15px;color:var(--slate);opacity:.85}
+
+/* ---------- proof receipt (signature) ---------- */
+.receipt{
+  background:var(--ink);border-radius:20px;padding:5px;position:relative;
+  box-shadow:var(--shadow-lg);
+}
+.receipt-inner{background:var(--ink-3);border-radius:16px;padding:22px 22px 18px;position:relative;overflow:hidden}
+.receipt-inner::before{
+  content:"";position:absolute;inset:0;
+  background:radial-gradient(700px 200px at 80% -10%,rgba(31,182,166,.16),transparent);
+  pointer-events:none;
+}
+.rec-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;position:relative}
+.rec-title{display:flex;align-items:center;gap:10px}
+.rec-title .ico{width:26px;height:26px;border-radius:7px;background:var(--teal-gl);display:grid;place-items:center}
+.rec-title .ico svg{width:14px;height:14px;stroke:var(--teal)}
+.rec-title h4{font-family:var(--display);color:#fff;font-size:14px;font-weight:600;letter-spacing:.01em}
+.rec-live{font-family:var(--mono);font-size:10.5px;color:var(--teal);display:flex;align-items:center;gap:6px}
+.rec-live .b{width:6px;height:6px;border-radius:50%;background:var(--teal);animation:pulse 2s infinite}
+.rec-meta{font-family:var(--mono);font-size:11px;color:var(--slate-2);margin-bottom:16px;display:flex;flex-direction:column;gap:3px;position:relative}
+.rec-meta .row{display:flex;justify-content:space-between;gap:10px}
+.rec-meta .row span:last-child{color:#aeb8d4}
+
+.chain{position:relative;padding-left:6px}
+.evt{display:flex;gap:14px;position:relative;padding-bottom:15px;opacity:0;transform:translateY(8px);animation:evtIn .5s forwards}
+.evt:nth-child(1){animation-delay:.2s}
+.evt:nth-child(2){animation-delay:.9s}
+.evt:nth-child(3){animation-delay:1.6s}
+.evt:nth-child(4){animation-delay:2.3s}
+.evt:nth-child(5){animation-delay:3.0s}
+@keyframes evtIn{to{opacity:1;transform:translateY(0)}}
+.evt:last-child{padding-bottom:0}
+.evt-node{position:relative;flex-shrink:0;display:flex;flex-direction:column;align-items:center}
+.evt-dot{
+  width:15px;height:15px;border-radius:50%;background:var(--ink-3);
+  border:2px solid var(--teal);z-index:2;margin-top:2px;
+  display:grid;place-items:center;
+}
+.evt-dot::after{content:"";width:5px;height:5px;border-radius:50%;background:var(--teal)}
+.evt.done .evt-dot{background:var(--teal)}
+.evt.done .evt-dot::after{background:#fff}
+.evt-line{width:2px;flex:1;background:linear-gradient(var(--teal),rgba(31,182,166,.25));margin:2px 0;min-height:18px}
+.evt:last-child .evt-line{display:none}
+.evt-body{flex:1;padding-bottom:2px}
+.evt-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:3px}
+.evt-name{font-family:var(--display);font-size:13px;font-weight:600;color:#fff}
+.evt-time{font-family:var(--mono);font-size:10px;color:var(--slate-2)}
+.evt-hash{font-family:var(--mono);font-size:10.5px;color:var(--teal);word-break:break-all;line-height:1.4}
+.evt-loc{font-size:11.5px;color:#9aa6c4;margin-top:1px}
+.rec-foot{
+  margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,.08);
+  display:flex;align-items:center;justify-content:space-between;position:relative;
+}
+.rec-foot .seal{display:flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11px;color:var(--teal)}
+.rec-foot .seal svg{width:14px;height:14px;stroke:var(--teal)}
+.rec-foot .tok{font-family:var(--mono);font-size:11px;color:var(--mikan)}
+
+/* ---------- section base ---------- */
+section{padding:78px 0;position:relative}
+.sec-head{max-width:680px;margin-bottom:48px}
+.sec-eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--teal-dk);margin-bottom:14px;display:flex;align-items:center;gap:10px}
+.sec-eyebrow::before{content:"";width:24px;height:1px;background:var(--teal)}
+h2{font-family:var(--display);font-weight:700;font-size:clamp(28px,3.6vw,42px);line-height:1.1;letter-spacing:-.02em;margin-bottom:16px}
+.sec-lede{font-size:17px;color:var(--slate);line-height:1.62}
+
+/* ---------- problem / 3-layer ---------- */
+.layers{display:grid;grid-template-columns:1fr;gap:0;background:var(--white);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow)}
+.layer{display:grid;grid-template-columns:64px 1fr;gap:0;border-bottom:1px solid var(--line-2);position:relative}
+.layer:last-child{border-bottom:none}
+.layer-num{
+  display:grid;place-items:center;font-family:var(--mono);font-size:13px;font-weight:700;
+  color:#fff;position:relative;
+}
+.layer:nth-child(1) .layer-num{background:linear-gradient(160deg,var(--mikan),var(--mikan-dk))}
+.layer:nth-child(2) .layer-num{background:linear-gradient(160deg,var(--slate),#3f4a66)}
+.layer:nth-child(3) .layer-num{background:linear-gradient(160deg,var(--teal),var(--teal-dk))}
+.layer-body{padding:22px 24px}
+.layer-tag{font-family:var(--mono);font-size:11px;letter-spacing:.05em;text-transform:uppercase;color:var(--slate-2);margin-bottom:6px}
+.layer-body h3{font-family:var(--display);font-size:19px;font-weight:600;margin-bottom:7px;letter-spacing:-.01em}
+.layer-body p{font-size:14.5px;color:var(--slate);max-width:760px}
+.layer-body .owner{display:inline-block;margin-top:10px;font-family:var(--mono);font-size:11px;color:var(--teal-dk);background:var(--teal-gl);padding:4px 10px;border-radius:6px}
+.layer:nth-child(1) .owner{color:var(--mikan-dk);background:rgba(240,138,36,.12)}
+
+/* ---------- token spec ---------- */
+.token-sec{background:var(--ink);color:#fff;border-radius:0}
+.token-sec h2{color:#fff}
+.token-sec .sec-lede{color:#aeb8d4}
+.token-sec .sec-eyebrow{color:var(--teal)}
+.token-grid{display:grid;grid-template-columns:1.1fr 1fr;gap:40px;align-items:start}
+@media(max-width:920px){.token-grid{grid-template-columns:1fr;gap:32px}}
+.spec-card{background:var(--ink-3);border:1px solid rgba(255,255,255,.09);border-radius:var(--r);overflow:hidden}
+.spec-card-head{padding:18px 22px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;align-items:center;justify-content:space-between}
+.spec-card-head .t{font-family:var(--display);font-size:15px;font-weight:600}
+.spec-card-head .badge{font-family:var(--mono);font-size:10.5px;color:var(--teal);border:1px solid rgba(31,182,166,.4);padding:3px 9px;border-radius:5px}
+.spec-row{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:13px 22px;border-bottom:1px solid rgba(255,255,255,.05);font-size:13.5px}
+.spec-row:last-child{border-bottom:none}
+.spec-row .k{color:var(--slate-2);font-weight:500}
+.spec-row .v{font-family:var(--mono);font-size:12.5px;color:#fff;text-align:right}
+.spec-row .v.big{font-size:15px;color:var(--teal);font-weight:700}
+.addr-card{background:var(--ink-3);border:1px solid rgba(255,255,255,.09);border-radius:var(--r);padding:22px}
+.addr-card .ac-title{font-family:var(--display);font-size:14px;font-weight:600;margin-bottom:4px}
+.addr-card .ac-sub{font-size:12.5px;color:var(--slate-2);margin-bottom:18px}
+.addr-item{margin-bottom:15px}
+.addr-item:last-child{margin-bottom:0}
+.addr-item .lbl{font-family:var(--mono);font-size:10.5px;letter-spacing:.04em;text-transform:uppercase;color:var(--slate-2);margin-bottom:6px;display:flex;align-items:center;gap:7px}
+.addr-box{
+  display:flex;align-items:center;gap:10px;background:rgba(0,0,0,.28);
+  border:1px solid rgba(255,255,255,.08);border-radius:9px;padding:10px 12px;
+}
+.addr-box code{font-family:var(--mono);font-size:11.5px;color:#cdd5e8;word-break:break-all;flex:1;line-height:1.4}
+.copy-btn{
+  flex-shrink:0;width:28px;height:28px;border-radius:7px;border:1px solid rgba(255,255,255,.12);
+  background:rgba(255,255,255,.04);cursor:pointer;display:grid;place-items:center;transition:all .18s;
+}
+.copy-btn svg{width:13px;height:13px;stroke:var(--slate-2);transition:stroke .18s}
+.copy-btn:hover{border-color:var(--teal);background:var(--teal-gl)}
+.copy-btn:hover svg{stroke:var(--teal)}
+.copy-btn.copied{background:var(--teal);border-color:var(--teal)}
+.copy-btn.copied svg{stroke:#fff}
+.note-positioning{
+  margin-top:22px;display:flex;gap:12px;align-items:flex-start;
+  background:rgba(31,182,166,.08);border:1px solid rgba(31,182,166,.22);
+  border-radius:11px;padding:15px 17px;
+}
+.note-positioning svg{width:18px;height:18px;stroke:var(--teal);flex-shrink:0;margin-top:2px}
+.note-positioning p{font-size:13px;color:#bcc6dd;line-height:1.55}
+.note-positioning strong{color:#fff;font-weight:600}
+
+/* ---------- use cases ---------- */
+.uc-tabs{display:flex;gap:10px;margin-bottom:30px;flex-wrap:wrap}
+.uc-tab{
+  font-family:var(--body);font-weight:600;font-size:14px;cursor:pointer;
+  padding:11px 18px;border-radius:10px;border:1px solid var(--line);background:var(--white);
+  color:var(--slate);transition:all .2s;display:flex;align-items:center;gap:9px;
+}
+.uc-tab .ic{font-size:16px}
+.uc-tab:hover{border-color:var(--slate-2)}
+.uc-tab.active{background:var(--ink);color:#fff;border-color:var(--ink)}
+.uc-panel{display:none;animation:fadeUp .4s}
+.uc-panel.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.uc-card{background:var(--white);border:1px solid var(--line);border-radius:18px;overflow:hidden;box-shadow:var(--shadow)}
+.uc-top{display:grid;grid-template-columns:1.15fr 1fr;gap:0}
+@media(max-width:820px){.uc-top{grid-template-columns:1fr}}
+.uc-info{padding:32px 34px}
+.uc-chip{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:11px;letter-spacing:.04em;text-transform:uppercase;padding:5px 11px;border-radius:7px;margin-bottom:16px}
+.uc-chip.mikan{color:var(--mikan-dk);background:rgba(240,138,36,.12)}
+.uc-chip.lux{color:var(--ink);background:var(--paper-2)}
+.uc-info h3{font-family:var(--display);font-size:24px;font-weight:700;letter-spacing:-.015em;margin-bottom:10px}
+.uc-info p{font-size:14.5px;color:var(--slate);margin-bottom:20px;line-height:1.6}
+.uc-stats{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.uc-stat{background:var(--paper);border:1px solid var(--line-2);border-radius:11px;padding:13px 15px}
+.uc-stat .n{font-family:var(--display);font-size:21px;font-weight:700;color:var(--ink);letter-spacing:-.01em}
+.uc-stat .l{font-size:11.5px;color:var(--slate-2);margin-top:2px}
+.uc-flow{background:var(--ink-3);padding:30px 30px;position:relative;overflow:hidden}
+.uc-flow::before{content:"";position:absolute;inset:0;background:radial-gradient(500px 160px at 90% 0%,rgba(31,182,166,.14),transparent)}
+.uc-flow-title{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--slate-2);margin-bottom:18px;position:relative}
+.flow-step{display:flex;gap:13px;position:relative;padding-bottom:16px}
+.flow-step:last-child{padding-bottom:0}
+.flow-step .fs-node{flex-shrink:0;display:flex;flex-direction:column;align-items:center}
+.fs-num{width:24px;height:24px;border-radius:7px;background:var(--teal-gl);border:1px solid rgba(31,182,166,.4);display:grid;place-items:center;font-family:var(--mono);font-size:11px;font-weight:700;color:var(--teal);z-index:2}
+.fs-line{width:1.5px;flex:1;background:rgba(31,182,166,.25);min-height:14px;margin:2px 0}
+.flow-step:last-child .fs-line{display:none}
+.fs-body{padding-bottom:2px}
+.fs-name{font-family:var(--display);font-size:13.5px;font-weight:600;color:#fff;margin-bottom:2px}
+.fs-rec{font-family:var(--mono);font-size:10.5px;color:#93dfd4;line-height:1.4}
+
+/* settlement bar */
+.settle{margin-top:26px;background:var(--white);border:1px solid var(--line);border-radius:14px;padding:22px 26px}
+.settle-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px}
+.settle-head h4{font-family:var(--display);font-size:16px;font-weight:600}
+.settle-head .tot{font-family:var(--mono);font-size:13px;color:var(--ink);background:var(--paper-2);padding:5px 12px;border-radius:7px}
+.settle-bar{display:flex;height:38px;border-radius:9px;overflow:hidden;border:1px solid var(--line-2)}
+.settle-seg{display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:10.5px;color:#fff;font-weight:500;position:relative;transition:flex .3s}
+.settle-seg:hover{filter:brightness(1.08)}
+.settle-legend{display:flex;gap:18px;flex-wrap:wrap;margin-top:14px}
+.sl-item{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--slate)}
+.sl-dot{width:9px;height:9px;border-radius:3px}
+
+/* ---------- why L1 / comparison ---------- */
+.cmp{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media(max-width:820px){.cmp{grid-template-columns:1fr}}
+.cmp-col{border-radius:16px;padding:28px 28px;position:relative;overflow:hidden}
+.cmp-web2{background:var(--white);border:1px solid var(--line)}
+.cmp-l1{background:var(--ink);color:#fff;box-shadow:var(--shadow-lg)}
+.cmp-col h3{font-family:var(--display);font-size:18px;font-weight:600;margin-bottom:4px;display:flex;align-items:center;gap:10px}
+.cmp-col .sub{font-size:12.5px;margin-bottom:22px}
+.cmp-web2 .sub{color:var(--slate-2)}
+.cmp-l1 .sub{color:#9aa6c4}
+.cmp-l1 h3{color:#fff}
+.cmp-badge{font-family:var(--mono);font-size:10px;padding:3px 8px;border-radius:5px;letter-spacing:.03em}
+.cmp-web2 .cmp-badge{background:var(--paper-2);color:var(--slate)}
+.cmp-l1 .cmp-badge{background:var(--teal-gl);color:var(--teal)}
+.cmp-item{display:flex;gap:12px;padding:13px 0;border-bottom:1px solid var(--line-2)}
+.cmp-l1 .cmp-item{border-color:rgba(255,255,255,.08)}
+.cmp-item:last-child{border-bottom:none}
+.cmp-item .ico{flex-shrink:0;width:20px;height:20px;border-radius:6px;display:grid;place-items:center;margin-top:1px}
+.cmp-web2 .ico{background:rgba(214,115,15,.12)}
+.cmp-web2 .ico svg{width:12px;height:12px;stroke:var(--mikan-dk)}
+.cmp-l1 .ico{background:var(--teal-gl)}
+.cmp-l1 .ico svg{width:12px;height:12px;stroke:var(--teal)}
+.cmp-item .ci-k{font-size:13px;font-weight:600;margin-bottom:2px}
+.cmp-l1 .ci-k{color:#fff}
+.cmp-item .ci-v{font-size:12.5px;line-height:1.45}
+.cmp-web2 .ci-v{color:var(--slate)}
+.cmp-l1 .ci-v{color:#9aa6c4}
+
+/* ---------- Q&A ---------- */
+.qa-wrap{display:grid;grid-template-columns:1fr;gap:11px;max-width:900px}
+.qa{background:var(--white);border:1px solid var(--line);border-radius:13px;overflow:hidden;transition:box-shadow .2s,border-color .2s}
+.qa:hover{border-color:rgba(11,27,63,.18)}
+.qa[open]{box-shadow:var(--shadow);border-color:var(--teal)}
+.qa summary{
+  list-style:none;cursor:pointer;padding:19px 22px;display:flex;align-items:center;gap:16px;
+  font-family:var(--display);font-weight:600;font-size:15.5px;letter-spacing:-.01em;
+}
+.qa summary::-webkit-details-marker{display:none}
+.qa-q{
+  flex-shrink:0;width:28px;height:28px;border-radius:8px;background:var(--paper-2);
+  display:grid;place-items:center;font-family:var(--mono);font-size:12px;font-weight:700;color:var(--ink);
+  transition:all .2s;
+}
+.qa[open] .qa-q{background:var(--teal);color:#fff}
+.qa summary .txt{flex:1}
+.qa summary .chev{flex-shrink:0;width:18px;height:18px;stroke:var(--slate-2);transition:transform .25s}
+.qa[open] summary .chev{transform:rotate(180deg);stroke:var(--teal)}
+.qa-a{padding:0 22px 21px 66px;font-size:14.5px;color:var(--slate);line-height:1.65}
+.qa-a p{margin-bottom:11px}
+.qa-a p:last-child{margin-bottom:0}
+.qa-a strong{color:var(--ink);font-weight:600}
+.qa-a .mini-table{margin:14px 0;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.qa-a .mt-row{display:grid;grid-template-columns:1fr 1.3fr;font-size:12.5px}
+.qa-a .mt-row:nth-child(odd){background:var(--paper)}
+.qa-a .mt-row .c{padding:9px 13px;border-bottom:1px solid var(--line-2)}
+.qa-a .mt-row .c:first-child{font-weight:600;color:var(--ink);border-right:1px solid var(--line-2)}
+.qa-a .mt-row:last-child .c{border-bottom:none}
+.qa-a ul{margin:8px 0 8px 2px;list-style:none}
+.qa-a ul li{padding-left:20px;position:relative;margin-bottom:6px;font-size:13.5px}
+.qa-a ul li::before{content:"";position:absolute;left:2px;top:9px;width:6px;height:6px;border-radius:2px;background:var(--teal)}
+
+/* ---------- roadmap ---------- */
+.road{display:grid;grid-template-columns:repeat(6,1fr);gap:0;position:relative;margin-top:10px}
+@media(max-width:920px){.road{grid-template-columns:1fr 1fr}}
+@media(max-width:560px){.road{grid-template-columns:1fr}}
+.road-item{padding:24px 18px;border:1px solid var(--line-2);border-right:none;background:var(--white);position:relative}
+.road-item:last-child{border-right:1px solid var(--line-2)}
+@media(max-width:920px){.road-item{border-right:1px solid var(--line-2)}}
+.road-item:first-child{border-radius:13px 0 0 13px}
+.road-item:last-child{border-radius:0 13px 13px 0}
+@media(max-width:920px){.road-item{border-radius:11px!important;margin-bottom:-1px}}
+.road-ph{font-family:var(--mono);font-size:11px;font-weight:700;color:var(--teal-dk);margin-bottom:9px}
+.road-item.now{background:var(--ink);color:#fff}
+.road-item.now .road-ph{color:var(--teal)}
+.road-dot{width:9px;height:9px;border-radius:50%;background:var(--line);margin-bottom:12px}
+.road-item.now .road-dot{background:var(--teal);box-shadow:0 0 0 4px var(--teal-gl)}
+.road-item h4{font-family:var(--display);font-size:14px;font-weight:600;margin-bottom:5px;line-height:1.25}
+.road-item p{font-size:12px;color:var(--slate);line-height:1.45}
+.road-item.now p{color:#9aa6c4}
+.road-item .tag{display:inline-block;margin-top:10px;font-family:var(--mono);font-size:9.5px;letter-spacing:.04em;text-transform:uppercase;padding:3px 8px;border-radius:5px;background:var(--teal-gl);color:var(--teal-dk)}
+.road-item.now .tag{background:var(--teal);color:#fff}
+
+/* ---------- CTA ---------- */
+.cta-sec{padding:90px 0}
+.cta-card{
+  background:linear-gradient(135deg,var(--ink),var(--ink-2));border-radius:24px;
+  padding:58px 54px;position:relative;overflow:hidden;box-shadow:var(--shadow-lg);
+}
+.cta-card::before{content:"";position:absolute;top:-40%;right:-10%;width:480px;height:480px;border-radius:50%;background:radial-gradient(circle,rgba(31,182,166,.18),transparent 60%)}
+.cta-card::after{content:"";position:absolute;bottom:-50%;left:5%;width:380px;height:380px;border-radius:50%;background:radial-gradient(circle,rgba(240,138,36,.10),transparent 60%)}
+.cta-in{position:relative;max-width:600px}
+.cta-card h2{color:#fff;margin-bottom:14px}
+.cta-card p{color:#aeb8d4;font-size:16px;margin-bottom:28px}
+.cta-btns{display:flex;gap:13px;flex-wrap:wrap}
+.btn-teal{background:var(--teal);color:#042b27}
+.btn-teal:hover{background:#27c9b8;transform:translateY(-2px);box-shadow:0 14px 30px rgba(31,182,166,.3)}
+.btn-out{background:transparent;color:#fff;border:1px solid rgba(255,255,255,.25)}
+.btn-out:hover{border-color:#fff;background:rgba(255,255,255,.06)}
+
+/* ---------- footer ---------- */
+footer{background:var(--ink-3);color:#9aa6c4;padding:54px 0 30px}
+.foot-grid{display:grid;grid-template-columns:1.6fr 1fr 1fr;gap:40px;margin-bottom:40px}
+@media(max-width:760px){.foot-grid{grid-template-columns:1fr;gap:28px}}
+.foot-brand{display:flex;align-items:center;gap:11px;font-family:var(--display);font-weight:700;font-size:18px;color:#fff;margin-bottom:14px}
+.foot-brand .mark{width:28px;height:28px;border-radius:8px;background:linear-gradient(135deg,var(--teal),var(--ink));display:grid;place-items:center;position:relative}
+.foot-brand .mark::after{content:"";position:absolute;width:10px;height:10px;border:2px solid #fff;border-radius:50%}
+.foot-about{font-size:13.5px;max-width:340px;line-height:1.6}
+.foot-col h5{font-family:var(--display);font-size:13px;font-weight:600;color:#fff;margin-bottom:14px;letter-spacing:.02em}
+.foot-col a{display:block;font-size:13px;margin-bottom:9px;transition:color .2s}
+.foot-col a:hover{color:var(--teal)}
+.foot-bottom{border-top:1px solid rgba(255,255,255,.08);padding-top:24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+.foot-bottom p{font-size:12px;color:var(--slate-2)}
+.foot-bottom .chain-id{font-family:var(--mono);font-size:11px;color:var(--slate-2)}
+.disclaimer{margin-top:18px;font-size:11px;color:#5e6a86;line-height:1.55;max-width:780px}
+
+/* reveal */
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .7s cubic-bezier(.16,1,.3,1),transform .7s cubic-bezier(.16,1,.3,1)}
+.reveal.in{opacity:1;transform:translateY(0)}
+
+@media(prefers-reduced-motion:reduce){
+  *{animation:none!important;transition:none!important}
+  .reveal{opacity:1;transform:none}
+  .evt{opacity:1;transform:none}
+}
+@media(max-width:560px){
+  .wrap{padding:0 20px}
+  .hero{padding:120px 0 50px}
+  .cta-card{padding:40px 26px}
+  .uc-info,.uc-flow{padding:24px}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-in">
+    <a href="#top" class="brand"><span class="mark"></span>WST</a>
+    <div class="nav-links">
+      <a href="#layers">Architecture</a>
+      <a href="#token">Token</a>
+      <a href="#usecases">Use Cases</a>
+      <a href="#why">Why L1</a>
+      <a href="#qa">Q&amp;A</a>
+      <a href="#contact" class="nav-cta">Contact</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<header class="hero" id="top">
+  <div class="wrap">
+    <div class="hero-grid">
+      <div>
+        <span class="eyebrow"><span class="dot"></span>FME L1 · Enterprise Logistics Proof Layer</span>
+        <h1>The proof layer for <span class="em">physical logistics</span>.</h1>
+        <p class="lede"><strong>World Supply Token (WST)</strong> turns every pickup, hub scan, and delivery into a signed, tamper-evident event on FME Layer 1 — so a shipment isn't just tracked, it's <strong>proven</strong>.</p>
+        <p class="hero-sub">Built for Sagawa Holdings logistics. Compatible with Aura DPP and Avery Dennison RFID/NFC/QR. Positioned as enterprise infrastructure — not a speculative cryptocurrency.</p>
+        <div class="hero-btns">
+          <a href="#usecases" class="btn btn-primary">See live PoC use cases
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
+          <a href="#token" class="btn btn-ghost">Token details</a>
+        </div>
+
+        <div class="trust">
+          <div class="trust-label">Designed to interoperate with</div>
+          <div class="trust-row">
+            <span class="t">Aura DPP</span>
+            <span class="t">Avery Dennison</span>
+            <span class="t">Deloitte</span>
+            <span class="t">SGH Logistics</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- SIGNATURE: live proof receipt -->
+      <div class="receipt">
+        <div class="receipt-inner">
+          <div class="rec-head">
+            <div class="rec-title">
+              <span class="ico"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M9 12l2 2 4-4"/><circle cx="12" cy="12" r="9"/></svg></span>
+              <h4>Proof Receipt</h4>
+            </div>
+            <span class="rec-live"><span class="b"></span>WRITING TO CHAIN</span>
+          </div>
+          <div class="rec-meta">
+            <div class="row"><span>Delivery ID</span><span>SGT-SHZ-2026-000001</span></div>
+            <div class="row"><span>Product</span><span>SHIZUOKA-MIKAN-BOX-001</span></div>
+            <div class="row"><span>Route</span><span>Shizuoka → Tokyo / Minato</span></div>
+          </div>
+
+          <div class="chain">
+            <div class="evt done">
+              <div class="evt-node"><div class="evt-dot"></div><div class="evt-line"></div></div>
+              <div class="evt-body">
+                <div class="evt-top"><span class="evt-name">Shipment registered</span><span class="evt-time">08:02</span></div>
+                <div class="evt-hash">0x9f4a…c21b</div>
+                <div class="evt-loc">Shizuoka farm · QR label issued</div>
+              </div>
+            </div>
+            <div class="evt done">
+              <div class="evt-node"><div class="evt-dot"></div><div class="evt-line"></div></div>
+              <div class="evt-body">
+                <div class="evt-top"><span class="evt-name">Pickup scan</span><span class="evt-time">09:14</span></div>
+                <div class="evt-hash">0x3d77…a90e</div>
+                <div class="evt-loc">Driver #SGT-114 · device verified</div>
+              </div>
+            </div>
+            <div class="evt done">
+              <div class="evt-node"><div class="evt-dot"></div><div class="evt-line"></div></div>
+              <div class="evt-body">
+                <div class="evt-top"><span class="evt-name">Hub transit</span><span class="evt-time">13:48</span></div>
+                <div class="evt-hash">0xb1e0…57fd</div>
+                <div class="evt-loc">Shizuoka center → Tokyo line-haul</div>
+              </div>
+            </div>
+            <div class="evt done">
+              <div class="evt-node"><div class="evt-dot"></div><div class="evt-line"></div></div>
+              <div class="evt-body">
+                <div class="evt-top"><span class="evt-name">Driver handoff</span><span class="evt-time">07:31</span></div>
+                <div class="evt-hash">0x6c2a…11d4</div>
+                <div class="evt-loc">Minato branch · final-mile assigned</div>
+              </div>
+            </div>
+            <div class="evt">
+              <div class="evt-node"><div class="evt-dot"></div></div>
+              <div class="evt-body">
+                <div class="evt-top"><span class="evt-name">Delivered + settled</span><span class="evt-time">10:05</span></div>
+                <div class="evt-hash">0xf08a…24wst</div>
+                <div class="evt-loc">ePOD issued · WST settlement triggered</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="rec-foot">
+            <span class="seal"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 2l8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6z"/><path d="M9 12l2 2 4-4"/></svg>Tamper-evident</span>
+            <span class="tok">+ settlement in WST</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- 3-LAYER ARCHITECTURE -->
+<section id="layers">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="sec-eyebrow">The model</div>
+      <h2>SGH does not replace LVMH's product passport. It completes it.</h2>
+      <p class="sec-lede">LVMH already proves a product is authentic. WST on FME L1 proves that authentic product travelled the right route, through the right hands, to the right recipient. Three layers, cleanly separated.</p>
+    </div>
+
+    <div class="layers reveal">
+      <div class="layer">
+        <div class="layer-num">01</div>
+        <div class="layer-body">
+          <div class="layer-tag">LVMH · Aura · Avery Dennison</div>
+          <h3>Product ID &amp; Digital Product Passport</h3>
+          <p>Serial IDs, NFC / RFID / QR tags, authenticity proof, ownership records, repair history, and sustainability data — managed on the brand side with Aura Blockchain Consortium and Avery Dennison labels.</p>
+          <span class="owner">Brand-owned layer · unchanged</span>
+        </div>
+      </div>
+      <div class="layer">
+        <div class="layer-num">02</div>
+        <div class="layer-body">
+          <div class="layer-tag">SGH · Logistics operations</div>
+          <h3>Logistics ID &amp; delivery events</h3>
+          <p>Logistics IDs, box IDs, pallet IDs, waybill numbers, and the physical chain of custody: pickup, hub arrival, line-haul, loading, delivery, receipt confirmation — each tied to driver ID, branch ID, and device ID.</p>
+          <span class="owner">SGH-owned layer · new</span>
+        </div>
+      </div>
+      <div class="layer">
+        <div class="layer-num">03</div>
+        <div class="layer-body">
+          <div class="layer-tag">FME L1 · WST</div>
+          <h3>The immutable proof layer</h3>
+          <p>Every logistics event is sealed with a timestamp, event type, hash, signature, and transaction ID. Permissioned Proof of Authority. Role-based access, full audit trail, dashboard, and explorer — with WST as the settlement and reward unit.</p>
+          <span class="owner">Tamper-evident · verifiable by anyone</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TOKEN SPEC -->
+<section id="token" class="token-sec">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="sec-eyebrow">Token</div>
+      <h2>World Supply Token</h2>
+      <p class="sec-lede">A fixed-supply utility token on FME Layer 1, issued as the settlement and reward unit for verified logistics events. Enterprise infrastructure — not a public speculative asset.</p>
+    </div>
+
+    <div class="token-grid">
+      <div>
+        <div class="spec-card reveal">
+          <div class="spec-card-head">
+            <span class="t">Token Specification</span>
+            <span class="badge">FME L1</span>
+          </div>
+          <div class="spec-row"><span class="k">Token Name</span><span class="v">World Supply Token</span></div>
+          <div class="spec-row"><span class="k">Symbol</span><span class="v big">WST</span></div>
+          <div class="spec-row"><span class="k">Total Supply</span><span class="v">5,000,000,000 WST</span></div>
+          <div class="spec-row"><span class="k">Decimals</span><span class="v">18</span></div>
+          <div class="spec-row"><span class="k">Network</span><span class="v">FME L1</span></div>
+          <div class="spec-row"><span class="k">Standard</span><span class="v">ERC-20 · Upgradeable Proxy</span></div>
+          <div class="spec-row"><span class="k">Consensus</span><span class="v">Proof of Authority</span></div>
+        </div>
+
+        <div class="note-positioning reveal">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>
+          <p><strong>Positioning note.</strong> In Phase 1, WST operates as an internal utility / settlement credit tied to verified delivery milestones — not as a tradable public cryptocurrency. Any future public structure would require separate legal and regulatory review.</p>
+        </div>
+      </div>
+
+      <div class="addr-card reveal">
+        <div class="ac-title">On-chain Addresses</div>
+        <div class="ac-sub">FME L1 · verify any record against these contracts</div>
+
+        <div class="addr-item">
+          <div class="lbl"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="#1FB6A6" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 9h6v6H9z"/></svg>Token / Proxy Address</div>
+          <div class="addr-box">
+            <code>0x40196d5A4C4bB98E4d56d4Fc970C2D9a25988926</code>
+            <button class="copy-btn" data-copy="0x40196d5A4C4bB98E4d56d4Fc970C2D9a25988926" aria-label="Copy proxy address">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="addr-item">
+          <div class="lbl"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="#8A95AD" stroke-width="2"><path d="M12 2l8 4v6c0 5-3.5 8-8 10-4.5-2-8-5-8-10V6z"/></svg>Implementation Address</div>
+          <div class="addr-box">
+            <code>0xA1b21D7e3759f636fc7172538c03B5847a2E5f7E</code>
+            <button class="copy-btn" data-copy="0xA1b21D7e3759f636fc7172538c03B5847a2E5f7E" aria-label="Copy implementation address">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="addr-item">
+          <div class="lbl"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="#8A95AD" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 4-6 8-6s8 2 8 6"/></svg>Owner</div>
+          <div class="addr-box">
+            <code>0x054dbBB401D28E219440BFe0C6700de7C4A922D5</code>
+            <button class="copy-btn" data-copy="0x054dbBB401D28E219440BFe0C6700de7C4A922D5" aria-label="Copy owner address">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="addr-item">
+          <div class="lbl"><svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="#8A95AD" stroke-width="2"><path d="M12 2v20M5 9l7-7 7 7"/></svg>Initial Receiver</div>
+          <div class="addr-box">
+            <code>0x054dbBB401D28E219440BFe0C6700de7C4A922D5</code>
+            <button class="copy-btn" data-copy="0x054dbBB401D28E219440BFe0C6700de7C4A922D5" aria-label="Copy initial receiver address">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="2"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- USE CASES -->
+<section id="usecases">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="sec-eyebrow">Proof of concept</div>
+      <h2>Two live pilots. One proof layer.</h2>
+      <p class="sec-lede">The same WST infrastructure proves a 1,000-yen box of mikan and a luxury handbag — from the everyday to the high-value. Each physical milestone becomes a signed event, and delivery triggers settlement.</p>
+    </div>
+
+    <div class="uc-tabs reveal">
+      <button class="uc-tab active" data-uc="mikan"><span class="ic">🍊</span>Shizuoka Mikan</button>
+      <button class="uc-tab" data-uc="lux"><span class="ic">👜</span>LVMH Luxury Goods</button>
+    </div>
+
+    <!-- MIKAN PANEL -->
+    <div class="uc-panel active" data-panel="mikan">
+      <div class="uc-card">
+        <div class="uc-top">
+          <div class="uc-info">
+            <span class="uc-chip mikan">Pilot 01 · Traceability + Instant Settlement</span>
+            <h3>Shizuoka mikan, proven farm to doorstep</h3>
+            <p>100 boxes of Shizuoka mikan shipped to Minato, Tokyo. One delivery ID per box, a QR label the farmer, Sagawa, and the recipient can all verify, and a settlement basis generated automatically at every step of the route.</p>
+            <div class="uc-stats">
+              <div class="uc-stat"><div class="n">100</div><div class="l">boxes · 1-month pilot</div></div>
+              <div class="uc-stat"><div class="n">¥1,000</div><div class="l">auto-split across 7 steps</div></div>
+              <div class="uc-stat"><div class="n">7</div><div class="l">signed checkpoints</div></div>
+              <div class="uc-stat"><div class="n">1 QR</div><div class="l">origin → quality → receipt</div></div>
+            </div>
+          </div>
+          <div class="uc-flow">
+            <div class="uc-flow-title">Recorded on FME L1</div>
+            <div class="flow-step"><div class="fs-node"><div class="fs-num">1</div><div class="fs-line"></div></div><div class="fs-body"><div class="fs-name">Shipment + QR issued</div><div class="fs-rec">origin, lot, harvest date, inspection hash</div></div></div>
+            <div class="flow-step"><div class="fs-node"><div class="fs-num">2</div><div class="fs-line"></div></div><div class="fs-body"><div class="fs-name">Pickup scan</div><div class="fs-rec">time, branch, driver/device ID, condition</div></div></div>
+            <div class="flow-step"><div class="fs-node"><div class="fs-num">3</div><div class="fs-line"></div></div><div class="fs-body"><div class="fs-name">Shizuoka center</div><div class="fs-rec">arrival, packaging state, line-haul start</div></div></div>
+            <div class="flow-step"><div class="fs-node"><div class="fs-num">4</div><div class="fs-line"></div></div><div class="fs-body"><div class="fs-name">Tokyo center → Minato</div><div class="fs-rec">arrival, delay check, branch handoff</div></div></div>
+            <div class="flow-step"><div class="fs-node"><div class="fs-num">5</div><div class="fs-line"></div></div><div class="fs-body"><div class="fs-name">Final delivery</div><div class="fs-rec">ePOD, receipt proof, WST settlement trigger</div></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="settle">
+        <div class="settle-head">
+          <h4>¥1,000 delivery — settlement basis, auto-generated</h4>
+          <span class="tot">Total ¥1,000 → WST settlement log</span>
+        </div>
+        <div class="settle-bar">
+          <div class="settle-seg" style="flex:100;background:#1FB6A6" title="Pickup driver ¥100">¥100</div>
+          <div class="settle-seg" style="flex:50;background:#2bbfae" title="Shizuoka branch ¥50">¥50</div>
+          <div class="settle-seg" style="flex:50;background:#37c8b6" title="Shizuoka center ¥50">¥50</div>
+          <div class="settle-seg" style="flex:200;background:#0E8B7E" title="Line-haul ¥200">¥200</div>
+          <div class="settle-seg" style="flex:50;background:#37c8b6" title="Tokyo center ¥50">¥50</div>
+          <div class="settle-seg" style="flex:50;background:#2bbfae" title="Minato branch ¥50">¥50</div>
+          <div class="settle-seg" style="flex:100;background:#1FB6A6" title="Final-mile driver ¥100">¥100</div>
+          <div class="settle-seg" style="flex:400;background:#11244F;color:#aeb8d4" title="HQ / systems / margin ¥400">¥400</div>
+        </div>
+        <div class="settle-legend">
+          <div class="sl-item"><span class="sl-dot" style="background:#1FB6A6"></span>Drivers ¥200</div>
+          <div class="sl-item"><span class="sl-dot" style="background:#2bbfae"></span>Branches ¥100</div>
+          <div class="sl-item"><span class="sl-dot" style="background:#0E8B7E"></span>Line-haul ¥200</div>
+          <div class="sl-item"><span class="sl-dot" style="background:#37c8b6"></span>Centers ¥100</div>
+          <div class="sl-item"><span class="sl-dot" style="background:#11244F"></span>HQ &amp; margin ¥400</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LUX PANEL -->
+    <div class="uc-panel" data-panel="lux">
+      <div class="uc-card">
+        <div class="uc-top">
+          <div class="uc-info">
+            <span class="uc-chip lux">Pilot 02 · DPP Logistics Proof</span>
+            <h3>Luxury goods, authenticity meets provenance</h3>
+            <p>LVMH proves the product is genuine via Aura DPP and Avery Dennison NFC. WST adds the missing layer: a tamper-evident record of how that genuine product moved through Japan — defeating substitution, and powering insurance, resale, and audit.</p>
+            <div class="uc-stats">
+              <div class="uc-stat"><div class="n">1→∞</div><div class="l">product↔logistics linking</div></div>
+              <div class="uc-stat"><div class="n">NFC</div><div class="l">Avery Dennison compatible</div></div>
+              <div class="uc-stat"><div class="n">RBAC</div><div class="l">LVMH / SGH / audit views</div></div>
+              <div class="uc-stat"><div class="n">DPP</div><div class="l">Aura-ready bridge</div></div>
+            </div>
+          </div>
+          <div class="uc-flow">
+            <div class="uc-flow-title">Recorded on FME L1</div>
+            <div class="flow-step"><div class="fs-node"><div class="fs-num">1</div><div class="fs-line"></div></div><div class="fs-body"><div class="fs-name">Link product ID → box ID</div><div class="fs-rec">Aura DPP reference · Avery NFC read</div></div></div>
+            <div class="flow-step"><div class="fs-node"><div class="fs-num">2</div><div class="fs-line"></div></div><div class="fs-body"><div class="fs-name">Issue logistics ID</div><div class="fs-rec">parent-child mapping, multi-item box</div></div></div>
+            <div class="flow-step"><div class="fs-node"><div class="fs-num">3</div><div class="fs-line"></div></div><div class="fs-body"><div class="fs-name">Pickup → hub → line-haul</div><div class="fs-rec">signed events, custody continuity</div></div></div>
+            <div class="flow-step"><div class="fs-node"><div class="fs-num">4</div><div class="fs-line"></div></div><div class="fs-body"><div class="fs-name">Loading + transport</div><div class="fs-rec">route, condition, exception flags</div></div></div>
+            <div class="flow-step"><div class="fs-node"><div class="fs-num">5</div><div class="fs-line"></div></div><div class="fs-body"><div class="fs-name">Delivery + verify</div><div class="fs-rec">ePOD · hash-verifiable in LVMH portal</div></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="settle">
+        <div class="settle-head">
+          <h4>Why product ID alone isn't enough</h4>
+          <span class="tot">Product ID + Logistics ID = complete DPP</span>
+        </div>
+        <div class="cmp" style="margin-top:4px">
+          <div class="cmp-col cmp-web2" style="box-shadow:none">
+            <h3><span class="cmp-badge">Product ID only</span></h3>
+            <div class="sub">Answers: is this genuine?</div>
+            <div class="cmp-item"><span class="ico"><svg viewBox="0 0 24 24" fill="none"><path d="M18 6L6 18M6 6l12 12"/></svg></span><div><div class="ci-k">Cannot prove the route</div><div class="ci-v">A cloned tag on a fake item still reads "authentic" at delivery.</div></div></div>
+            <div class="cmp-item"><span class="ico"><svg viewBox="0 0 24 24" fill="none"><path d="M18 6L6 18M6 6l12 12"/></svg></span><div><div class="ci-k">No custody trail</div><div class="ci-v">Who handled it, when, and where it was substituted is invisible.</div></div></div>
+            <div class="cmp-item"><span class="ico"><svg viewBox="0 0 24 24" fill="none"><path d="M18 6L6 18M6 6l12 12"/></svg></span><div><div class="ci-k">Weak for insurance</div><div class="ci-v">No point-of-liability when damage or loss occurs in transit.</div></div></div>
+          </div>
+          <div class="cmp-col cmp-l1">
+            <h3><span class="cmp-badge">+ Logistics ID on WST</span></h3>
+            <div class="sub">Answers: did the genuine item travel right?</div>
+            <div class="cmp-item"><span class="ico"><svg viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5"/></svg></span><div><div class="ci-k">Route is proven</div><div class="ci-v">Missing origin scan or unauthorized hub exposes substitution instantly.</div></div></div>
+            <div class="cmp-item"><span class="ico"><svg viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5"/></svg></span><div><div class="ci-k">Full chain of custody</div><div class="ci-v">Every driver, branch, and device recorded by signed event.</div></div></div>
+            <div class="cmp-item"><span class="ico"><svg viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5"/></svg></span><div><div class="ci-k">Insurance &amp; resale ready</div><div class="ci-v">Point-of-liability and provenance history are court-verifiable.</div></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHY L1 -->
+<section id="why" style="background:var(--paper-2)">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="sec-eyebrow">Why a Layer 1 — not just Web2</div>
+      <h2>Web2 is for operations. L1 is for trust.</h2>
+      <p class="sec-lede">A Web2 tracking system ultimately asks partners to "trust our database." WST records each logistics event so a third party can verify it later, by transaction hash — no trust required.</p>
+    </div>
+
+    <div class="cmp reveal">
+      <div class="cmp-col cmp-web2">
+        <h3>Web2 system <span class="cmp-badge">central DB</span></h3>
+        <div class="sub">Records — but ownership stays with one company</div>
+        <div class="cmp-item"><span class="ico"><svg viewBox="0 0 24 24" fill="none"><path d="M3 12h18M3 6h18M3 18h18"/></svg></span><div><div class="ci-k">Stored in a central database</div><div class="ci-v">A breach, insider edit, or admin change can rewrite history silently.</div></div></div>
+        <div class="cmp-item"><span class="ico"><svg viewBox="0 0 24 24" fill="none"><path d="M12 8v5M12 16h.01"/><circle cx="12" cy="12" r="9"/></svg></span><div><div class="ci-k">Proof depends on SGH's word</div><div class="ci-v">Customers and partners have to trust the operator's explanation.</div></div></div>
+        <div class="cmp-item"><span class="ico"><svg viewBox="0 0 24 24" fill="none"><path d="M3 12h18"/></svg></span><div><div class="ci-k">Settlement is manual</div><div class="ci-v">Invoices, reconciliation, and month-end processing dominate.</div></div></div>
+        <div class="cmp-item"><span class="ico"><svg viewBox="0 0 24 24" fill="none"><path d="M12 19V5"/></svg></span><div><div class="ci-k">Stops at the company boundary</div><div class="ci-v">Each partner needs a bespoke API integration to connect.</div></div></div>
+      </div>
+      <div class="cmp-col cmp-l1">
+        <h3>WST on FME L1 <span class="cmp-badge">proof layer</span></h3>
+        <div class="sub">Proves — and SGH owns the standard</div>
+        <div class="cmp-item"><span class="ico"><svg viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5"/></svg></span><div><div class="ci-k">Sealed in hash-linked blocks</div><div class="ci-v">Altering any record breaks the chain and is detected immediately.</div></div></div>
+        <div class="cmp-item"><span class="ico"><svg viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5"/></svg></span><div><div class="ci-k">Verifiable by transaction hash</div><div class="ci-v">"Verify it yourself" replaces "trust our system."</div></div></div>
+        <div class="cmp-item"><span class="ico"><svg viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5"/></svg></span><div><div class="ci-k">Settlement automates</div><div class="ci-v">A verified delivery event triggers the WST settlement basis directly.</div></div></div>
+        <div class="cmp-item"><span class="ico"><svg viewBox="0 0 24 24" fill="none"><path d="M20 6L9 17l-5-5"/></svg></span><div><div class="ci-k">A shared standard to build on</div><div class="ci-v">Partners and other carriers connect to one common proof layer SGH governs.</div></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Q&A -->
+<section id="qa">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="sec-eyebrow">From the SGH review</div>
+      <h2>Questions, answered.</h2>
+      <p class="sec-lede">The thirteen technical questions raised during the SGH evaluation, with direct answers grounded in the WST architecture.</p>
+    </div>
+
+    <div class="qa-wrap reveal">
+      <details class="qa">
+        <summary><span class="qa-q">1</span><span class="txt">Can one box hold many product IDs?</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></summary>
+        <div class="qa-a">
+          <p>Yes. WST links product IDs and logistics IDs not only one-to-one, but one-to-many, many-to-one, and many-to-many through a <strong>parent-child structure</strong>.</p>
+          <p>Three product IDs (a bag, a wallet, an accessory) packed into one box receive a single box-level logistics ID — for example <strong>Box-001</strong> containing IDs A, B, C. Scanning the box updates all child items; at delivery, each item can be marked delivered simultaneously.</p>
+          <ul>
+            <li>Product ID — the brand's per-item ID</li>
+            <li>Box ID — the packing-unit ID created at shipment</li>
+            <li>Logistics ID — SGH's delivery &amp; proof ID</li>
+            <li>Pallet ID — groups multiple boxes when needed</li>
+          </ul>
+        </div>
+      </details>
+
+      <details class="qa">
+        <summary><span class="qa-q">2</span><span class="txt">No scanners today — what about field workload?</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></summary>
+        <div class="qa-a">
+          <p>The PoC minimizes field load with a <strong>three-phase</strong> rollout, recording only high-value checkpoints rather than every micro-action.</p>
+          <div class="mini-table">
+            <div class="mt-row"><div class="c">Phase 1</div><div class="c">QR / 2D barcode — handheld scanner, smartphone, or tablet via API to existing terminals</div></div>
+            <div class="mt-row"><div class="c">Phase 2</div><div class="c">NFC — read the product or box NFC tag where present, link to the logistics event</div></div>
+            <div class="mt-row"><div class="c">Phase 3</div><div class="c">RFID bulk read — Avery Dennison RFID gates read many boxes at once, lowering load long-term</div></div>
+          </div>
+          <p>Only shipment, pickup, hub arrival, loading, and delivery are scanned — the events with the highest proof value.</p>
+        </div>
+      </details>
+
+      <details class="qa">
+        <summary><span class="qa-q">3</span><span class="txt">Can LVMH and SGH choose what to share?</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></summary>
+        <div class="qa-a">
+          <p>Yes — both sharing and non-sharing are supported, controlled by <strong>role-based access</strong> in the smart contracts.</p>
+          <p><strong>Shared:</strong> product / DPP reference ID, logistics ID, box ID, status, pickup / arrival / delivery times, branch codes, transaction hash, delivery-proof ID.</p>
+          <p><strong>Never on-chain:</strong> customer names, addresses, phone numbers, detailed contents, pricing, contracts, and driver personal data — these stay off-chain, with only hashes and reference IDs recorded.</p>
+        </div>
+      </details>
+
+      <details class="qa">
+        <summary><span class="qa-q">4</span><span class="txt">This works in Web2 — why own an L1?</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></summary>
+        <div class="qa-a">
+          <p>Web2 can build tracking — but it ultimately means "trust SGH's database." On WST, each event is recorded in a tamper-evident form a third party can verify later by transaction hash.</p>
+          <p>The biggest benefit: SGH becomes the <strong>owner and standard-setter</strong> of its logistics data. Riding on someone else's chain makes SGH a data supplier; owning an L1 lets SGH design Japan's logistics proof layer on its own terms — with automated settlement and DPP interoperability Web2 can't offer.</p>
+        </div>
+      </details>
+
+      <details class="qa">
+        <summary><span class="qa-q">5</span><span class="txt">How is credibility established with LVMH?</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></summary>
+        <div class="qa-a">
+          <p>Credibility rests on five pillars:</p>
+          <ul>
+            <li><strong>Permissioned PoA</strong> — only approved validators produce blocks; enterprise-manageable and auditable</li>
+            <li><strong>Signed events</strong> — each scan carries device ID, branch ID, role ID, timestamp, and event type</li>
+            <li><strong>No personal data on-chain</strong> — only minimal reference IDs and hashes</li>
+            <li><strong>Clear role split</strong> — LVMH/Aura/Avery own product authenticity; SGH owns logistics proof</li>
+            <li><strong>Auditable dashboard</strong> — SGH, LVMH, and auditors verify on-chain, not by SGH's word</li>
+          </ul>
+        </div>
+      </details>
+
+      <details class="qa">
+        <summary><span class="qa-q">6</span><span class="txt">Beyond winning LVMH, where's the revenue?</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></summary>
+        <div class="qa-a">
+          <p>LVMH is the entry point to a logistics-data business:</p>
+          <ul>
+            <li>Premium "blockchain-proof" delivery for high-value goods</li>
+            <li>DPP logistics-proof API for brands, Aura, Avery, Deloitte, insurers, resale platforms</li>
+            <li>Insurance &amp; dispute resolution using tamper-evident records</li>
+            <li>Paid audit reports for pharma, art, watches, jewelry, semiconductors</li>
+            <li>Corporate loyalty, driver rewards, and partner settlement via WST</li>
+            <li>Horizontal expansion to watches, apparel, pharma, food, spirits, cross-border EC</li>
+          </ul>
+        </div>
+      </details>
+
+      <details class="qa">
+        <summary><span class="qa-q">7</span><span class="txt">What if competing carriers use SGH's L1?</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></summary>
+        <div class="qa-a">
+          <p>That's the strongest outcome. If SGH opens the L1, it becomes the <strong>trust-infrastructure provider</strong> for the industry — not just a carrier.</p>
+          <p>SGH sets the standard, earns usage / API / proof-issuance fees, and gains leverage: brands using multiple carriers can verify them all against one standard. When regulators eventually require logistics, CO₂, temperature, and authenticity proof, the early standard-setter shapes the rules.</p>
+        </div>
+      </details>
+
+      <details class="qa">
+        <summary><span class="qa-q">8</span><span class="txt">What data can SGH analyze after the PoC?</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></summary>
+        <div class="qa-a">
+          <p>Far more than LVMH and user ratings — a tamper-proof operational baseline:</p>
+          <ul>
+            <li><strong>Operations:</strong> pickup-to-delivery time, hub dwell time, missing-scan rate, exception rate, delay patterns, per-branch speed</li>
+            <li><strong>Field load:</strong> time per scan, added worker burden, QR vs NFC vs RFID fit, label error rate</li>
+            <li><strong>Business:</strong> which proofs LVMH values, premium pricing potential, API value, expansion fit</li>
+            <li><strong>Technical:</strong> transaction volume, block speed, dashboard latency, node load, scaling needs</li>
+          </ul>
+        </div>
+      </details>
+
+      <details class="qa">
+        <summary><span class="qa-q">9</span><span class="txt">Is horizontal expansion just adding servers?</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></summary>
+        <div class="qa-a">
+          <p>Largely yes — server expansion plus per-industry app modules. The L1 base is shared; data fields, screens, and APIs are tuned per industry.</p>
+          <p><strong>Infrastructure:</strong> start small, then scale to a 7-server (enterprise pilot) or 11-server (high-availability) configuration, adding validator / RPC nodes, indexer, explorer, backup, and monitoring.</p>
+          <p><strong>Applications:</strong> luxury (DPP, authenticity, resale), pharma (temperature, lot, regulatory), food (origin, freshness), art (provenance), semiconductors (component authenticity).</p>
+        </div>
+      </details>
+
+      <details class="qa">
+        <summary><span class="qa-q">10</span><span class="txt">What apps are needed on top of the L1?</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></summary>
+        <div class="qa-a">
+          <p>The L1 is the proof base; the field uses apps. The PoC builds these as one system:</p>
+          <ul>
+            <li>Admin dashboard — status, scan history, on-chain records, exceptions</li>
+            <li>Scan-input app — QR / barcode / NFC / RFID → FME L1</li>
+            <li>Label-issuing app — logistics ID, box ID, QR / NFC / RFID labels</li>
+            <li>LVMH viewing portal — delivery status, proof, transaction hash</li>
+            <li>API layer — LVMH, Aura, Avery Dennison, Deloitte, SGH systems</li>
+            <li>Blockchain explorer — transaction ID, block, timestamp, hash</li>
+            <li>PoC reporting — history, exceptions, scan rate, proof export</li>
+          </ul>
+        </div>
+      </details>
+
+      <details class="qa">
+        <summary><span class="qa-q">11</span><span class="txt">Can you build the apps — and what does the PoC cost?</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></summary>
+        <div class="qa-a">
+          <p>Yes. The recommended <strong>Standard PoA PoC package</strong> includes the FME L1 demo environment, smart contracts, product↔logistics linking, QR/barcode scanning, NFC/RFID integration design, label issuing, admin dashboard, LVMH portal, explorer, API design, PoC server environment, demo hardware (2D scanners, label printer), internal testing in Los Angeles, Japan demo prep, a PoC report, and a production roadmap — over roughly <strong>10–14 weeks</strong>.</p>
+          <p><em>Pricing to be confirmed separately. Possible additional items: on-site travel/demo, SGH system API integration, external integration with LVMH/Aura/Avery/Deloitte, RFID gates, production servers, security audit, legal/compliance review, localization, and ongoing operations.</em></p>
+        </div>
+      </details>
+
+      <details class="qa">
+        <summary><span class="qa-q">12</span><span class="txt">What exactly is the product ID?</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></summary>
+        <div class="qa-a">
+          <p>A unique per-item ID assigned by the brand — for each bag, wallet, watch, or garment — potentially carrying brand, category, serial, lot, country, factory, materials, DPP reference, authenticity proof, repair history, ownership, and sustainability data.</p>
+          <p>It's read via QR, NFC, RFID, 2D code, Avery Dennison digital-ID labels, or Aura DPP tags. Where LVMH products already carry these, <strong>SGH doesn't create a new product ID</strong> — it references the existing one and links it to the SGH logistics ID. SGH's job is the logistics ID and the proof events.</p>
+        </div>
+      </details>
+
+      <details class="qa">
+        <summary><span class="qa-q">13</span><span class="txt">If the product ID proves authenticity, why a logistics ID?</span><svg class="chev" viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></summary>
+        <div class="qa-a">
+          <p>They answer different questions. The <strong>product ID</strong> proves "this is a genuine LVMH item." The <strong>logistics ID</strong> proves "that genuine item travelled the right route, through the right hands, to the right recipient."</p>
+          <p>Product ID alone can't show when SGH collected it, which hubs it passed, which box it was in, which driver carried it, whether delay / damage / substitution occurred, who finally received it, or the point-of-liability for a claim.</p>
+          <p>Linking both on WST gives LVMH not just authenticity proof, but trust across the entire logistics process — the foundation for anti-substitution, insurance, resale history, and audit.</p>
+        </div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- ROADMAP -->
+<section id="roadmap" style="background:var(--paper-2)">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <div class="sec-eyebrow">Phased rollout</div>
+      <h2>Start small. Prove value. Own the standard.</h2>
+      <p class="sec-lede">From a one-month mikan pilot to a logistics proof platform SGH offers to outside companies — each phase de-risks the next.</p>
+    </div>
+    <div class="road reveal">
+      <div class="road-item now">
+        <div class="road-dot"></div>
+        <div class="road-ph">PHASE 1</div>
+        <h4>Mikan PoC</h4>
+        <p>Shizuoka mikan traceability + settlement simulation.</p>
+        <span class="tag">Now</span>
+      </div>
+      <div class="road-item">
+        <div class="road-dot"></div>
+        <div class="road-ph">PHASE 2</div>
+        <h4>Premium goods</h4>
+        <p>Luxury fruit, chilled, furusato-nozei gifts.</p>
+      </div>
+      <div class="road-item">
+        <div class="road-dot"></div>
+        <div class="road-ph">PHASE 3</div>
+        <h4>High-value</h4>
+        <p>Pharma, cosmetics, and LVMH luxury goods.</p>
+      </div>
+      <div class="road-item">
+        <div class="road-dot"></div>
+        <div class="road-ph">PHASE 4</div>
+        <h4>Settlement</h4>
+        <p>Driver &amp; partner settlement integration.</p>
+      </div>
+      <div class="road-item">
+        <div class="road-dot"></div>
+        <div class="road-ph">PHASE 5</div>
+        <h4>Instant pay</h4>
+        <p>Stablecoin or bank-API real-time settlement.</p>
+      </div>
+      <div class="road-item">
+        <div class="road-dot"></div>
+        <div class="road-ph">PHASE 6</div>
+        <h4>Platform</h4>
+        <p>Offered to outside companies as proof infra.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-sec" id="contact">
+  <div class="wrap">
+    <div class="cta-card reveal">
+      <div class="cta-in">
+        <div class="sec-eyebrow" style="color:var(--teal)">Next step</div>
+        <h2>Turn the proof layer into a pilot.</h2>
+        <p>WST is the first step toward SGH owning Japan's logistics trust infrastructure — beginning with a low-risk, real-world delivery pilot that keeps field load light while proving the full model.</p>
+        <div class="cta-btns">
+          <a href="mailto:contact@aucfans.com" class="btn btn-teal">Request the PoC brief
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+          </a>
+          <a href="#token" class="btn btn-out">Review token details</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <div class="foot-brand"><span class="mark"></span>World Supply Token</div>
+        <p class="foot-about">The proof layer for physical logistics. WST records every delivery milestone as a signed, tamper-evident event on FME Layer 1 — built for Sagawa Holdings, interoperable with Aura DPP and Avery Dennison RFID/NFC/QR.</p>
+      </div>
+      <div class="foot-col">
+        <h5>Explore</h5>
+        <a href="#layers">Architecture</a>
+        <a href="#token">Token spec</a>
+        <a href="#usecases">Use cases</a>
+        <a href="#why">Why L1</a>
+        <a href="#qa">Q&amp;A</a>
+      </div>
+      <div class="foot-col">
+        <h5>Contracts · FME L1</h5>
+        <a href="#token">Proxy 0x40196d…8926</a>
+        <a href="#token">Impl 0xA1b21D…5f7E</a>
+        <a href="#token">Owner 0x054dbB…22D5</a>
+        <a href="#contact">Contact</a>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <p>© 2026 World Supply Token · wst.aucfans.com · Prepared by FME, Inc.</p>
+      <span class="chain-id">Network: FME L1 · WST · 18 decimals</span>
+    </div>
+    <p class="disclaimer">Confidential draft for executive discussion. WST is presented as enterprise utility / settlement infrastructure, not as a public speculative cryptocurrency or an offer of securities. In Phase 1 it operates as an internal utility and settlement credit tied to verified logistics milestones; any future public token, exchange listing, or redeemable-value structure would require separate legal and regulatory review. Brand names (LVMH, Aura, Avery Dennison, Deloitte, Sagawa) refer to interoperability targets and publicly described programs; they do not imply endorsement or a partnership unless separately agreed.</p>
+  </div>
+</footer>
+
+<script>
+// copy buttons
+document.querySelectorAll('.copy-btn').forEach(btn=>{
+  btn.addEventListener('click',async()=>{
+    const t=btn.getAttribute('data-copy');
+    try{
+      await navigator.clipboard.writeText(t);
+    }catch(e){
+      const ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();
+      try{document.execCommand('copy')}catch(_){}document.body.removeChild(ta);
+    }
+    const orig=btn.innerHTML;
+    btn.classList.add('copied');
+    btn.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>';
+    setTimeout(()=>{btn.classList.remove('copied');btn.innerHTML=orig;},1400);
+  });
+});
+
+// use case tabs
+document.querySelectorAll('.uc-tab').forEach(tab=>{
+  tab.addEventListener('click',()=>{
+    const uc=tab.getAttribute('data-uc');
+    document.querySelectorAll('.uc-tab').forEach(t=>t.classList.remove('active'));
+    tab.classList.add('active');
+    document.querySelectorAll('.uc-panel').forEach(p=>{
+      p.classList.toggle('active',p.getAttribute('data-panel')===uc);
+    });
+  });
+});
+
+// reveal on scroll
+const io=new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});
+},{threshold:.12,rootMargin:'0px 0px -40px 0px'});
+document.querySelectorAll('.reveal').forEach(el=>io.observe(el));
+
+// nav shadow on scroll
+const nav=document.querySelector('nav');
+addEventListener('scroll',()=>{
+  nav.style.boxShadow=scrollY>10?'0 1px 20px rgba(11,27,63,.06)':'none';
+});
+</script>
+</body>
+</html>
