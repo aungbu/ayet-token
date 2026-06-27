@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TrueLayer1 — QR コード生成 / QR Codes</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:system-ui,-apple-system,"Hiragino Kaku Gothic ProN","Noto Sans JP",Meiryo,sans-serif;background:#0B1435;color:#fff;line-height:1.6;min-height:100vh}
+.bar{background:#0B1435;padding:18px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.08)}
+.brand{font-size:18px;font-weight:700}
+.brand .t{color:#0D9488}
+.brand-sub{font-size:10px;color:rgba(255,255,255,.55);margin-top:2px}
+.nav a{color:rgba(255,255,255,.6);font-size:12px;text-decoration:none;margin-left:14px}
+.nav a:hover{color:#fff}
+.wrap{max-width:920px;margin:0 auto;padding:24px 18px 56px}
+.title{font-size:20px;font-weight:700;margin-bottom:4px}
+.sub{font-size:12px;color:rgba(255,255,255,.5);margin-bottom:8px}
+.howto{background:rgba(13,148,136,.12);border:1px solid rgba(13,148,136,.3);border-radius:8px;padding:12px 14px;font-size:12px;color:#a7f3e8;margin-bottom:20px;line-height:1.6}
+.howto b{color:#fff}
+.state{padding:50px 20px;text-align:center;color:rgba(255,255,255,.6);font-size:13px}
+.spinner{display:inline-block;width:28px;height:28px;border:3px solid rgba(255,255,255,.2);border-top-color:#0D9488;border-radius:50%;animation:spin .8s linear infinite;margin-bottom:14px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:16px}
+.qcard{background:#fff;color:#1e293b;border-radius:12px;padding:16px;text-align:center}
+.qcard .qr{background:#fff;border-radius:8px;padding:8px;display:inline-block;margin-bottom:10px}
+.qcard .qr img,.qcard .qr canvas{display:block;width:170px;height:170px}
+.qcard .sku{font-size:13px;font-weight:700;color:#0f172a}
+.qcard .id{font-size:10px;font-family:monospace;color:#64748b;margin:2px 0 6px;word-break:break-all}
+.qcard .ed{font-size:11px;color:#0D9488;font-weight:600;margin-bottom:10px}
+.qbtns{display:flex;gap:6px;justify-content:center}
+.qbtn{flex:1;font-size:11px;font-weight:600;border:none;border-radius:6px;padding:7px;cursor:pointer}
+.qbtn.print{background:#0B1435;color:#fff}
+.qbtn.open{background:#0D9488;color:#fff}
+.err{color:#fca5a5;font-size:12px;text-align:center;padding:40px 20px}
+.foot{text-align:center;font-size:10px;color:rgba(255,255,255,.4);padding-top:24px}
+/* print: only show the one card being printed */
+@media print{
+  body{background:#fff}
+  .bar,.nav,.howto,.title,.sub,.foot,.qbtns{display:none!important}
+  .wrap{padding:0}
+  .grid{display:block}
+  .qcard{break-inside:avoid;box-shadow:none;border:1px solid #ddd;page-break-after:always;max-width:300px;margin:0 auto}
+  .qcard.print-hide{display:none!important}
+}
+</style>
+</head>
+<body>
+<div class="bar">
+  <div>
+    <div class="brand">True<span class="t">Layer1</span></div>
+    <div class="brand-sub">QR コード生成 / QR Code Generator</div>
+  </div>
+  <div class="nav"><a href="/products-list/">Products</a><a href="/scan/">Scan</a></div>
+</div>
+
+<div class="wrap">
+  <div class="title">QR コード <span style="font-size:14px;font-weight:400;color:rgba(255,255,255,.6)">Product QR Codes</span></div>
+  <div class="sub">各製品のQRコード &middot; One QR code per registered product</div>
+
+  <div class="howto">
+    <b>使い方 / How to test:</b> スマホのカメラを QR コードに向けてください → 製品パスポートが開きます。<br>
+    Point your phone camera at any QR code below → the product passport opens. Tap <b>Print</b> to print one and stick it on a box.
+  </div>
+
+  <div id="content">
+    <div class="state"><div class="spinner"></div><br>製品を読み込み中...<br><span style="font-size:11px">Loading products from chain...</span></div>
+  </div>
+
+  <div class="foot">TrueLayer1 &middot; Powered by FME Layer1</div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.13.4/ethers.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+const RPC = "https://l1.aucfans.com/rpc/";
+const CONTRACT = "0xc29485B66eCA4F029af7cFd24af5B9f8826BCB1b";
+const BASE_URL = "https://dpp.truel1.com/";
+const provider = new ethers.JsonRpcProvider(RPC);
+const ABI = [
+  "function totalDPPs() view returns (uint256)",
+  "function dppIds(uint256) view returns (string)",
+  "function products(string) view returns (string sku, uint256 edition, uint256 totalEditions, string batch, string origin, uint256 createdAt, bool exists)"
+];
+function esc(s){ return String(s).replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+function fmtNum(n){ return Number(n).toLocaleString(); }
+
+function printCard(idx){
+  // hide all cards except the one being printed
+  document.querySelectorAll('.qcard').forEach((c,i)=>{
+    c.classList.toggle('print-hide', i!==idx);
+  });
+  window.print();
+  setTimeout(()=>{ document.querySelectorAll('.qcard').forEach(c=>c.classList.remove('print-hide')); }, 500);
+}
+
+async function main(){
+  try{
+    const c = new ethers.Contract(CONTRACT, ABI, provider);
+    const total = Number(await c.totalDPPs());
+    if(total === 0){
+      document.getElementById("content").innerHTML = '<div class="state">製品がありません / No products yet.</div>';
+      return;
+    }
+    const ids = [];
+    for(let i=0;i<total;i++){ ids.push(await c.dppIds(i)); }
+    const products = await Promise.all(ids.map(async id=>{
+      try{ const p = await c.products(id); return p.exists ? {id, p} : null; }catch(e){ return null; }
+    }));
+
+    // build empty cards first
+    const container = document.createElement("div");
+    container.className = "grid";
+    let html = "";
+    products.filter(Boolean).forEach((item, i)=>{
+      const {id, p} = item;
+      html += '<div class="qcard">' +
+        '<div class="qr" id="qr-'+i+'"></div>' +
+        '<div class="sku">' + esc(p.sku) + '</div>' +
+        '<div class="id">' + esc(id) + '</div>' +
+        '<div class="ed">限定版 #' + fmtNum(p.edition) + ' / ' + fmtNum(p.totalEditions) + '</div>' +
+        '<div class="qbtns">' +
+        '<button class="qbtn print" onclick="printCard('+i+')">Print</button>' +
+        '<button class="qbtn open" onclick="window.open(\'' + BASE_URL + encodeURIComponent(id) + '\',\'_blank\')">Open</button>' +
+        '</div></div>';
+    });
+    document.getElementById("content").innerHTML = '<div class="grid">' + html + '</div>';
+
+    // render QR codes into each slot
+    products.filter(Boolean).forEach((item, i)=>{
+      const url = BASE_URL + encodeURIComponent(item.id);
+      new QRCode(document.getElementById("qr-"+i), {
+        text: url, width:170, height:170,
+        colorDark:"#0B1435", colorLight:"#ffffff",
+        correctLevel: QRCode.CorrectLevel.M
+      });
+    });
+  }catch(e){
+    console.error(e);
+    document.getElementById("content").innerHTML = '<div class="err">読み込みエラー / Could not load.<br>' + esc(e.message||e) + '</div>';
+  }
+}
+main();
+</script>
+</body>
+</html>
