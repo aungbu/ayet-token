@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TrueLayer1 — 登録製品一覧 / All Products</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:system-ui,-apple-system,"Hiragino Kaku Gothic ProN","Noto Sans JP",Meiryo,sans-serif;background:#0B1435;color:#fff;line-height:1.6;min-height:100vh}
+.bar{background:#0B1435;padding:18px 20px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.08)}
+.brand{font-size:18px;font-weight:700}
+.brand .t{color:#0D9488}
+.brand-sub{font-size:10px;color:rgba(255,255,255,.55);margin-top:2px}
+.nav a{color:rgba(255,255,255,.6);font-size:12px;text-decoration:none;margin-left:14px}
+.nav a:hover{color:#fff}
+.wrap{max-width:920px;margin:0 auto;padding:24px 18px 56px}
+.head{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:6px;flex-wrap:wrap;gap:8px}
+.title{font-size:20px;font-weight:700}
+.count{font-size:13px;color:#0D9488;font-weight:600}
+.sub{font-size:12px;color:rgba(255,255,255,.5);margin-bottom:20px}
+.state{padding:50px 20px;text-align:center;color:rgba(255,255,255,.6);font-size:13px}
+.spinner{display:inline-block;width:28px;height:28px;border:3px solid rgba(255,255,255,.2);border-top-color:#0D9488;border-radius:50%;animation:spin .8s linear infinite;margin-bottom:14px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+.card{background:#fff;color:#1e293b;border-radius:12px;overflow:hidden;text-decoration:none;display:block;transition:transform .12s,box-shadow .12s}
+.card:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,.25)}
+.card-top{background:linear-gradient(135deg,#1a2a5e,#0D9488);padding:14px 16px;color:#fff;position:relative}
+.card-check{position:absolute;top:12px;right:14px;background:rgba(255,255,255,.2);border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:13px}
+.card-sku{font-size:15px;font-weight:700}
+.card-id{font-size:11px;font-family:monospace;opacity:.85;margin-top:3px}
+.card-body{padding:13px 16px}
+.card-ed{font-size:13px;color:#0D9488;font-weight:600;margin-bottom:8px}
+.card-row{display:flex;justify-content:space-between;font-size:11px;padding:2px 0}
+.card-k{color:#94a3b8}
+.card-v{color:#0f172a;font-weight:500;text-align:right}
+.card-foot{border-top:1px solid #f1f5f9;padding:9px 16px;font-size:11px;color:#0D9488;display:flex;justify-content:space-between;align-items:center}
+.badge{display:inline-block;font-size:9px;font-weight:700;background:#d1fae5;color:#065f46;padding:2px 8px;border-radius:9px}
+.err{color:#fca5a5;font-size:12px;text-align:center;padding:40px 20px}
+.foot{text-align:center;font-size:10px;color:rgba(255,255,255,.4);padding-top:24px}
+</style>
+</head>
+<body>
+<div class="bar">
+  <div>
+    <div class="brand">True<span class="t">Layer1</span></div>
+    <div class="brand-sub">デジタルプロダクトパスポート</div>
+  </div>
+  <div class="nav"><a href="/">Passport</a><a href="/scan/">Token Scan</a></div>
+</div>
+
+<div class="wrap">
+  <div class="head">
+    <div class="title">登録製品一覧 <span style="font-size:14px;font-weight:400;color:rgba(255,255,255,.6)">All Registered Products</span></div>
+    <div class="count" id="count"></div>
+  </div>
+  <div class="sub">FME Layer1 ブロックチェーンから直接読み込み &middot; Read live from chain</div>
+
+  <div id="content">
+    <div class="state"><div class="spinner"></div><br>ブロックチェーンから読み込み中...<br><span style="font-size:11px">Loading from FME Layer1...</span></div>
+  </div>
+
+  <div class="foot">TrueLayer1 &middot; Powered by FME Layer1</div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.13.4/ethers.umd.min.js"></script>
+<script>
+const RPC = "https://l1.aucfans.com/rpc/";
+const CONTRACT = "0xc29485B66eCA4F029af7cFd24af5B9f8826BCB1b";
+const provider = new ethers.JsonRpcProvider(RPC);
+const ABI = [
+  "function totalDPPs() view returns (uint256)",
+  "function dppIds(uint256) view returns (string)",
+  "function products(string) view returns (string sku, uint256 edition, uint256 totalEditions, string batch, string origin, uint256 createdAt, bool exists)",
+  "function licenses(string) view returns (string ipHolder, string licensee, string territory, string licenseNo, uint256 registeredAt, bool exists)"
+];
+function esc(s){ return String(s).replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+function fmtNum(n){ return Number(n).toLocaleString(); }
+
+async function main(){
+  try{
+    const c = new ethers.Contract(CONTRACT, ABI, provider);
+    const total = Number(await c.totalDPPs());
+    document.getElementById("count").textContent = total + " 製品 / products";
+
+    if(total === 0){
+      document.getElementById("content").innerHTML = '<div class="state">まだ製品が登録されていません。<br>No products registered yet.</div>';
+      return;
+    }
+
+    // fetch all IDs
+    const ids = [];
+    for(let i=0;i<total;i++){ ids.push(await c.dppIds(i)); }
+
+    // fetch product + license for each
+    const cards = await Promise.all(ids.map(async (id)=>{
+      try{
+        const [p, lic] = await Promise.all([ c.products(id), c.licenses(id) ]);
+        if(!p.exists) return "";
+        return '<a class="card" href="/' + encodeURIComponent(id) + '">' +
+          '<div class="card-top"><div class="card-check">&#10003;</div>' +
+          '<div class="card-sku">' + esc(p.sku) + '</div>' +
+          '<div class="card-id">' + esc(id) + '</div></div>' +
+          '<div class="card-body">' +
+          '<div class="card-ed">限定版 #' + fmtNum(p.edition) + ' / ' + fmtNum(p.totalEditions) + '</div>' +
+          '<div class="card-row"><span class="card-k">原産地</span><span class="card-v">' + esc(p.origin) + '</span></div>' +
+          (lic.exists ? '<div class="card-row"><span class="card-k">IPホルダー</span><span class="card-v">' + esc(lic.ipHolder) + '</span></div>' : '') +
+          (lic.exists ? '<div class="card-row"><span class="card-k">正規製造</span><span class="card-v">' + esc(lic.licensee) + '</span></div>' : '') +
+          '</div>' +
+          '<div class="card-foot"><span class="badge">&#10003; 正規認証</span><span>パスポートを見る &#8594;</span></div>' +
+          '</a>';
+      }catch(e){ return ""; }
+    }));
+
+    document.getElementById("content").innerHTML = '<div class="grid">' + cards.join("") + '</div>';
+  }catch(e){
+    console.error(e);
+    document.getElementById("content").innerHTML = '<div class="err">読み込みエラー / Could not read from chain.<br>' + esc(e.message||e) + '</div>';
+  }
+}
+main();
+</script>
+</body>
+</html>
