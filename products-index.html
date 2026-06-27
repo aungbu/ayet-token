@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TrueLayer1 — Bulk Product Upload</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;background:#0B1435;color:#1e293b;line-height:1.6}
+.bar{background:#0B1435;color:#fff;padding:16px 20px;display:flex;align-items:center;justify-content:space-between}
+.bar .b{font-size:18px;font-weight:700}
+.bar .b .t{color:#0D9488}
+.bar .nav a{color:rgba(255,255,255,.65);font-size:12px;text-decoration:none;margin-left:16px}
+.bar .nav a:hover{color:#fff}
+.wrap{max-width:1040px;margin:0 auto;padding:22px 18px 60px}
+.panel{background:#fff;border-radius:12px;padding:20px;margin-bottom:18px}
+.panel h2{font-size:15px;color:#0B1435;margin-bottom:4px}
+.panel .hint{font-size:12px;color:#94a3b8;margin-bottom:16px}
+.drop{border:2px dashed #cbd5e1;border-radius:10px;padding:26px;text-align:center;color:#64748b;font-size:13px;cursor:pointer;transition:.15s}
+.drop:hover{border-color:#0D9488;background:#f0fdfa}
+.drop .big{font-size:15px;color:#0f172a;font-weight:600;margin-bottom:4px}
+textarea{width:100%;border:1px solid #cbd5e1;border-radius:8px;padding:11px;font-family:monospace;font-size:11px;min-height:120px;margin-top:12px;resize:vertical}
+textarea:focus{outline:none;border-color:#0D9488}
+.btn{background:#0D9488;color:#fff;border:none;border-radius:7px;padding:10px 20px;font-size:13px;font-weight:600;cursor:pointer;margin-top:12px}
+.btn:hover{background:#0b7d72}
+.btn.sec{background:#e2e8f0;color:#475569}
+.summary{display:flex;gap:12px;margin:16px 0}
+.sc{flex:1;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;padding:12px;text-align:center}
+.sc .n{font-size:22px;font-weight:700;color:#0f172a}
+.sc .l{font-size:11px;color:#64748b;margin-top:2px}
+.sc.ok .n{color:#059669}
+.sc.warn .n{color:#d97706}
+.sc.err .n{color:#dc2626}
+table{width:100%;border-collapse:collapse;font-size:11px;margin-top:8px}
+th{background:#0B1435;color:#fff;padding:7px 8px;text-align:left;font-weight:600;font-size:10px;position:sticky;top:0}
+td{padding:6px 8px;border-bottom:1px solid #f1f5f9}
+tr.bad td{background:#fef2f2}
+.tablewrap{max-height:300px;overflow:auto;border:1px solid #e2e8f0;border-radius:8px;margin-top:8px}
+.pill{display:inline-block;font-size:9px;font-weight:600;padding:1px 7px;border-radius:9px}
+.pill.good{background:#d1fae5;color:#065f46}
+.pill.dup{background:#fef3c7;color:#92400e}
+.pill.miss{background:#fee2e2;color:#991b1b}
+.out-label{font-size:11px;font-weight:600;color:#475569;margin:14px 0 5px;display:flex;justify-content:space-between;align-items:center}
+.copy-btn{background:#0D9488;color:#fff;border:none;border-radius:5px;padding:4px 12px;font-size:11px;font-weight:600;cursor:pointer}
+.out{background:#0f172a;color:#7dd3c8;border-radius:8px;padding:12px;font-family:monospace;font-size:11px;white-space:pre-wrap;word-break:break-all;line-height:1.5}
+.steps{background:#f0fdfa;border-radius:8px;padding:12px 14px;font-size:11.5px;color:#134e4a;margin-top:14px;line-height:1.6}
+.steps b{color:#0f766e}
+.note{background:#fef3c7;border-left:3px solid #d97706;border-radius:6px;padding:10px 12px;font-size:11px;color:#78350f;margin-top:14px;line-height:1.5}
+.hdr-row{font-size:11px;color:#475569;background:#f8fafc;padding:8px 10px;border-radius:6px;font-family:monospace;margin-bottom:8px;word-break:break-all}
+</style>
+</head>
+<body>
+<div class="bar">
+  <div class="b">True<span class="t">Layer1</span> · Bulk CSV Upload</div>
+  <div class="nav"><a href="/">Passport</a><a href="/scan/">Scan</a><a href="/manual/">Manual Entry</a></div>
+</div>
+
+<div class="wrap">
+  <div class="panel">
+    <h2>Upload Products CSV</h2>
+    <div class="hint">Drop a CSV file or paste rows below. Products are previewed and checked — nothing is written until you run the command on your server.</div>
+
+    <div class="hdr-row">Expected columns: dppId,sku,edition,totalEditions,batch,origin,ipHolder,licensee,territory,licenseNo,nfcId</div>
+
+    <div class="drop" id="drop" onclick="document.getElementById('file').click()">
+      <div class="big">Drop CSV here or click to choose a file</div>
+      <div>or paste rows in the box below</div>
+    </div>
+    <input type="file" id="file" accept=".csv,text/csv" style="display:none">
+    <textarea id="csvText" placeholder="Paste CSV rows here (including the header row)..." oninput="parseCsv()"></textarea>
+    <button class="btn" onclick="parseCsv()">Preview &amp; Check</button>
+  </div>
+
+  <div class="panel" id="resultPanel" style="display:none">
+    <h2>Preview</h2>
+    <div class="hint">Check for typos and missing fields before registering.</div>
+    <div class="summary">
+      <div class="sc"><div class="n" id="s_total">0</div><div class="l">Total rows</div></div>
+      <div class="sc ok"><div class="n" id="s_ok">0</div><div class="l">Ready to register</div></div>
+      <div class="sc err"><div class="n" id="s_bad">0</div><div class="l">Missing required field</div></div>
+    </div>
+    <div class="tablewrap">
+      <table id="tbl"><thead><tr>
+        <th>Status</th><th>DPP ID</th><th>SKU</th><th>Ed.</th><th>IP Holder</th><th>Licensee</th><th>NFC</th>
+      </tr></thead><tbody id="tbody"></tbody></table>
+    </div>
+
+    <div class="out-label"><span>1. Clean CSV (save as products.csv)</span><button class="copy-btn" onclick="copyText('csvOut')">Copy</button></div>
+    <div class="out" id="csvOut"></div>
+
+    <div class="out-label"><span>2. Commands to upload &amp; register on the server</span><button class="copy-btn" onclick="copyText('cmdOut')">Copy</button></div>
+    <div class="out" id="cmdOut"></div>
+
+    <div class="steps">
+      <b>How to register all these products:</b><br>
+      1. Copy the clean CSV (button 1). On GitHub, update your <b>products.csv</b> with it, commit.<br>
+      2. On your server, run the commands from button 2 — they pull the CSV and run the batch script.<br>
+      3. It registers every new product on FME Layer1 and prints each tx hash.<br>
+      4. Already-registered products are skipped automatically.
+    </div>
+    <div class="note">
+      <b>Security note:</b> This page only previews and builds commands. Your private key never leaves the server — the blockchain write runs there.
+    </div>
+  </div>
+</div>
+
+<script>
+const EXPECTED = ["dppId","sku","edition","totalEditions","batch","origin","ipHolder","licensee","territory","licenseNo","nfcId"];
+const REQUIRED = ["dppId","sku","edition","ipHolder"];
+
+const drop = document.getElementById('drop');
+const fileInput = document.getElementById('file');
+
+drop.addEventListener('dragover', e=>{ e.preventDefault(); drop.style.borderColor='#0D9488'; });
+drop.addEventListener('dragleave', ()=>{ drop.style.borderColor='#cbd5e1'; });
+drop.addEventListener('drop', e=>{
+  e.preventDefault(); drop.style.borderColor='#cbd5e1';
+  const f = e.dataTransfer.files[0];
+  if(f) readFile(f);
+});
+fileInput.addEventListener('change', e=>{ if(e.target.files[0]) readFile(e.target.files[0]); });
+
+function readFile(f){
+  const r = new FileReader();
+  r.onload = ()=>{ document.getElementById('csvText').value = r.result; parseCsv(); };
+  r.readAsText(f);
+}
+
+function parseCsv(){
+  const raw = document.getElementById('csvText').value.trim();
+  if(!raw){ document.getElementById('resultPanel').style.display='none'; return; }
+
+  const lines = raw.split(/\r?\n/).filter(l=>l.trim());
+  let start = 0;
+  // detect header
+  if(lines[0].toLowerCase().includes('dppid')) start = 1;
+
+  const rows = [];
+  for(let i=start;i<lines.length;i++){
+    const c = lines[i].split(',').map(x=>x.trim());
+    const row = {};
+    EXPECTED.forEach((k,idx)=> row[k] = c[idx]||'');
+    const missing = REQUIRED.filter(k=>!row[k]);
+    row._ok = missing.length===0;
+    rows.push(row);
+  }
+
+  // render
+  const tbody = document.getElementById('tbody');
+  tbody.innerHTML = '';
+  let okN=0, badN=0;
+  rows.forEach(r=>{
+    if(r._ok) okN++; else badN++;
+    const tr = document.createElement('tr');
+    if(!r._ok) tr.className='bad';
+    const status = r._ok ? '<span class="pill good">ready</span>' : '<span class="pill miss">missing</span>';
+    tr.innerHTML = '<td>'+status+'</td><td>'+r.dppId+'</td><td>'+r.sku+'</td><td>'+r.edition+'</td><td>'+r.ipHolder+'</td><td>'+r.licensee+'</td><td>'+r.nfcId+'</td>';
+    tbody.appendChild(tr);
+  });
+
+  document.getElementById('s_total').textContent = rows.length;
+  document.getElementById('s_ok').textContent = okN;
+  document.getElementById('s_bad').textContent = badN;
+
+  // clean CSV
+  const csv = [EXPECTED.join(',')].concat(
+    rows.filter(r=>r._ok).map(r=> EXPECTED.map(k=>r[k]).join(','))
+  ).join('\n');
+  document.getElementById('csvOut').textContent = csv;
+
+  // commands
+  const cmd =
+'# On the server — pull updated CSV from GitHub and register:\n' +
+'cd /tmp && rm -rf pull-products\n' +
+'git clone https://github.com/aungbu/ayet-token.git pull-products\n' +
+'cp /tmp/pull-products/products.csv /opt/FME/contracts/truelayer1-dpp/scripts/\n' +
+'rm -rf /tmp/pull-products\n' +
+'cd /opt/FME/contracts/truelayer1-dpp\n' +
+'npx hardhat run scripts/add-products.js --network fme';
+  document.getElementById('cmdOut').textContent = cmd;
+
+  document.getElementById('resultPanel').style.display='block';
+}
+
+function copyText(id){
+  const t = document.getElementById(id).textContent;
+  navigator.clipboard.writeText(t).then(()=>{
+    event.target.textContent = "Copied!";
+    setTimeout(()=>{ event.target.textContent = "Copy"; }, 1200);
+  });
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TrueLayer1 — Manual Product Entry</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:system-ui,-apple-system,"Helvetica Neue",Arial,sans-serif;background:#0B1435;color:#1e293b;line-height:1.6}
+.bar{background:#0B1435;color:#fff;padding:16px 20px;display:flex;align-items:center;justify-content:space-between}
+.bar .b{font-size:18px;font-weight:700}
+.bar .b .t{color:#0D9488}
+.bar .nav a{color:rgba(255,255,255,.65);font-size:12px;text-decoration:none;margin-left:16px}
+.bar .nav a:hover{color:#fff}
+.wrap{max-width:980px;margin:0 auto;padding:22px 18px 60px;display:grid;grid-template-columns:1fr 1fr;gap:22px}
+@media(max-width:760px){.wrap{grid-template-columns:1fr}}
+.panel{background:#fff;border-radius:12px;padding:20px}
+.panel h2{font-size:14px;color:#0B1435;margin-bottom:4px}
+.panel .hint{font-size:11px;color:#94a3b8;margin-bottom:16px}
+.field{margin-bottom:13px}
+.field label{display:block;font-size:11px;color:#475569;font-weight:600;margin-bottom:4px}
+.field label .req{color:#dc2626}
+.field input{width:100%;border:1px solid #cbd5e1;border-radius:7px;padding:9px 11px;font-size:13px;font-family:inherit}
+.field input:focus{outline:none;border-color:#0D9488}
+.field .ex{font-size:10px;color:#94a3b8;margin-top:3px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+/* preview passport */
+.pp{border:1px solid #e2e8f0;border-radius:10px;overflow:hidden;margin-bottom:16px}
+.pp-verify{background:#059669;color:#fff;text-align:center;padding:14px}
+.pp-verify .ic{font-size:24px}
+.pp-verify .big{font-size:15px;font-weight:700;margin-top:3px}
+.pp-sec{padding:11px 14px;border-bottom:1px solid #f1f5f9;font-size:12px}
+.pp-sec:last-child{border-bottom:none}
+.pp-row{display:flex;justify-content:space-between;padding:2px 0}
+.pp-k{color:#64748b}
+.pp-v{color:#0f172a;font-weight:500;text-align:right}
+.pp-name{font-size:14px;font-weight:700;color:#0f172a}
+.pp-ed{color:#0D9488;font-weight:600;font-size:12px}
+/* output */
+.out-label{font-size:11px;font-weight:600;color:#475569;margin:14px 0 5px;display:flex;justify-content:space-between;align-items:center}
+.copy-btn{background:#0D9488;color:#fff;border:none;border-radius:5px;padding:4px 12px;font-size:11px;font-weight:600;cursor:pointer}
+.copy-btn:hover{background:#0b7d72}
+.out{background:#0f172a;color:#7dd3c8;border-radius:8px;padding:12px;font-family:monospace;font-size:11px;white-space:pre-wrap;word-break:break-all;line-height:1.5}
+.note{background:#fef3c7;border-left:3px solid #d97706;border-radius:6px;padding:10px 12px;font-size:11px;color:#78350f;margin-top:14px;line-height:1.5}
+.steps{background:#f0fdfa;border-radius:8px;padding:12px 14px;font-size:11.5px;color:#134e4a;margin-top:14px;line-height:1.6}
+.steps b{color:#0f766e}
+</style>
+</head>
+<body>
+<div class="bar">
+  <div class="b">True<span class="t">Layer1</span> · Manual Entry</div>
+  <div class="nav"><a href="/">Passport</a><a href="/scan/">Scan</a><a href="/products/">Bulk CSV</a></div>
+</div>
+
+<div class="wrap">
+  <!-- LEFT: form -->
+  <div class="panel">
+    <h2>Add One Product</h2>
+    <div class="hint">Fill in the details. The preview and commands update live. Nothing is written until you run the command on the server.</div>
+
+    <div class="field">
+      <label>DPP ID <span class="req">*</span></label>
+      <input id="f_dppId" value="JIP-DLX-002001" oninput="update()">
+      <div class="ex">Format: BRAND-TYPE-NUMBER (this becomes the passport URL)</div>
+    </div>
+    <div class="two">
+      <div class="field">
+        <label>SKU <span class="req">*</span></label>
+        <input id="f_sku" value="JIP-DLX" oninput="update()">
+      </div>
+      <div class="field">
+        <label>Origin</label>
+        <input id="f_origin" value="Tokyo Japan" oninput="update()">
+        <div class="ex">No commas</div>
+      </div>
+    </div>
+    <div class="two">
+      <div class="field">
+        <label>Edition # <span class="req">*</span></label>
+        <input id="f_edition" type="number" value="2001" oninput="update()">
+      </div>
+      <div class="field">
+        <label>Total Editions</label>
+        <input id="f_total" type="number" value="10000" oninput="update()">
+      </div>
+    </div>
+    <div class="field">
+      <label>Batch</label>
+      <input id="f_batch" value="BATCH-2026-06" oninput="update()">
+    </div>
+    <div class="field">
+      <label>IP Holder <span class="req">*</span></label>
+      <input id="f_ipHolder" value="Publisher Alpha" oninput="update()">
+      <div class="ex">No commas</div>
+    </div>
+    <div class="field">
+      <label>Licensed Manufacturer</label>
+      <input id="f_licensee" value="Licensed Maker A" oninput="update()">
+      <div class="ex">No commas</div>
+    </div>
+    <div class="two">
+      <div class="field">
+        <label>Territory</label>
+        <input id="f_territory" value="Japan / Global" oninput="update()">
+      </div>
+      <div class="field">
+        <label>License No.</label>
+        <input id="f_licenseNo" value="LIC-2026-0042" oninput="update()">
+      </div>
+    </div>
+    <div class="field">
+      <label>NFC Tag ID</label>
+      <input id="f_nfcId" value="NFC-04E7F8B0" oninput="update()">
+      <div class="ex">The unique ID of the physical NFC sticker</div>
+    </div>
+  </div>
+
+  <!-- RIGHT: preview + output -->
+  <div class="panel">
+    <h2>Live Preview</h2>
+    <div class="hint">This is what the customer sees when they tap the tag.</div>
+    <div class="pp">
+      <div class="pp-verify"><div class="ic">&#10003;</div><div class="big">正規認証済み / VERIFIED</div></div>
+      <div class="pp-sec">
+        <div class="pp-name" id="p_name">Japan IP Collector Box</div>
+        <div class="pp-ed" id="p_ed">限定版 #002,001 / 10,000</div>
+      </div>
+      <div class="pp-sec">
+        <div class="pp-row"><span class="pp-k">製品ID</span><span class="pp-v" id="p_id">JIP-DLX-002001</span></div>
+        <div class="pp-row"><span class="pp-k">原産地</span><span class="pp-v" id="p_origin">Tokyo Japan</span></div>
+      </div>
+      <div class="pp-sec" style="background:#f0fdf4">
+        <div class="pp-row"><span class="pp-k">IPホルダー</span><span class="pp-v" id="p_ip">Publisher Alpha</span></div>
+        <div class="pp-row"><span class="pp-k">正規製造</span><span class="pp-v" id="p_lic">Licensed Maker A</span></div>
+        <div class="pp-row"><span class="pp-k">許諾地域</span><span class="pp-v" id="p_terr">Japan / Global</span></div>
+      </div>
+    </div>
+
+    <div class="out-label"><span>1. CSV row (add to products.csv)</span><button class="copy-btn" onclick="copyText('csvOut')">Copy</button></div>
+    <div class="out" id="csvOut"></div>
+
+    <div class="out-label"><span>2. One-line command (run on server to register this product)</span><button class="copy-btn" onclick="copyText('cmdOut')">Copy</button></div>
+    <div class="out" id="cmdOut"></div>
+
+    <div class="steps">
+      <b>How to register this product:</b><br>
+      1. Copy the command above (button 2)<br>
+      2. On your server, paste it and press Enter<br>
+      3. It writes this one product to FME Layer1 and prints the tx hash<br>
+      4. The passport at <b>dpp.truel1.com/[DPP-ID]</b> goes live
+    </div>
+
+    <div class="note">
+      <b>Security note:</b> This page never touches your private key. It only builds the data and command. The actual blockchain write happens on your server, where the key stays safe.
+    </div>
+  </div>
+</div>
+
+<script>
+const CONTRACT = "0xc29485B66eCA4F029af7cFd24af5B9f8826BCB1b";
+function v(id){ return document.getElementById('f_'+id).value.trim(); }
+function esc(s){ return String(s).replace(/'/g,"'\\''"); }
+
+function update(){
+  const d = {
+    dppId:v('dppId'), sku:v('sku'), edition:v('edition'), total:v('total'),
+    batch:v('batch'), origin:v('origin'), ipHolder:v('ipHolder'),
+    licensee:v('licensee'), territory:v('territory'), licenseNo:v('licenseNo'), nfcId:v('nfcId')
+  };
+
+  // preview
+  document.getElementById('p_id').textContent = d.dppId || '—';
+  document.getElementById('p_origin').textContent = d.origin || '—';
+  document.getElementById('p_ip').textContent = d.ipHolder || '—';
+  document.getElementById('p_lic').textContent = d.licensee || '—';
+  document.getElementById('p_terr').textContent = d.territory || '—';
+  const edNum = Number(d.edition||0).toLocaleString();
+  const totNum = Number(d.total||0).toLocaleString();
+  document.getElementById('p_ed').textContent = '限定版 #' + edNum + ' / ' + totNum;
+
+  // CSV row
+  const csv = [d.dppId,d.sku,d.edition,d.total,d.batch,d.origin,d.ipHolder,d.licensee,d.territory,d.licenseNo,d.nfcId].join(',');
+  document.getElementById('csvOut').textContent = csv;
+
+  // one-line command using hardhat console-style inline script
+  const cmd =
+'cd /opt/FME/contracts/truelayer1-dpp && npx hardhat run --network fme <(cat <<\'EOF\'\n' +
+'const { ethers } = require("hardhat");\n' +
+'async function main(){\n' +
+'  const [s] = await ethers.getSigners();\n' +
+'  const abi = ["function registerFull(string,string,uint256,uint256,string,string,string,string,string,string,string)","function isAuthentic(string) view returns (bool)"];\n' +
+'  const c = new ethers.Contract("'+CONTRACT+'", abi, s);\n' +
+'  if (await c.isAuthentic("'+esc(d.dppId)+'")) { console.log("Already registered: '+esc(d.dppId)+'"); return; }\n' +
+'  const tx = await c.registerFull("'+esc(d.dppId)+'","'+esc(d.sku)+'",'+ (d.edition||0) +'n,'+ (d.total||0) +'n,"'+esc(d.batch)+'","'+esc(d.origin)+'","'+esc(d.ipHolder)+'","'+esc(d.licensee)+'","'+esc(d.territory)+'","'+esc(d.licenseNo)+'","'+esc(d.nfcId)+'");\n' +
+'  const r = await tx.wait();\n' +
+'  console.log("Registered '+esc(d.dppId)+'  tx:", r.hash);\n' +
+'}\n' +
+'main().catch(e=>{console.error(e);process.exitCode=1;});\n' +
+'EOF\n)';
+  document.getElementById('cmdOut').textContent = cmd;
+}
+
+function copyText(id){
+  const t = document.getElementById(id).textContent;
+  navigator.clipboard.writeText(t).then(()=>{
+    event.target.textContent = "Copied!";
+    setTimeout(()=>{ event.target.textContent = "Copy"; }, 1200);
+  });
+}
+update();
+</script>
+</body>
+</html>
