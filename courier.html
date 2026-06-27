@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TrueLayer1 — 配送スキャン / Courier Scan</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:system-ui,-apple-system,"Hiragino Kaku Gothic ProN","Noto Sans JP",Meiryo,sans-serif;background:#0B1435;color:#fff;line-height:1.6;min-height:100vh}
+.bar{background:#0B1435;padding:15px 18px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.08)}
+.brand{font-size:17px;font-weight:700}
+.brand .t{color:#0D9488}
+.brand-sub{font-size:10px;color:rgba(255,255,255,.55)}
+.nav a{color:rgba(255,255,255,.6);font-size:12px;text-decoration:none;margin-left:12px}
+.wrap{max-width:520px;margin:0 auto;padding:20px 16px 50px}
+.card{background:#fff;color:#1e293b;border-radius:12px;padding:18px;margin-bottom:16px}
+.card h2{font-size:15px;color:#0B1435;margin-bottom:3px}
+.card .hint{font-size:11px;color:#94a3b8;margin-bottom:14px}
+/* scanner */
+#reader{width:100%;border-radius:10px;overflow:hidden;background:#000;min-height:60px}
+.scan-btns{display:flex;gap:8px;margin-top:10px}
+.sbtn{flex:1;border:none;border-radius:7px;padding:10px;font-size:13px;font-weight:600;cursor:pointer}
+.sbtn.start{background:#0D9488;color:#fff}
+.sbtn.stop{background:#e2e8f0;color:#475569}
+.scanned{background:#f0fdf4;border:1px solid #86efac;border-radius:8px;padding:10px 12px;font-size:13px;color:#065f46;margin-top:10px;display:none}
+.scanned b{font-family:monospace}
+/* manual id */
+.field{margin-bottom:13px}
+.field label{display:block;font-size:11px;color:#475569;font-weight:600;margin-bottom:4px}
+.field input,.field select{width:100%;border:1px solid #cbd5e1;border-radius:7px;padding:10px 11px;font-size:14px;font-family:inherit;background:#fff}
+.field input:focus,.field select:focus{outline:none;border-color:#0D9488}
+.status-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.status-opt{border:1px solid #cbd5e1;border-radius:8px;padding:11px 10px;font-size:13px;cursor:pointer;text-align:center;transition:.12s}
+.status-opt:hover{border-color:#0D9488}
+.status-opt.sel{background:#0D9488;color:#fff;border-color:#0D9488}
+.seal-row{display:flex;align-items:center;gap:10px;margin-top:6px}
+.toggle{position:relative;width:46px;height:26px;background:#cbd5e1;border-radius:13px;cursor:pointer;transition:.15s;flex-shrink:0}
+.toggle.on{background:#059669}
+.toggle::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;background:#fff;border-radius:50%;transition:.15s}
+.toggle.on::after{left:23px}
+.out-label{font-size:11px;font-weight:600;color:#475569;margin:14px 0 5px;display:flex;justify-content:space-between;align-items:center}
+.copy-btn{background:#0D9488;color:#fff;border:none;border-radius:5px;padding:4px 12px;font-size:11px;font-weight:600;cursor:pointer}
+.out{background:#0f172a;color:#7dd3c8;border-radius:8px;padding:12px;font-family:monospace;font-size:11px;white-space:pre-wrap;word-break:break-all;line-height:1.5}
+.steps{background:#f0fdfa;border-radius:8px;padding:11px 13px;font-size:11.5px;color:#134e4a;margin-top:12px;line-height:1.6}
+.steps b{color:#0f766e}
+.note{background:#fef3c7;border-left:3px solid #d97706;border-radius:6px;padding:9px 12px;font-size:11px;color:#78350f;margin-top:12px;line-height:1.5}
+.warn-setup{background:#fee2e2;border:1px solid #fca5a5;border-radius:8px;padding:11px 13px;font-size:12px;color:#991b1b;margin-bottom:16px;line-height:1.5;display:none}
+</style>
+</head>
+<body>
+<div class="bar">
+  <div>
+    <div class="brand">True<span class="t">Layer1</span> · 配送スキャン</div>
+    <div class="brand-sub">Courier Checkpoint Scan</div>
+  </div>
+  <div class="nav"><a href="/products-list/">Products</a></div>
+</div>
+
+<div class="wrap">
+  <div class="warn-setup" id="setupWarn">
+    ⚠ LogisticsRegistry address not set. Edit <b>LOGISTICS_CONTRACT</b> at the top of this file with your deployed contract address.
+  </div>
+
+  <!-- 1. SCAN -->
+  <div class="card">
+    <h2>1. 製品をスキャン / Scan Product</h2>
+    <div class="hint">製品のQRコードをスキャンするか、製品IDを直接入力してください。</div>
+    <div id="reader"></div>
+    <div class="scan-btns">
+      <button class="sbtn start" onclick="startScan()">カメラ開始 / Start Camera</button>
+      <button class="sbtn stop" onclick="stopScan()">停止 / Stop</button>
+    </div>
+    <div class="scanned" id="scanned">スキャン完了: <b id="scannedId"></b></div>
+    <div class="field" style="margin-top:12px">
+      <label>製品ID / DPP ID</label>
+      <input id="dppId" placeholder="JIP-DLX-001847" oninput="update()">
+    </div>
+  </div>
+
+  <!-- 2. CHECKPOINT -->
+  <div class="card">
+    <h2>2. チェックポイント / Checkpoint</h2>
+    <div class="hint">現在のステータスと場所を選択してください。</div>
+
+    <div class="field">
+      <label>ステータス / Status</label>
+      <div class="status-grid" id="statusGrid"></div>
+    </div>
+
+    <div class="field">
+      <label>場所 / Location</label>
+      <select id="location" onchange="onLocChange()">
+        <option value="Tokyo Factory">Tokyo Factory（東京工場）</option>
+        <option value="Tokyo Hub">Tokyo Hub（東京ハブ）</option>
+        <option value="Osaka Hub">Osaka Hub（大阪ハブ）</option>
+        <option value="Nagoya Hub">Nagoya Hub（名古屋ハブ）</option>
+        <option value="Fukuoka Hub">Fukuoka Hub（福岡ハブ）</option>
+        <option value="Osaka City">Osaka City（大阪市・配達先）</option>
+        <option value="__custom">+ 自由入力 / Type custom...</option>
+      </select>
+      <input id="locCustom" placeholder="Custom location" style="display:none;margin-top:8px" oninput="update()">
+    </div>
+
+    <div class="field">
+      <label>封印状態 / Seal</label>
+      <div class="seal-row">
+        <div class="toggle on" id="sealToggle" onclick="toggleSeal()"></div>
+        <span id="sealLabel" style="font-size:13px;color:#065f46;font-weight:600">未開封 / Intact</span>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>メモ / Note（任意）</label>
+      <input id="note" placeholder="例: 配達完了・受領確認" oninput="update()">
+    </div>
+  </div>
+
+  <!-- 3. RECORD -->
+  <div class="card">
+    <h2>3. ブロックチェーンに記録 / Record</h2>
+    <div class="hint">下のコマンドをサーバーで実行すると、このチェックポイントがFME Layer1に記録されます。</div>
+    <div class="out-label"><span>Command — paste on server &amp; press Enter</span><button class="copy-btn" onclick="copyText('cmdOut')">Copy</button></div>
+    <div class="out" id="cmdOut">製品IDを入力してください...</div>
+    <div class="steps">
+      <b>記録方法 / How to record:</b><br>
+      1. 製品をスキャン → ステータス・場所を選択<br>
+      2. <b>Copy</b> でコマンドをコピー<br>
+      3. サーバーで貼り付けて Enter<br>
+      4. パスポートのタイムラインに即反映されます
+    </div>
+    <div class="note"><b>Security:</b> This page never holds your private key. It builds the command; the chain-write runs on your server.</div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
+<script>
+// ====== EDIT THIS after deploying LogisticsRegistry ======
+const LOGISTICS_CONTRACT = "0xYOUR_LOGISTICS_CONTRACT_ADDRESS";
+// =========================================================
+
+const STATUSES = [
+  {key:"manufactured", label:"📦 製造完了"},
+  {key:"shipped",      label:"🚚 出荷・集荷"},
+  {key:"hub_arrived",  label:"🏢 ハブ到着"},
+  {key:"out_delivery", label:"🚛 配達中"},
+  {key:"delivered",    label:"✓ 配達完了"},
+  {key:"inspected",    label:"🔍 検品"}
+];
+
+let selStatus = "shipped";
+let sealIntact = true;
+let qr = null;
+
+// setup warning
+if (LOGISTICS_CONTRACT.indexOf("YOUR_LOGISTICS") !== -1) {
+  document.getElementById("setupWarn").style.display = "block";
+}
+
+// build status buttons
+const grid = document.getElementById("statusGrid");
+STATUSES.forEach(s=>{
+  const d = document.createElement("div");
+  d.className = "status-opt" + (s.key===selStatus ? " sel" : "");
+  d.textContent = s.label;
+  d.onclick = ()=>{ selStatus = s.key; document.querySelectorAll(".status-opt").forEach(x=>x.classList.remove("sel")); d.classList.add("sel"); update(); };
+  grid.appendChild(d);
+});
+
+function toggleSeal(){
+  sealIntact = !sealIntact;
+  const t = document.getElementById("sealToggle");
+  const l = document.getElementById("sealLabel");
+  t.classList.toggle("on", sealIntact);
+  l.textContent = sealIntact ? "未開封 / Intact" : "開封済み / Broken";
+  l.style.color = sealIntact ? "#065f46" : "#b91c1c";
+  update();
+}
+
+function onLocChange(){
+  const sel = document.getElementById("location").value;
+  document.getElementById("locCustom").style.display = (sel==="__custom") ? "block" : "none";
+  update();
+}
+
+function getLocation(){
+  const sel = document.getElementById("location").value;
+  if (sel === "__custom") return document.getElementById("locCustom").value.trim();
+  return sel;
+}
+
+function update(){
+  const id = document.getElementById("dppId").value.trim();
+  const loc = getLocation();
+  const note = document.getElementById("note").value.trim();
+  if (!id){ document.getElementById("cmdOut").textContent = "製品IDを入力してください..."; return; }
+
+  const cmd =
+'cd /opt/FME/contracts/truelayer1-dpp\n' +
+'npx hardhat run --network fme scripts/add-logistics.js "' + id + '" "' + selStatus + '" "' + loc + '" ' + (sealIntact?'true':'false') + ' "' + note + '"';
+  document.getElementById("cmdOut").textContent = cmd;
+}
+
+// QR scanner
+function startScan(){
+  if (qr) return;
+  qr = new Html5Qrcode("reader");
+  qr.start({ facingMode: "environment" }, { fps:10, qrbox:200 },
+    (decoded)=>{
+      // decoded is a URL like https://dpp.truel1.com/JIP-DLX-001847
+      let id = decoded;
+      try { const u = new URL(decoded); id = u.pathname.replace(/^\/+/,"").replace(/\/+$/,""); } catch(e){}
+      id = decodeURIComponent(id);
+      document.getElementById("dppId").value = id;
+      document.getElementById("scannedId").textContent = id;
+      document.getElementById("scanned").style.display = "block";
+      update();
+      stopScan();
+    },
+    ()=>{}
+  ).catch(e=>{ alert("カメラを起動できません: " + e); qr=null; });
+}
+function stopScan(){
+  if (qr){ qr.stop().then(()=>{ qr.clear(); qr=null; }).catch(()=>{ qr=null; }); }
+}
+update();
+</script>
+</body>
+</html>

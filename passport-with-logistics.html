@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TrueLayer1 — 正規品証明</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:system-ui,-apple-system,"Hiragino Kaku Gothic ProN","Noto Sans JP",Meiryo,sans-serif;background:#0B1435;line-height:1.6}
+.page{max-width:480px;margin:0 auto;background:#f4f5f7;min-height:100vh}
+.top{background:#0B1435;color:#fff;padding:18px 20px;display:flex;align-items:center;justify-content:space-between}
+.brand{font-size:18px;font-weight:700}
+.brand .t{color:#0D9488}
+.brand-sub{font-size:10px;color:rgba(255,255,255,.55);margin-top:2px}
+.demo-tag{font-size:10px;border:1px solid rgba(255,255,255,.3);color:rgba(255,255,255,.75);padding:3px 8px;border-radius:4px}
+.state{padding:40px 20px;text-align:center;color:#64748b;font-size:13px}
+.spinner{display:inline-block;width:26px;height:26px;border:3px solid #d1d5db;border-top-color:#0D9488;border-radius:50%;animation:spin .8s linear infinite;margin-bottom:12px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.verify{background:#059669;color:#fff;text-align:center;padding:22px 20px}
+.verify .ico{font-size:30px;line-height:1}
+.verify .big{font-size:18px;font-weight:700;margin-top:6px}
+.verify .small{font-size:11px;opacity:.85;margin-top:2px}
+.fail{background:#b91c1c;color:#fff;text-align:center;padding:22px 20px}
+.fail .ico{font-size:30px;line-height:1}
+.fail .big{font-size:18px;font-weight:700;margin-top:6px}
+.fail .small{font-size:11px;opacity:.85;margin-top:2px}
+.product{background:#fff;padding:18px 20px;display:flex;gap:14px;align-items:center;border-bottom:1px solid #ececed}
+.pimg{width:64px;height:64px;flex-shrink:0;background:linear-gradient(135deg,#1a2a5e,#0D9488);border-radius:8px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:24px}
+.pname{font-size:15px;font-weight:700;color:#111}
+.pname-en{font-size:11px;color:#888;margin-top:2px}
+.pedition{font-size:12px;color:#0D9488;font-weight:600;margin-top:6px}
+.section{background:#fff;padding:14px 20px;border-bottom:1px solid #ececed}
+.section.alt{background:#f0fdf4}
+.slabel{font-size:10px;color:#888;text-transform:uppercase;letter-spacing:.04em;margin-bottom:8px}
+.section.alt .slabel{color:#059669}
+.row{display:flex;justify-content:space-between;font-size:12px;padding:3px 0}
+.row .k{color:#666}
+.row .v{color:#111;font-weight:500;text-align:right}
+.log{display:flex;align-items:center;gap:8px;font-size:12px;color:#333;padding:4px 0}
+.log .c{color:#059669;font-weight:700}
+/* timeline */
+.timeline{position:relative;padding-left:26px}
+.tl-item{position:relative;padding-bottom:16px}
+.tl-item:last-child{padding-bottom:0}
+.tl-item::before{content:"";position:absolute;left:-19px;top:3px;width:13px;height:13px;border-radius:50%;background:#059669;border:2px solid #fff;box-shadow:0 0 0 1px #059669}
+.tl-item.pending::before{background:#cbd5e1;box-shadow:0 0 0 1px #cbd5e1}
+.tl-item:not(:last-child)::after{content:"";position:absolute;left:-13px;top:16px;width:2px;height:calc(100% - 13px);background:#d1fae5}
+.tl-status{font-size:13px;font-weight:700;color:#0f172a}
+.tl-meta{font-size:11px;color:#64748b;margin-top:1px}
+.tl-seal{display:inline-block;font-size:9px;font-weight:700;padding:1px 7px;border-radius:8px;margin-top:3px}
+.tl-seal.ok{background:#d1fae5;color:#065f46}
+.tl-seal.bad{background:#fee2e2;color:#991b1b}
+.proof{background:#0B1435;color:#fff;padding:16px 20px;text-align:center}
+.proof .pl{font-size:11px;color:rgba(255,255,255,.6);margin-bottom:6px}
+.proof .hash{font-family:monospace;font-size:11px;color:#0D9488;word-break:break-all}
+.proof a{display:inline-block;margin-top:10px;color:#fff;font-size:11px;border:1px solid rgba(13,148,136,.5);padding:6px 14px;border-radius:6px;text-decoration:none}
+.foot{text-align:center;font-size:10px;color:#aaa;padding:16px}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="top">
+    <div>
+      <div class="brand">True<span class="t">Layer1</span></div>
+      <div class="brand-sub">デジタルプロダクトパスポート</div>
+    </div>
+    <div class="demo-tag">DEMO / PoC</div>
+  </div>
+
+  <div id="content">
+    <div class="state"><div class="spinner"></div><br>ブロックチェーンで確認中...<br><span style="font-size:11px">Verifying on FME Layer1...</span></div>
+  </div>
+
+  <div class="foot">
+    TrueLayer1 &middot; Powered by FME Layer1<br>
+    Digital Product Passport &amp; IP License Proof
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.13.4/ethers.umd.min.js"></script>
+<script>
+const RPC = "https://l1.aucfans.com/rpc/";
+const DPP_CONTRACT = "0xc29485B66eCA4F029af7cFd24af5B9f8826BCB1b";
+// ====== EDIT THIS after deploying LogisticsRegistry ======
+const LOGISTICS_CONTRACT = "0xYOUR_LOGISTICS_CONTRACT_ADDRESS";
+// =========================================================
+const provider = new ethers.JsonRpcProvider(RPC);
+
+const DPP_ABI = [
+  "function products(string) view returns (string sku, uint256 edition, uint256 totalEditions, string batch, string origin, uint256 createdAt, bool exists)",
+  "function licenses(string) view returns (string ipHolder, string licensee, string territory, string licenseNo, uint256 registeredAt, bool exists)",
+  "function tags(string) view returns (string nfcId, bool sealIntact, uint256 linkedAt, bool exists)"
+];
+const LOG_ABI = [
+  "function getAllEvents(string) view returns (tuple(string status,string location,bool sealIntact,string note,uint256 timestamp)[])"
+];
+
+// friendly labels for status codes
+const STATUS_LABEL = {
+  manufactured:"📦 製造完了 / Manufactured",
+  shipped:"🚚 出荷・集荷 / Shipped",
+  hub_arrived:"🏢 ハブ到着 / Arrived at Hub",
+  out_delivery:"🚛 配達中 / Out for Delivery",
+  delivered:"✓ 配達完了 / Delivered",
+  inspected:"🔍 検品 / Inspected"
+};
+
+function getDppId(){
+  let p = window.location.pathname.replace(/^\/+/,"").replace(/\/+$/,"");
+  if (p==="" || p==="index.html" || p==="p.html") return null;
+  return decodeURIComponent(p);
+}
+function esc(s){ return String(s).replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+function fmtNum(n){ return Number(n).toLocaleString(); }
+function fmtDate(ts){ if(!ts||Number(ts)===0) return "—"; return new Date(Number(ts)*1000).toISOString().slice(0,10); }
+function fmtDateTime(ts){ if(!ts||Number(ts)===0) return "—"; const d=new Date(Number(ts)*1000); return d.toISOString().slice(0,10)+" "+d.toISOString().slice(11,16); }
+
+function renderNotFound(dppId){
+  document.getElementById("content").innerHTML =
+    '<div class="fail"><div class="ico">&#10007;</div>' +
+    '<div class="big">未登録 / NOT FOUND</div>' +
+    '<div class="small">この製品IDはブロックチェーンに登録されていません</div></div>' +
+    '<div class="section"><div class="slabel">確認した製品ID / Queried ID</div>' +
+    '<div class="row"><span class="k">DPP ID</span><span class="v">' + esc(dppId||"(none)") + '</span></div></div>' +
+    '<div class="section"><div class="log" style="color:#b91c1c"><span>&#9888;</span>' +
+    '<span>正規品として登録された記録がありません。偽造品の可能性があります。</span></div></div>';
+}
+
+async function main(){
+  const dppId = getDppId();
+  if (!dppId){ renderNotFound(null); return; }
+  try{
+    const dpp = new ethers.Contract(DPP_CONTRACT, DPP_ABI, provider);
+    const p = await dpp.products(dppId);
+    if (!p.exists){ renderNotFound(dppId); return; }
+    const [lic, tag] = await Promise.all([ dpp.licenses(dppId), dpp.tags(dppId) ]);
+
+    // try to load logistics events (don't fail the page if contract not set)
+    let events = [];
+    if (LOGISTICS_CONTRACT.indexOf("YOUR_LOGISTICS") === -1){
+      try{
+        const log = new ethers.Contract(LOGISTICS_CONTRACT, LOG_ABI, provider);
+        events = await log.getAllEvents(dppId);
+      }catch(e){ console.warn("no logistics", e); }
+    }
+
+    let html = "";
+    html += '<div class="verify"><div class="ico">&#10003;</div><div class="big">正規認証済み</div><div class="small">VERIFIED AUTHENTIC</div></div>';
+    html += '<div class="product"><div class="pimg">&#128230;</div><div>' +
+            '<div class="pname">' + esc(p.sku) + '</div>' +
+            '<div class="pname-en">Japan IP Collector Product</div>' +
+            '<div class="pedition">限定版 #' + fmtNum(p.edition) + ' / ' + fmtNum(p.totalEditions) + '</div></div></div>';
+
+    html += '<div class="section"><div class="slabel">商品情報 / Product</div>' +
+            '<div class="row"><span class="k">製品ID</span><span class="v">' + esc(dppId) + '</span></div>' +
+            '<div class="row"><span class="k">原産地</span><span class="v">' + esc(p.origin) + '</span></div>' +
+            '<div class="row"><span class="k">バッチ</span><span class="v">' + esc(p.batch) + '</span></div>' +
+            '<div class="row"><span class="k">登録日</span><span class="v">' + fmtDate(p.createdAt) + '</span></div></div>';
+
+    if (lic.exists){
+      html += '<div class="section alt"><div class="slabel">IP ライセンス証明 / License</div>' +
+              '<div class="row"><span class="k">IPホルダー</span><span class="v">' + esc(lic.ipHolder) + '</span></div>' +
+              '<div class="row"><span class="k">正規製造</span><span class="v">' + esc(lic.licensee) + '</span></div>' +
+              '<div class="row"><span class="k">許諾地域</span><span class="v">' + esc(lic.territory) + '</span></div>' +
+              '<div class="row"><span class="k">ライセンス番号</span><span class="v">' + esc(lic.licenseNo) + '</span></div></div>';
+    }
+
+    // LOGISTICS TIMELINE
+    if (events && events.length > 0){
+      let tl = '<div class="section"><div class="slabel">配送・物流記録 / Logistics Journey</div><div class="timeline">';
+      events.forEach(e=>{
+        const label = STATUS_LABEL[e.status] || esc(e.status);
+        const sealClass = e.sealIntact ? "ok" : "bad";
+        const sealTxt = e.sealIntact ? "封印OK" : "開封";
+        tl += '<div class="tl-item">' +
+              '<div class="tl-status">' + label + '</div>' +
+              '<div class="tl-meta">' + esc(e.location) + ' &middot; ' + fmtDateTime(e.timestamp) + '</div>' +
+              (e.note ? '<div class="tl-meta">' + esc(e.note) + '</div>' : '') +
+              '<span class="tl-seal ' + sealClass + '">' + sealTxt + '</span>' +
+              '</div>';
+      });
+      tl += '</div></div>';
+      html += tl;
+    } else {
+      html += '<div class="section"><div class="slabel">配送・物流記録 / Logistics</div>' +
+              '<div class="log" style="color:#94a3b8"><span>—</span><span>物流記録はまだありません / No logistics events yet</span></div></div>';
+    }
+
+    if (tag.exists){
+      html += '<div class="section"><div class="slabel">セキュリティ / Security</div>' +
+              '<div class="log"><span class="c">&#128274;</span><span>NFC: ' + esc(tag.nfcId) + '</span></div></div>';
+    }
+
+    html += '<div class="proof"><div class="pl">ブロックチェーンで検証済み</div>' +
+            '<div class="hash">' + DPP_CONTRACT.slice(0,10) + '…' + DPP_CONTRACT.slice(-6) + '</div>' +
+            '<a href="https://l1.aucfans.com/fmescan/search?q=' + DPP_CONTRACT + '">FME Layer1 で確認 &#8599;</a></div>';
+
+    document.getElementById("content").innerHTML = html;
+  }catch(e){
+    console.error(e);
+    document.getElementById("content").innerHTML = '<div class="state" style="color:#b91c1c">読み込みエラー / Could not read.<br><span style="font-size:11px">' + esc(e.message||e) + '</span></div>';
+  }
+}
+main();
+</script>
+</body>
+</html>
