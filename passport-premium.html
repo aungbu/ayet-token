@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TrueLayer1 — 正規品証明</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:system-ui,-apple-system,"Hiragino Kaku Gothic ProN","Noto Sans JP",Meiryo,sans-serif;background:#070d22;line-height:1.6;-webkit-font-smoothing:antialiased}
+.page{max-width:460px;margin:0 auto;background:#0b1224;min-height:100vh;color:#e8edf7}
+
+/* top bar */
+.top{padding:16px 20px;display:flex;align-items:center;justify-content:space-between}
+.brand{font-size:17px;font-weight:700;color:#fff;letter-spacing:-.01em}
+.brand .t{color:#14b8a6}
+.brand-sub{font-size:9.5px;color:rgba(255,255,255,.45);margin-top:1px;letter-spacing:.02em}
+.demo-tag{font-size:9px;border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.6);padding:3px 9px;border-radius:20px}
+
+/* loading / fail states */
+.state{padding:60px 24px;text-align:center;color:rgba(255,255,255,.6);font-size:13px}
+.spinner{display:inline-block;width:30px;height:30px;border:3px solid rgba(255,255,255,.15);border-top-color:#14b8a6;border-radius:50%;animation:spin .8s linear infinite;margin-bottom:14px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.fail-wrap{padding:0 20px}
+.fail{background:linear-gradient(160deg,#7f1d1d,#991b1b);border-radius:18px;text-align:center;padding:34px 22px;margin-top:10px}
+.fail .ico{font-size:38px}
+.fail .big{font-size:20px;font-weight:700;margin-top:8px;color:#fff}
+.fail .small{font-size:12px;opacity:.85;margin-top:4px;color:#fff}
+.fail-card{background:#141c30;border-radius:14px;padding:16px 18px;margin-top:14px;font-size:12px;color:#fca5a5;line-height:1.6}
+
+/* hero product card */
+.hero{padding:4px 16px 0}
+.card-main{background:linear-gradient(165deg,#15203a,#0e1628);border-radius:22px;overflow:hidden;box-shadow:0 12px 40px rgba(0,0,0,.5);border:1px solid rgba(255,255,255,.06)}
+/* product image */
+.pimg-wrap{position:relative;aspect-ratio:16/10;background:linear-gradient(135deg,#1e3a5f 0%,#14b8a6 100%);overflow:hidden}
+.pimg-wrap img{width:100%;height:100%;object-fit:cover;display:block}
+.pimg-fallback{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;color:rgba(255,255,255,.9)}
+.pimg-fallback .emoji{font-size:54px;filter:drop-shadow(0 4px 12px rgba(0,0,0,.3))}
+.pimg-fallback .ftxt{font-size:11px;margin-top:8px;letter-spacing:.08em;opacity:.7}
+.verify-chip{position:absolute;top:14px;left:14px;background:rgba(5,150,105,.95);backdrop-filter:blur(8px);color:#fff;font-size:11px;font-weight:700;padding:6px 13px;border-radius:30px;display:flex;align-items:center;gap:5px;box-shadow:0 4px 12px rgba(0,0,0,.25)}
+.verify-chip .vico{font-size:13px}
+.edition-chip{position:absolute;top:14px;right:14px;background:rgba(0,0,0,.5);backdrop-filter:blur(8px);color:#fff;font-size:11px;font-weight:600;padding:6px 12px;border-radius:30px}
+/* product title block */
+.ptitle{padding:18px 20px 16px}
+.ptitle .name{font-size:21px;font-weight:700;color:#fff;line-height:1.25}
+.ptitle .name-en{font-size:12px;color:rgba(255,255,255,.5);margin-top:3px}
+.ptitle .ed-big{display:inline-flex;align-items:baseline;gap:6px;margin-top:12px;background:rgba(20,184,166,.12);border:1px solid rgba(20,184,166,.3);border-radius:10px;padding:7px 13px}
+.ptitle .ed-big .num{font-size:18px;font-weight:700;color:#5eead4}
+.ptitle .ed-big .of{font-size:11px;color:rgba(255,255,255,.5)}
+
+/* info sections */
+.sec{padding:16px 20px;border-top:1px solid rgba(255,255,255,.05)}
+.sec-label{font-size:10px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.06em;margin-bottom:11px;font-weight:600}
+.kv{display:flex;justify-content:space-between;align-items:baseline;padding:5px 0;font-size:13px}
+.kv .k{color:rgba(255,255,255,.5)}
+.kv .v{color:#fff;font-weight:500;text-align:right}
+.sec.license .sec-label{color:#5eead4}
+
+/* timeline */
+.timeline{position:relative;padding-left:24px;margin-top:4px}
+.tl-item{position:relative;padding-bottom:18px}
+.tl-item:last-child{padding-bottom:0}
+.tl-item::before{content:"";position:absolute;left:-24px;top:2px;width:14px;height:14px;border-radius:50%;background:#14b8a6;border:3px solid #0b1224;box-shadow:0 0 0 2px #14b8a6}
+.tl-item::after{content:"";position:absolute;left:-18px;top:16px;width:2px;height:calc(100% - 14px);background:linear-gradient(#14b8a6,rgba(20,184,166,.2))}
+.tl-item:last-child::after{display:none}
+.tl-status{font-size:13px;font-weight:700;color:#fff}
+.tl-meta{font-size:11px;color:rgba(255,255,255,.5);margin-top:2px}
+.tl-seal{display:inline-block;font-size:9px;font-weight:700;padding:2px 8px;border-radius:20px;margin-top:4px}
+.tl-seal.ok{background:rgba(5,150,105,.25);color:#5eead4}
+.tl-seal.bad{background:rgba(220,38,38,.25);color:#fca5a5}
+
+/* QR section on the passport */
+.qr-sec{padding:20px;border-top:1px solid rgba(255,255,255,.05);text-align:center}
+.qr-box{background:#fff;border-radius:16px;padding:14px;display:inline-block;box-shadow:0 6px 20px rgba(0,0,0,.3)}
+.qr-box #qrcode img,.qr-box #qrcode canvas{display:block;border-radius:6px}
+.qr-cap{font-size:11px;color:rgba(255,255,255,.45);margin-top:10px;line-height:1.5}
+
+/* actions */
+.actions{padding:8px 16px 20px}
+.btn-wallet{width:100%;background:#fff;color:#0b1224;border:none;border-radius:14px;padding:15px;font-size:14px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;font-family:inherit}
+.btn-wallet:active{transform:scale(.98)}
+.btn-secondary{width:100%;background:rgba(255,255,255,.08);color:#fff;border:1px solid rgba(255,255,255,.15);border-radius:14px;padding:14px;font-size:13px;font-weight:600;cursor:pointer;margin-top:10px;font-family:inherit}
+
+/* proof */
+.proof{margin:0 16px 20px;background:linear-gradient(160deg,#0d1830,#0a1326);border:1px solid rgba(20,184,166,.2);border-radius:16px;padding:18px;text-align:center}
+.proof .pl{font-size:10px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px}
+.proof .verified-row{display:flex;align-items:center;justify-content:center;gap:6px;color:#5eead4;font-size:13px;font-weight:700;margin-bottom:10px}
+.proof .hash{font-family:ui-monospace,monospace;font-size:10.5px;color:rgba(255,255,255,.5);word-break:break-all;margin-bottom:12px}
+.proof a{display:inline-block;color:#fff;font-size:12px;font-weight:600;background:rgba(20,184,166,.2);border:1px solid rgba(20,184,166,.4);padding:9px 18px;border-radius:10px;text-decoration:none}
+
+.foot{text-align:center;font-size:10px;color:rgba(255,255,255,.3);padding:8px 16px 30px;line-height:1.6}
+
+/* toast */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:#14b8a6;color:#fff;padding:12px 22px;border-radius:30px;font-size:13px;font-weight:600;box-shadow:0 8px 24px rgba(0,0,0,.3);transition:transform .3s;z-index:100}
+.toast.show{transform:translateX(-50%) translateY(0)}
+</style>
+</head>
+<body>
+<div class="page">
+  <div class="top">
+    <div>
+      <div class="brand">True<span class="t">Layer1</span></div>
+      <div class="brand-sub">DIGITAL PRODUCT PASSPORT</div>
+    </div>
+    <div class="demo-tag">DEMO / PoC</div>
+  </div>
+
+  <div id="content">
+    <div class="state"><div class="spinner"></div><br>ブロックチェーンで確認中...<br><span style="font-size:11px">Verifying on FME Layer1...</span></div>
+  </div>
+
+  <div class="foot">
+    TrueLayer1 &middot; Powered by FME Layer1 (Chain 77777)<br>
+    Digital Product Passport &amp; IP License Proof
+  </div>
+</div>
+
+<div class="toast" id="toast">保存しました / Saved</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.13.4/ethers.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+const RPC = "https://l1.aucfans.com/rpc/";
+const DPP_CONTRACT = "0xc29485B66eCA4F029af7cFd24af5B9f8826BCB1b";
+const LOGISTICS_CONTRACT = "0x5Ee44752D853c3BFCBE7532ff3464eba065E90Da";
+const provider = new ethers.JsonRpcProvider(RPC);
+
+const DPP_ABI = [
+  "function products(string) view returns (string sku, uint256 edition, uint256 totalEditions, string batch, string origin, uint256 createdAt, bool exists)",
+  "function licenses(string) view returns (string ipHolder, string licensee, string territory, string licenseNo, uint256 registeredAt, bool exists)",
+  "function tags(string) view returns (string nfcId, bool sealIntact, uint256 linkedAt, bool exists)"
+];
+const LOG_ABI = [
+  "function getAllEvents(string) view returns (tuple(string status,string location,bool sealIntact,string note,uint256 timestamp)[])"
+];
+const STATUS_LABEL = {
+  manufactured:"📦 製造完了 / Manufactured",
+  shipped:"🚚 出荷・集荷 / Shipped",
+  hub_arrived:"🏢 ハブ到着 / Arrived at Hub",
+  out_delivery:"🚛 配達中 / Out for Delivery",
+  delivered:"✓ 配達完了 / Delivered",
+  inspected:"🔍 検品 / Inspected"
+};
+
+function getDppId(){
+  let p = window.location.pathname.replace(/^\/+/,"").replace(/\/+$/,"");
+  if (p===""||p==="index.html"||p==="p.html") return null;
+  return decodeURIComponent(p);
+}
+function esc(s){ return String(s).replace(/</g,"&lt;").replace(/>/g,"&gt;"); }
+function fmtNum(n){ return Number(n).toLocaleString(); }
+function fmtDate(ts){ if(!ts||Number(ts)===0) return "—"; return new Date(Number(ts)*1000).toISOString().slice(0,10); }
+function fmtDateTime(ts){ if(!ts||Number(ts)===0) return "—"; const d=new Date(Number(ts)*1000); return d.toISOString().slice(0,10)+" "+d.toISOString().slice(11,16); }
+
+function renderNotFound(dppId){
+  document.getElementById("content").innerHTML =
+    '<div class="fail-wrap"><div class="fail"><div class="ico">&#10007;</div>' +
+    '<div class="big">未登録 / NOT FOUND</div>' +
+    '<div class="small">ブロックチェーンに登録されていません</div></div>' +
+    '<div class="fail-card"><b>⚠ 警告:</b> この製品IDは正規品として登録された記録がありません。偽造品の可能性があります。<br><br>' +
+    'No authentic record found on FME Layer1. This may be a counterfeit.<br><br>' +
+    '<span style="color:rgba(255,255,255,.4);font-size:11px">Queried ID: ' + esc(dppId||"(none)") + '</span></div></div>';
+}
+
+function showToast(msg){
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  setTimeout(()=>t.classList.remove("show"), 1800);
+}
+
+function saveProduct(dppId, name){
+  // wallet-style: download a simple pass file (JSON) — placeholder for real wallet pass
+  const data = {
+    platform:"TrueLayer1 Digital Product Passport",
+    dppId: dppId, product: name,
+    verifyUrl: "https://dpp.truel1.com/" + dppId,
+    blockchain:"FME Layer1 (Chain 77777)",
+    contract: DPP_CONTRACT,
+    saved: new Date().toISOString()
+  };
+  const blob = new Blob([JSON.stringify(data,null,2)], {type:"application/json"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = dppId + "-passport.json";
+  a.click();
+  showToast("パスポートを保存 / Saved");
+}
+
+function shareProduct(dppId){
+  const url = "https://dpp.truel1.com/" + dppId;
+  if (navigator.share){
+    navigator.share({ title:"TrueLayer1 Passport", text:"正規品証明 / Verified Authentic", url:url });
+  } else {
+    navigator.clipboard.writeText(url).then(()=>showToast("リンクをコピー / Link copied"));
+  }
+}
+
+async function main(){
+  const dppId = getDppId();
+  if (!dppId){ renderNotFound(null); return; }
+  try{
+    const dpp = new ethers.Contract(DPP_CONTRACT, DPP_ABI, provider);
+    const p = await dpp.products(dppId);
+    if (!p.exists){ renderNotFound(dppId); return; }
+    const [lic, tag] = await Promise.all([ dpp.licenses(dppId), dpp.tags(dppId) ]);
+
+    let events = [];
+    try{
+      const log = new ethers.Contract(LOGISTICS_CONTRACT, LOG_ABI, provider);
+      events = await log.getAllEvents(dppId);
+    }catch(e){ console.warn("no logistics", e); }
+
+    const verifyUrl = "https://dpp.truel1.com/" + encodeURIComponent(dppId);
+    // try a real product image; fall back to gradient+emoji
+    const imgPath = "/img/" + dppId + ".jpg";
+
+    let html = "";
+    html += '<div class="hero"><div class="card-main">';
+
+    // image with fallback
+    html += '<div class="pimg-wrap">' +
+            '<img src="' + imgPath + '" alt="" onerror="this.style.display=\'none\';this.nextElementSibling.style.display=\'flex\'">' +
+            '<div class="pimg-fallback" style="display:none"><div class="emoji">&#128230;</div><div class="ftxt">JAPAN IP COLLECTOR</div></div>' +
+            '<div class="verify-chip"><span class="vico">&#10003;</span> 正規認証済み</div>' +
+            '<div class="edition-chip">#' + fmtNum(p.edition) + ' / ' + fmtNum(p.totalEditions) + '</div>' +
+            '</div>';
+
+    // title
+    html += '<div class="ptitle">' +
+            '<div class="name">' + esc(p.sku) + '</div>' +
+            '<div class="name-en">Japan IP Collector Product</div>' +
+            '<div class="ed-big"><span class="num">限定版 #' + fmtNum(p.edition) + '</span><span class="of">/ ' + fmtNum(p.totalEditions) + ' 限定</span></div>' +
+            '</div>';
+
+    // product info
+    html += '<div class="sec"><div class="sec-label">商品情報 / Product</div>' +
+            '<div class="kv"><span class="k">製品ID</span><span class="v">' + esc(dppId) + '</span></div>' +
+            '<div class="kv"><span class="k">原産地</span><span class="v">' + esc(p.origin) + '</span></div>' +
+            '<div class="kv"><span class="k">バッチ</span><span class="v">' + esc(p.batch) + '</span></div>' +
+            '<div class="kv"><span class="k">登録日</span><span class="v">' + fmtDate(p.createdAt) + '</span></div></div>';
+
+    // license
+    if (lic.exists){
+      html += '<div class="sec license"><div class="sec-label">&#128737; IP ライセンス証明 / License</div>' +
+              '<div class="kv"><span class="k">IPホルダー</span><span class="v">' + esc(lic.ipHolder) + '</span></div>' +
+              '<div class="kv"><span class="k">正規製造</span><span class="v">' + esc(lic.licensee) + '</span></div>' +
+              '<div class="kv"><span class="k">許諾地域</span><span class="v">' + esc(lic.territory) + '</span></div>' +
+              '<div class="kv"><span class="k">ライセンス番号</span><span class="v">' + esc(lic.licenseNo) + '</span></div></div>';
+    }
+
+    // logistics timeline
+    if (events && events.length > 0){
+      let tl = '<div class="sec"><div class="sec-label">&#128666; 配送・物流記録 / Logistics Journey</div><div class="timeline">';
+      events.forEach(e=>{
+        const label = STATUS_LABEL[e.status] || esc(e.status);
+        const sealClass = e.sealIntact ? "ok" : "bad";
+        const sealTxt = e.sealIntact ? "封印OK / Sealed" : "開封 / Broken";
+        tl += '<div class="tl-item"><div class="tl-status">' + label + '</div>' +
+              '<div class="tl-meta">' + esc(e.location) + ' &middot; ' + fmtDateTime(e.timestamp) + '</div>' +
+              (e.note ? '<div class="tl-meta">' + esc(e.note) + '</div>' : '') +
+              '<span class="tl-seal ' + sealClass + '">' + sealTxt + '</span></div>';
+      });
+      tl += '</div></div>';
+      html += tl;
+    }
+
+    // security
+    if (tag.exists){
+      html += '<div class="sec"><div class="sec-label">&#128274; セキュリティ / Security</div>' +
+              '<div class="kv"><span class="k">NFCタグ</span><span class="v">' + esc(tag.nfcId) + '</span></div>' +
+              '<div class="kv"><span class="k">暗号認証</span><span class="v" style="color:#5eead4">✓ 正規タグ</span></div></div>';
+    }
+
+    // QR on the passport
+    html += '<div class="qr-sec"><div class="sec-label" style="margin-bottom:12px">この製品のQR / Product QR</div>' +
+            '<div class="qr-box"><div id="qrcode"></div></div>' +
+            '<div class="qr-cap">このQRをスキャンするとこのパスポートが開きます<br>Scan to open this passport</div></div>';
+
+    html += '</div></div>'; // close card-main, hero
+
+    // actions
+    html += '<div class="actions">' +
+            '<button class="btn-wallet" onclick="saveProduct(\'' + esc(dppId) + '\',\'' + esc(p.sku) + '\')">&#128179; ウォレットに保存 / Save to Wallet</button>' +
+            '<button class="btn-secondary" onclick="shareProduct(\'' + esc(dppId) + '\')">&#128279; 共有 / Share</button></div>';
+
+    // proof
+    html += '<div class="proof"><div class="pl">Blockchain Verified</div>' +
+            '<div class="verified-row"><span>&#10003;</span> FME Layer1 で検証済み</div>' +
+            '<div class="hash">' + DPP_CONTRACT + '</div>' +
+            '<a href="https://l1.aucfans.com/fmescan/search?q=' + DPP_CONTRACT + '">エクスプローラで確認 &#8599;</a></div>';
+
+    document.getElementById("content").innerHTML = html;
+
+    // render the QR
+    new QRCode(document.getElementById("qrcode"), {
+      text: verifyUrl, width:130, height:130,
+      colorDark:"#0b1224", colorLight:"#ffffff", correctLevel: QRCode.CorrectLevel.M
+    });
+
+  }catch(e){
+    console.error(e);
+    document.getElementById("content").innerHTML = '<div class="state" style="color:#fca5a5">読み込みエラー / Could not read.<br><span style="font-size:11px">' + esc(e.message||e) + '</span></div>';
+  }
+}
+main();
+</script>
+</body>
+</html>
