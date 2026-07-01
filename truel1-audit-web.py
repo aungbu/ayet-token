@@ -29,7 +29,7 @@ TOOLS = "/opt/ai-temp"
 REPORTS = "/opt/ai-temp/reports"
 PYBIN = "/opt/ai-temp/slither-env/bin/python3"
 SLITHER = "/usr/local/bin/slither"
-OZ_NODE_MODULES = "/opt/ai-temp/AYET-workspace/node_modules"
+NODE_MODULES = os.environ.get("TRUEL1_NODE_MODULES", "/opt/ai-temp/AYET-workspace/node_modules")
 MAX_UPLOAD = 3 * 1024 * 1024  # 3 MB
 
 PAGE = """<!DOCTYPE html><html><head><meta charset="utf-8">
@@ -116,6 +116,30 @@ def parse_multipart(content_type, body):
     return fields
 
 
+def solc_version():
+    try:
+        r = subprocess.run(["solc", "--version"], capture_output=True,
+                           text=True, timeout=15)
+        lines = [l for l in (r.stdout or "").splitlines() if l.strip()]
+        return lines[-1].strip() if lines else "unknown"
+    except Exception:
+        return "unknown"
+
+
+def build_remaps(node_modules):
+    """One remapping per top-level package in node_modules, e.g.
+    '@openzeppelin/=node_modules/@openzeppelin/' (relative to the run cwd)."""
+    remaps = []
+    if not node_modules or not os.path.isdir(node_modules):
+        return remaps
+    for entry in sorted(os.listdir(node_modules)):
+        if entry.startswith("."):
+            continue
+        if os.path.isdir(os.path.join(node_modules, entry)):
+            remaps.append(f"{entry}/=node_modules/{entry}/")
+    return remaps
+
+
 def run_audit(sol_bytes, filename, project, prefix, ecosystem):
     safe = os.path.basename(filename or "contract.sol")
     if not safe.lower().endswith(".sol"):
@@ -123,23 +147,36 @@ def run_audit(sol_bytes, filename, project, prefix, ecosystem):
     safe = re.sub(r"[^A-Za-z0-9_.-]", "_", safe)
     work = tempfile.mkdtemp(prefix="tl-audit-")
     try:
-        if os.path.isdir(OZ_NODE_MODULES):
+        if os.path.isdir(NODE_MODULES):
             try:
-                os.symlink(OZ_NODE_MODULES, os.path.join(work, "node_modules"))
+                os.symlink(NODE_MODULES, os.path.join(work, "node_modules"))
             except OSError:
                 pass
         with open(os.path.join(work, safe), "wb") as f:
             f.write(sol_bytes)
 
+        # Resolve library imports (e.g. OpenZeppelin) via remappings that point
+        # at the symlinked node_modules.
+        remaps = build_remaps(os.path.join(work, "node_modules"))
+        cmd = [SLITHER, safe, "--json", "-"]
+        if remaps:
+            cmd += ["--solc-remaps", " ".join(remaps)]
+
         # 1. Slither -> JSON (nonzero exit when findings exist is normal)
-        sl = subprocess.run([SLITHER, safe, "--json", "-"], cwd=work,
-                            capture_output=True, text=True, timeout=240)
+        sl = subprocess.run(cmd, cwd=work, capture_output=True, text=True, timeout=240)
         sj = (sl.stdout or "").strip()
         if not sj:
-            raise RuntimeError("Slither produced no analysis output. This usually "
-                               "means the contract failed to compile (unresolved "
-                               "imports or a solc version mismatch). Try a flattened "
-                               ".sol.\n\n" + (sl.stderr or "")[-1500:])
+            detail = (sl.stderr or "").strip() or (sl.stdout or "").strip() or "(no output)"
+            remap_note = " ".join(remaps) if remaps else \
+                f"(none - no node_modules found at {NODE_MODULES})"
+            raise RuntimeError(
+                "Slither could not analyse the contract - it most likely failed "
+                "to compile (unresolved imports or a solc version mismatch).\n"
+                f"solc in use: {solc_version()}\n"
+                f"import remappings tried: {remap_note}\n"
+                "If the contract imports libraries that aren't in node_modules, "
+                "upload a flattened .sol instead.\n\n"
+                f"Slither reported:\n{detail[-1800:]}")
 
         # 2. convert to report spec
         spec = os.path.join(work, "spec.json")
