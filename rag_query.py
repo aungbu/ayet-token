@@ -66,13 +66,25 @@ def load_index():
     return emb, chunks
 
 
-def retrieve(question, emb, chunks, k):
+def retrieve(question, emb, chunks, k, source=None):
+    idxs = np.arange(len(chunks))
+    if source:
+        s = source.lower()
+        keep = [i for i in idxs if s in chunks[i]["source"].lower()]
+        if not keep:
+            print(f"No chunks match --source '{source}'. "
+                  f"Check the filename substring (e.g. AKIMOTO).")
+            sys.exit(1)
+        idxs = np.array(keep)
+        matched = sorted(set(chunks[i]["source"] for i in keep))
+        print(f"--source '{source}' restricts retrieval to {len(matched)} "
+              f"audit(s): {', '.join(matched)}")
     q = embed_one(question)
     n = np.linalg.norm(q) or 1.0
     q = q / n
-    sims = emb @ q
-    top = np.argsort(-sims)[:k]
-    return [(chunks[i], float(sims[i])) for i in top]
+    sims = emb[idxs] @ q
+    order = np.argsort(-sims)[:k]
+    return [(chunks[int(idxs[o])], float(sims[o])) for o in order]
 
 
 def generate(model, question, context):
@@ -110,6 +122,10 @@ def main():
     ap.add_argument("--model", default="qwen2.5-coder:32b",
                     help="generation model (use deepseek-r1:70b for deeper analysis)")
     ap.add_argument("--k", type=int, default=6, help="number of excerpts to retrieve")
+    ap.add_argument("--source", default=None,
+                    help="restrict retrieval to audits whose filename contains this "
+                         "substring, e.g. --source AKIMOTO (prevents cross-contamination "
+                         "when asking about one specific token)")
     ap.add_argument("--pdf", action="store_true", help="also save a PDF report")
     ap.add_argument("--title", default="Audit Knowledge Query")
     args = ap.parse_args()
@@ -118,7 +134,7 @@ def main():
     n_sources = len(set(c["source"] for c in chunks))
     print(f"Index: {len(chunks)} chunks from {n_sources} audits.")
     print(f"Retrieving top {args.k} excerpts...")
-    hits = retrieve(args.question, emb, chunks, args.k)
+    hits = retrieve(args.question, emb, chunks, args.k, source=args.source)
 
     context_parts, sources = [], []
     for ch, score in hits:
