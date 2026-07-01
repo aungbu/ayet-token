@@ -1,11 +1,15 @@
 #!/usr/bin/env python3
 """
-TrueL1 RAG Ingest
------------------
-Reads every Coinsult audit PDF, extracts its text, splits it into overlapping
-chunks, embeds each chunk with nomic-embed-text via the local Ollama API, and
-saves a searchable NumPy index. No vector database, no running service - just
-two files on disk. Re-run this any time you add new PDFs to the source folder.
+TrueL1 External Audit Reference RAG - Ingest  (v2, page-aware)
+-------------------------------------------------------------
+Reads every external audit PDF, extracts text PAGE BY PAGE, splits each page
+into overlapping chunks, embeds each chunk with nomic-embed-text via the local
+Ollama API, and saves a searchable NumPy index. Each chunk records the page it
+came from so answers can cite [file.pdf, p.N]. No vector database, no running
+service - just files on disk. Re-run any time you add or change PDFs.
+
+Note: this is a REFERENCE index over public third-party reports. It does not
+train a model and is not a substitute for a professional audit.
 """
 import os
 import sys
@@ -29,20 +33,27 @@ INDEX_DIR = "/opt/ai-temp/rag/index"
 CHUNK_CHARS = 1200
 CHUNK_OVERLAP = 200
 EMBED_BATCH = 32
+INDEX_VERSION = 2
 
 
-def extract_text(path):
+def extract_pages(path):
+    """Return [(page_number, text), ...], 1-indexed, skipping empty pages."""
     try:
         doc = fitz.open(path)
-        text = "\n".join(page.get_text() for page in doc)
+        pages = []
+        for i, page in enumerate(doc, 1):
+            t = page.get_text().strip()
+            if t:
+                pages.append((i, t))
         doc.close()
-        return text.strip()
+        return pages
     except Exception as e:
         print(f"  ! extract failed for {os.path.basename(path)}: {e}")
-        return ""
+        return []
 
 
 def chunk_text(text):
+    """Sliding-window chunks within a single page's text."""
     text = re.sub(r"\n{3,}", "\n\n", text)
     chunks = []
     start, n = 0, len(text)
@@ -98,19 +109,26 @@ def main():
         print(f"No PDFs found in {PDF_DIR}")
         sys.exit(1)
 
-    print(f"Found {len(pdfs)} PDFs. Extracting text + chunking...")
+    print(f"Found {len(pdfs)} PDFs. Extracting text page-by-page + chunking...")
     records = []
     skipped = 0
     for i, path in enumerate(pdfs, 1):
-        text = extract_text(path)
-        if not text:
+        pages = extract_pages(path)
+        if not pages:
             skipped += 1
             continue
         tok = token_name(path)
-        for j, c in enumerate(chunk_text(text)):
-            records.append(
-                {"text": c, "source": os.path.basename(path), "token": tok, "idx": j}
-            )
+        idx = 0
+        for pno, ptext in pages:
+            for c in chunk_text(ptext):
+                records.append({
+                    "text": c,
+                    "source": os.path.basename(path),
+                    "token": tok,
+                    "page": pno,
+                    "idx": idx,
+                })
+                idx += 1
         if i % 25 == 0 or i == len(pdfs):
             print(f"  {i}/{len(pdfs)} PDFs -> {len(records)} chunks so far")
 
@@ -138,6 +156,16 @@ def main():
     np.save(os.path.join(INDEX_DIR, "embeddings.npy"), arr)
     with open(os.path.join(INDEX_DIR, "chunks.json"), "w") as f:
         json.dump(records, f)
+    with open(os.path.join(INDEX_DIR, "index_meta.json"), "w") as f:
+        json.dump(
+            {
+                "version": INDEX_VERSION,
+                "chunks": len(records),
+                "audits": len(set(r["source"] for r in records)),
+                "has_pages": True,
+            },
+            f,
+        )
 
     dt = int(time.time() - t0)
     n_sources = len(set(r["source"] for r in records))
@@ -145,6 +173,7 @@ def main():
     print(f"  embeddings.npy shape: {arr.shape}")
     print(f"  chunks indexed:       {len(records)}")
     print(f"  audits indexed:       {n_sources}")
+    print(f"  page citations:       enabled (index v{INDEX_VERSION})")
 
 
 if __name__ == "__main__":
