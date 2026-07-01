@@ -1,0 +1,47 @@
+{
+  "project": "AYET",
+  "assessor": "TrueL1",
+  "report_type": "Preliminary",
+  "assessed_on": "2026-05-25",
+  "type": "ERC-20 (Upgradeable, UUPS)",
+  "ecosystem": "Binance Smart Chain (BSC)",
+  "language": "Solidity",
+  "methods": "Manual Review, Static Analysis (Slither)",
+  "timeline": "Preliminary comments published 2026-05-25",
+  "repository": "github.com/aungbu/ayet-token (AYETToken)",
+  "commit": "587b034a9ef5c78d1e48ef14ce789264bf7786f9",
+  "scope": ["AYET.sol"],
+  "approach": "This assessment evaluated the security and correctness of the AYET token contract using manual review supported by static analysis (Slither) and AI-assisted retrieval over prior audit precedents.\nThe review emphasised:\n- Architecture review and threat modelling of the upgradeable proxy design.\n- Privileged-role and centralization analysis.\n- Manual verification of token logic against intended behaviour.\n- Code quality and best-practice alignment.\nThis is an AI-assisted internal review intended to support a human reviewer. It is not a certification and does not replace an independent professional audit.",
+  "findings": [
+    {
+      "id": "AYE-01",
+      "title": "Initial Token Distribution",
+      "category": "Centralization",
+      "severity": "Centralization",
+      "status": "Pending",
+      "location": "AYET.sol: 42",
+      "description": "The entire fixed supply of 4,000,000,000 AYET is minted to a single `initialReceiver` address during initialization. Concentrating the full supply in one address is a centralization risk: the holder can move or sell tokens without community consensus, and a compromise of that key could allow an attacker to dump the supply on the market, causing severe damage to the project.",
+      "recommendation": "Publish a transparent token-distribution plan at a public, community-accessible location. Hold undistributed tokens in a multi-signature wallet (2-of-3 or 3-of-5) rather than a single externally owned account, and restrict access to deployer keys.\nAdditional measures:\n- Lock up a portion of tokens and release them on a vesting schedule.\n- Consider third-party KYC of the team to increase accountability.\n- Provide the distribution-plan URL and the multisig address so status can be verified."
+    },
+    {
+      "id": "AYE-02",
+      "title": "Centralized Control Of Contract Upgrade",
+      "category": "Centralization",
+      "severity": "Centralization",
+      "status": "Pending",
+      "location": "AYET.sol: 13",
+      "description": "AYETToken is a UUPS-upgradeable contract whose implementation can be replaced by the `onlyOwner` role via `_authorizeUpgrade`. A single owner key can therefore change the logic behind the proxy. If that key is compromised, an attacker could point the proxy at a malicious implementation and introduce arbitrary behaviour.",
+      "recommendation": "Restrict access to the upgrade authority using a combination of a timelock and a multi-signature wallet, and notify the community before any upgrade.\nShort Term:\n- Assign the upgrade role to a multi-signature (2-of-3 / 3-of-5) wallet.\n- Add a timelock with reasonable latency (e.g. 48 hours) on upgrades.\n- Publish the timelock and signer addresses.\nLong Term:\n- Introduce a DAO / governance module to control upgrades.\nPermanent:\n- Renounce ownership or remove the upgrade functionality once the contract is final."
+    },
+    {
+      "id": "AYE-03",
+      "title": "Centralization Related Risks",
+      "category": "Centralization",
+      "severity": "Centralization",
+      "status": "Pending",
+      "location": "AYET.sol: 45, 49, 53",
+      "description": "The owner holds several privileged functions: `pause()` / `unpause()`, `transferOwnership()`, `renounceOwnership()`, and `upgradeToAndCall()` (UUPS, gated by `_authorizeUpgrade` with `onlyOwner`). No on-chain timelock, multisig, or role separation is enforced inside AYETToken.\nBecause `_update()` is protected by `whenNotPaused`, a compromised owner could immediately halt all transfers, burns, and other balance-changing operations, then resume, transfer, or renounce ownership. More importantly, the UUPS upgrade authority lets the owner replace the implementation with arbitrary logic — including new minting, blacklisting, confiscation, or permanent-freeze behaviour.\nIn the current implementation the owner cannot directly mint or seize balances, but the upgrade authority makes those restrictions non-binding in practice, concentrating strong trust in the owner key.",
+      "recommendation": "Apply the same tiered controls as for the upgrade authority, and carefully manage the privileged key.\nShort Term:\n- Timelock (e.g. 48h) plus multi-signature (2-of-3 / 3-of-5) on privileged operations.\nLong Term:\n- Timelock combined with a DAO / governance module for decentralization and transparency.\nPermanent:\n- Renounce ownership or remove the risky functions once no longer needed."
+    }
+  ]
+}
