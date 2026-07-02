@@ -6,6 +6,8 @@ import socketserver
 import subprocess
 import json
 import os
+import time
+import threading
 from urllib.parse import urlparse
 
 PORT = 3001
@@ -83,6 +85,32 @@ def health_verdict(m):
     return {"status": "healthy", "message": "Ready - can push more"}
 
 
+
+# --- 2-second metrics cache: nvidia-smi/ollama are slow (~3.6s/call), so build
+# the payload at most once every CACHE_TTL seconds and serve it to all pollers.
+CACHE_TTL = 2.0
+_cache = {"data": None, "ts": 0.0}
+_lock = threading.Lock()
+
+
+def cached_metrics():
+    now = time.time()
+    with _lock:
+        if _cache["data"] is not None and (now - _cache["ts"]) < CACHE_TTL:
+            return _cache["data"]
+    m = gpu_stats()
+    data = {
+        "metrics": m,
+        "throttle": throttle_status(),
+        "models": ollama_models(),
+        "verdict": health_verdict(m),
+    }
+    with _lock:
+        _cache["data"] = data
+        _cache["ts"] = time.time()
+    return data
+
+
 class Handler(http.server.BaseHTTPRequestHandler):
     def do_GET(self):
         path = urlparse(self.path).path
@@ -93,13 +121,7 @@ class Handler(http.server.BaseHTTPRequestHandler):
             with open(HTML_PATH, "rb") as f:
                 self.wfile.write(f.read())
         elif path == "/api/metrics":
-            m = gpu_stats()
-            data = {
-                "metrics": m,
-                "throttle": throttle_status(),
-                "models": ollama_models(),
-                "verdict": health_verdict(m),
-            }
+            data = cached_metrics()
             self.send_response(200)
             self.send_header("Content-Type", "application/json")
             self.send_header("Access-Control-Allow-Origin", "*")
