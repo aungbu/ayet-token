@@ -71,7 +71,7 @@ are written to the shared reports folder and served from {base}.</div>
 </div></body></html>"""
 
 FORM = """
-<form class="card" method="POST" action="/audit" enctype="multipart/form-data">
+<form class="card" method="POST" action="" enctype="multipart/form-data">
   <label>Solidity file (.sol)</label>
   <input type="file" name="solfile" accept=".sol" required>
   <div class="row">
@@ -249,7 +249,7 @@ class Handler(BaseHTTPRequestHandler):
         self._send(200, render_page(FORM))
 
     def do_POST(self):
-        if not self.path.startswith("/audit"):
+        if not (self.path.rstrip("/").endswith("/audit") or self.path.rstrip("/") == "" or self.path.startswith("/audit")):
             self._send(404, render_page(result_err("Not found.")))
             return
         try:
