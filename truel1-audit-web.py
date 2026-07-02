@@ -158,13 +158,19 @@ def run_audit(sol_bytes, filename, project, prefix, ecosystem):
         # Resolve library imports (e.g. OpenZeppelin) via remappings that point
         # at the symlinked node_modules.
         remaps = build_remaps(os.path.join(work, "node_modules"))
-        cmd = [SLITHER, safe, "--json", "-"]
+        sl_json = os.path.join(work, "slither.json")
+        cmd = [SLITHER, safe, "--json", sl_json]
         if remaps:
             cmd += ["--solc-remaps", " ".join(remaps)]
 
-        # 1. Slither -> JSON (nonzero exit when findings exist is normal)
+        # 1. Slither -> JSON file. Writing to a file (not stdout) keeps the
+        # error log on stderr when compilation fails, so failures are visible.
+        # Nonzero exit when findings exist is normal.
         sl = subprocess.run(cmd, cwd=work, capture_output=True, text=True, timeout=240)
-        sj = (sl.stdout or "").strip()
+        sj = ""
+        if os.path.exists(sl_json):
+            with open(sl_json) as fh:
+                sj = fh.read().strip()
         if not sj:
             detail = (sl.stderr or "").strip() or (sl.stdout or "").strip() or "(no output)"
             remap_note = " ".join(remaps) if remaps else \

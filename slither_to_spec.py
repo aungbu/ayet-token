@@ -13,6 +13,7 @@ Usage:
   or
     slither_to_spec.py slither-output.json --project AYET -o spec.json
 """
+import os
 import sys
 import json
 import argparse
@@ -86,16 +87,36 @@ def humanize(check):
     return check.replace("-", " ").replace("_", " ").title()
 
 
+def _el_filename(el):
+    sm = el.get("source_mapping") or {}
+    return (sm.get("filename_short") or sm.get("filename_relative")
+            or sm.get("filename_used") or sm.get("filename_absolute")
+            or sm.get("filename") or "")
+
+
+def _is_dependency(fname):
+    f = (fname or "").replace("\\", "/")
+    return "node_modules/" in f or "/lib/" in f or f.startswith("lib/")
+
+
+def detector_touches_project(det):
+    """True if any element is in the project's own code (not a dependency)."""
+    files = [f for f in (_el_filename(el) for el in det.get("elements", [])) if f]
+    if not files:
+        return False
+    return any(not _is_dependency(f) for f in files)
+
+
 def location_of(det, sol_file):
-    """Best-effort 'file: line, line' from the first element's source mapping."""
-    for el in det.get("elements", []):
+    """'file: lines', preferring the project element; filename as basename."""
+    els = sorted(det.get("elements", []),
+                 key=lambda el: 1 if _is_dependency(_el_filename(el)) else 0)
+    for el in els:
         sm = el.get("source_mapping") or {}
         lines = sm.get("lines") or []
-        fname = sm.get("filename_short") or sm.get("filename_relative") \
-            or sm.get("filename") or sol_file or "source"
+        fname = os.path.basename(_el_filename(el)) or sol_file or "source"
         if lines:
-            shown = ", ".join(str(n) for n in lines[:6])
-            return f"{fname}: {shown}"
+            return f"{fname}: {', '.join(str(n) for n in lines[:6])}"
         return fname
     return sol_file or "source"
 
@@ -113,6 +134,9 @@ def parse_slither(sl, project, prefix, sol_file):
         raise RuntimeError(err)
 
     dets = (sl.get("results") or {}).get("detectors") or []
+    total_raw = len(dets)
+    dets = [d for d in dets if detector_touches_project(d)]
+    excluded = total_raw - len(dets)
 
     # Order by severity (High first), then keep stable order within a level.
     sev_rank = {"High": 0, "Medium": 1, "Low": 2, "Informational": 3, "Optimization": 4}
@@ -144,6 +168,22 @@ def parse_slither(sl, project, prefix, sol_file):
                 "confirm the behaviour is intended if this is a false positive."),
         })
 
+    approach = (
+        "This report is generated automatically from a Slither static-analysis "
+        "run over the uploaded contract. Findings correspond to Slither detectors "
+        "that reference the project's own source; results located entirely within "
+        "third-party dependencies (e.g. node_modules) are excluded.\n"
+        "Important:\n"
+        "- Static analysis surfaces common patterns; it is not exhaustive and can "
+        "produce false positives and false negatives.\n"
+        "- Centralization, business-logic, and economic risks generally require "
+        "manual review and are not fully covered here.\n"
+        "- This is an AI-assisted internal review aid, not a professional audit or "
+        "certification. Verify important findings against the source.")
+    if excluded:
+        approach += (f"\nNote: {excluded} finding(s) located entirely within "
+                     "third-party dependencies were excluded from this report.")
+
     spec = {
         "project": project,
         "assessor": "TrueL1",
@@ -153,17 +193,7 @@ def parse_slither(sl, project, prefix, sol_file):
         "language": "Solidity",
         "methods": "Static Analysis (Slither)",
         "scope": [sol_file] if sol_file else [],
-        "approach": (
-            "This report is generated automatically from a Slither static-analysis "
-            "run over the uploaded contract. Findings correspond to Slither "
-            "detectors and their reported locations.\n"
-            "Important:\n"
-            "- Static analysis surfaces common patterns; it is not exhaustive and "
-            "can produce false positives and false negatives.\n"
-            "- Centralization, business-logic, and economic risks generally require "
-            "manual review and are not fully covered here.\n"
-            "- This is an AI-assisted internal review aid, not a professional audit "
-            "or certification. Verify important findings against the source."),
+        "approach": approach,
         "findings": findings,
     }
     return spec
