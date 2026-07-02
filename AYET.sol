@@ -37,7 +37,7 @@ contract AYET is
         __Ownable_init(initialOwner);
         __ERC20Permit_init("AKIMOTO YASUSHI ENTERTAINMENT TOKEN");
         __ERC20Votes_init();
-        __UUPSUpgradeable_init();
+
 
         _mint(initialReceiver, INITIAL_SUPPLY);
     }
