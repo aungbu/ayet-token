@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TrueLayer1 — デモ進行台本（社外秘）</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:system-ui,-apple-system,"Hiragino Kaku Gothic ProN","Noto Sans JP",Meiryo,sans-serif;background:#070d22;color:#e8edf7;line-height:1.65;-webkit-font-smoothing:antialiased}
+a{text-decoration:none;color:inherit}
+.wrap{max-width:680px;margin:0 auto;padding:0 16px 60px}
+.top{padding:18px 0;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.07)}
+.brand{font-size:17px;font-weight:700;color:#fff}
+.brand .t{color:#14b8a6}
+.priv{font-size:9px;font-weight:700;color:#fbbf24;border:1px solid rgba(217,119,6,.5);padding:3px 9px;border-radius:12px;letter-spacing:.06em}
+.h{padding:26px 0 6px}
+.h h1{font-size:22px;font-weight:800;color:#fff}
+.h .sub{font-size:12px;color:rgba(255,255,255,.5);margin-top:6px}
+
+/* checklist */
+.check{background:#0e1628;border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:16px 18px;margin:18px 0}
+.check .ch{font-size:12.5px;font-weight:700;color:#5eead4;margin-bottom:8px;letter-spacing:.04em}
+.check label{display:flex;gap:10px;align-items:flex-start;font-size:12.5px;color:rgba(255,255,255,.7);padding:5px 0;cursor:pointer}
+.check input{margin-top:3px;accent-color:#14b8a6}
+
+/* steps */
+.step{background:linear-gradient(165deg,#111a33,#0d1526);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:18px;margin-bottom:14px}
+.step .sh{display:flex;align-items:center;gap:12px}
+.step .num{min-width:34px;height:34px;border-radius:10px;background:rgba(20,184,166,.15);border:1px solid rgba(20,184,166,.4);color:#5eead4;font-weight:800;font-size:15px;display:flex;align-items:center;justify-content:center}
+.step .st{font-size:15.5px;font-weight:700;color:#fff}
+.step .dur{margin-left:auto;font-size:10px;color:rgba(255,255,255,.4)}
+.step .say{margin-top:12px;background:rgba(20,184,166,.06);border-left:3px solid #14b8a6;border-radius:6px;padding:10px 13px;font-size:12.5px;color:rgba(255,255,255,.78)}
+.step .say b{color:#5eead4}
+.step .tip{margin-top:8px;font-size:11px;color:rgba(255,255,255,.45)}
+.step .go{display:inline-block;margin-top:12px;background:#14b8a6;color:#06251f;font-size:13px;font-weight:800;padding:11px 22px;border-radius:24px}
+.step .go.sec{background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.2)}
+.step.warn{border-color:rgba(217,119,6,.4)}
+.step.warn .num{background:rgba(217,119,6,.15);border-color:rgba(217,119,6,.5);color:#fbbf24}
+.step.bad{border-color:rgba(220,38,38,.35)}
+.step.bad .num{background:rgba(220,38,38,.12);border-color:rgba(220,38,38,.5);color:#fca5a5}
+.close{background:#0e1628;border:1px solid rgba(20,184,166,.3);border-radius:14px;padding:16px 18px;margin-top:20px;font-size:12.5px;color:rgba(255,255,255,.75)}
+.close b{color:#5eead4}
+.foot{text-align:center;font-size:10px;color:rgba(255,255,255,.3);padding-top:26px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div class="brand">True<span class="t">Layer1</span> · デモ進行台本</div>
+    <div class="priv">CONFIDENTIAL</div>
+  </div>
+
+  <div class="h">
+    <h1>SGH / World Supply 様 デモ進行</h1>
+    <div class="sub">各ステップの「開く」を順番にタップするだけで、ライブデモが完成します。所要 約10分。</div>
+  </div>
+
+  <div class="check">
+    <div class="ch">☑ 会議前チェック（5分前）</div>
+    <label><input type="checkbox"> スマホ充電・Wi-Fi または テザリング接続を確認</label>
+    <label><input type="checkbox"> このページと 手順1〜7 を一度ずつ開いて表示確認（ハードリフレッシュ）</label>
+    <label><input type="checkbox"> 管理ページ用パスワードを手元に（手順6で使用）</label>
+    <label><input type="checkbox"> 印刷したQRコード（製品用）を1枚持参 — 手順6でスキャン実演</label>
+  </div>
+
+  <!-- 1 -->
+  <div class="step">
+    <div class="sh"><div class="num">1</div><div class="st">全体像 — ホームページ</div><div class="dur">1分</div></div>
+    <div class="say">「本日ご覧いただくものは、すべて<b>本番稼働中のブロックチェーン</b>から読み込む実機です。スライドではありません。」</div>
+    <a class="go" href="https://dpp.truel1.com/" target="_blank" rel="noopener">開く →</a>
+  </div>
+
+  <!-- 2 -->
+  <div class="step">
+    <div class="sh"><div class="num">2</div><div class="st">物流証明のコンセプト</div><div class="dur">2分</div></div>
+    <div class="say">「商品ID＝<b>何であるか</b>、物流ID＝<b>どう運ばれたか</b>。既存システムはそのまま、その上に証明レイヤーを追加します。1箱スキャンで中の全商品に紐づく親子構造もここでご説明。」</div>
+    <div class="tip">このページの3つのデモカードが、次の手順3〜5です。</div>
+    <a class="go" href="https://dpp.truel1.com/logistics/" target="_blank" rel="noopener">開く →</a>
+  </div>
+
+  <!-- 3 -->
+  <div class="step">
+    <div class="sh"><div class="num">3</div><div class="st">✅ 正常な配送ジャーニー</div><div class="dur">2分</div></div>
+    <div class="say">「製造 → 集荷 → ハブ → 配達完了。各工程の<b>場所・時刻・封印OK</b>がチェーンに記録され、誰でも検証できます。下の『エクスプローラで確認』が第三者検証の入口です。」</div>
+    <div class="tip">スクロールして物流タイムラインを見せる。緑の封印OKバッジを指す。</div>
+    <a class="go" href="https://dpp.truel1.com/JIP-DLX-001847" target="_blank" rel="noopener">開く →</a>
+  </div>
+
+  <!-- 4 -->
+  <div class="step warn">
+    <div class="sh"><div class="num">4</div><div class="st">🚨 封印異常の検知（見せ場）</div><div class="dur">2分</div></div>
+    <div class="say">「こちらは輸送中に<b>封印破損が検知された</b>ケース。大阪ハブで赤い『開封』が記録され、<b>この記録は誰にも消せません</b>。異常を隠せない — これがWeb2の社内DBとの決定的な違いです。」</div>
+    <div class="tip">東京の緑 → 大阪の赤、の対比をゆっくり見せる。ここが一番刺さります。</div>
+    <a class="go" href="https://dpp.truel1.com/JIP-DLX-001848" target="_blank" rel="noopener">開く →</a>
+  </div>
+
+  <!-- 5 -->
+  <div class="step bad">
+    <div class="sh"><div class="num">5</div><div class="st">❌ 偽造品の判定</div><div class="dur">1分</div></div>
+    <div class="say">「登録のないIDは、照合の瞬間に<b>『未登録』と判定</b>されます。正規の記録が『無い』こと自体が、偽物のシグナルになります。」</div>
+    <a class="go" href="https://dpp.truel1.com/FAKE-DEMO-999" target="_blank" rel="noopener">開く →</a>
+  </div>
+
+  <!-- 6 -->
+  <div class="step">
+    <div class="sh"><div class="num">6</div><div class="st">📷 現場のスキャン（配送担当画面）</div><div class="dur">2分</div></div>
+    <div class="say">「現場の操作は<b>①読む ②工程を選ぶ ③送信</b> の3つだけ。秘密鍵もウォレットも現場は扱いません。持参したQRをその場でスキャンして見せます。」</div>
+    <div class="tip">パスワード入力あり（admin / 手元のパスワード）。印刷QRをカメラで読む実演。</div>
+    <a class="go" href="https://dpp.truel1.com/courier/" target="_blank" rel="noopener">開く →</a>
+  </div>
+
+  <!-- 7 -->
+  <div class="step">
+    <div class="sh"><div class="num">7</div><div class="st">🔍 第三者検証 — ブロックエクスプローラ</div><div class="dur">1分</div></div>
+    <div class="say">「最後に、いま見ていただいた記録の<b>原本</b>です。御社が想定される第三者機関検証は、まさにこの画面で可能です。」</div>
+    <a class="go" href="https://l1.aucfans.com/fmescan/search?q=0x5Ee44752D853c3BFCBE7532ff3464eba065E90Da" target="_blank" rel="noopener">物流レジストリを開く →</a>
+    <a class="go sec" href="https://l1.aucfans.com/fmescan/search?q=0xc29485B66eCA4F029af7cFd24af5B9f8826BCB1b" target="_blank" rel="noopener">商品レジストリ →</a>
+  </div>
+
+  <div class="close">
+    <b>クロージングの一言：</b>「ここまでのすべてが、既に動いています。PoCは環境構築からではなく、<b>御社の商品とルートでの検証</b>から始められます。キックオフは2週間以内に可能です。」<br><br>
+    → 次のアクション：①意思決定ミーティング日程 ②NDA/基本合意 ③対象ルートと窓口のご指名
+  </div>
+
+  <div class="foot">TrueLayer1 · Internal demo script · Do not share</div>
+</div>
+</body>
+</html>
