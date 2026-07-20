@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TrueLayer1 — 物流証明 / Logistics Proof</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:system-ui,-apple-system,"Hiragino Kaku Gothic ProN","Noto Sans JP",Meiryo,sans-serif;background:#070d22;color:#e8edf7;line-height:1.7;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:960px;margin:0 auto;padding:0 20px}
+
+/* top bar */
+.bar{padding:16px 0;border-bottom:1px solid rgba(255,255,255,.06)}
+.bar .wrap{display:flex;align-items:center;justify-content:space-between}
+.brand{font-size:18px;font-weight:700;color:#fff}
+.brand .t{color:#14b8a6}
+.nav a{font-size:12px;color:rgba(255,255,255,.6);margin-left:16px}
+.nav a:hover{color:#5eead4}
+
+/* hero */
+.hero{padding:60px 0 40px;text-align:center}
+.hero .kicker{font-size:12px;letter-spacing:.15em;color:#5eead4;font-weight:700;margin-bottom:14px}
+.hero h1{font-size:34px;font-weight:800;color:#fff;line-height:1.35}
+.hero h1 .t{color:#14b8a6}
+.hero .sub{font-size:15px;color:rgba(255,255,255,.6);margin-top:14px;max-width:640px;margin-left:auto;margin-right:auto}
+@media(max-width:600px){.hero h1{font-size:26px}}
+
+/* live demo strip */
+.demos{padding:10px 0 50px}
+.demos-h{text-align:center;font-size:13px;color:rgba(255,255,255,.5);margin-bottom:18px}
+.demo-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media(max-width:700px){.demo-grid{grid-template-columns:1fr}}
+.demo{border-radius:16px;padding:22px 18px;text-align:center;border:1px solid rgba(255,255,255,.08);background:linear-gradient(165deg,#111a33,#0d1526);transition:.15s;display:block}
+.demo:hover{transform:translateY(-3px);border-color:rgba(20,184,166,.4)}
+.demo .ico{font-size:30px}
+.demo .dt{font-size:15px;font-weight:700;color:#fff;margin-top:10px}
+.demo .dd{font-size:11.5px;color:rgba(255,255,255,.55);margin-top:6px;line-height:1.6}
+.demo .go{display:inline-block;margin-top:14px;font-size:12px;font-weight:700;padding:8px 18px;border-radius:20px}
+.demo.ok .go{background:rgba(5,150,105,.25);color:#5eead4;border:1px solid rgba(5,150,105,.5)}
+.demo.warn .go{background:rgba(217,119,6,.2);color:#fbbf24;border:1px solid rgba(217,119,6,.5)}
+.demo.bad .go{background:rgba(220,38,38,.2);color:#fca5a5;border:1px solid rgba(220,38,38,.5)}
+.demo-note{text-align:center;font-size:11px;color:rgba(255,255,255,.4);margin-top:14px}
+
+/* sections */
+.sec{padding:44px 0;border-top:1px solid rgba(255,255,255,.05)}
+.sec-k{font-size:11px;letter-spacing:.12em;color:#5eead4;font-weight:700;margin-bottom:8px}
+.sec h2{font-size:23px;font-weight:800;color:#fff;margin-bottom:14px}
+.sec p.lead{font-size:14px;color:rgba(255,255,255,.65);max-width:720px}
+
+/* two IDs */
+.ids{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:22px}
+@media(max-width:700px){.ids{grid-template-columns:1fr}}
+.idc{border-radius:14px;padding:20px;border:1px solid rgba(255,255,255,.08);background:#0e1628}
+.idc .ih{font-size:15px;font-weight:700;color:#fff;display:flex;align-items:center;gap:8px}
+.idc .ih .b{font-size:10px;font-weight:700;padding:2px 9px;border-radius:12px;background:rgba(20,184,166,.15);color:#5eead4;border:1px solid rgba(20,184,166,.35)}
+.idc .id-d{font-size:12.5px;color:rgba(255,255,255,.6);margin-top:8px;line-height:1.7}
+.idc .one{margin-top:12px;font-size:13px;font-weight:700;color:#5eead4}
+
+/* flow */
+.flow{margin-top:24px;background:#0f172a;border-radius:14px;padding:20px;border:1px solid rgba(255,255,255,.06);overflow-x:auto}
+.flow pre{font-family:ui-monospace,Consolas,monospace;font-size:13px;color:#7dd3c8;line-height:2;white-space:pre}
+.flow .r{color:#fca5a5}
+
+/* models */
+.models{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:22px}
+@media(max-width:700px){.models{grid-template-columns:1fr}}
+.mo{border-radius:14px;padding:22px;border:1px solid rgba(255,255,255,.08);background:#0e1628}
+.mo.premium{border-color:rgba(20,184,166,.35);background:linear-gradient(165deg,#0f2231,#0e1628)}
+.mo .mh{font-size:16px;font-weight:800;color:#fff}
+.mo .ms{font-size:11px;color:#5eead4;font-weight:700;margin-top:2px;letter-spacing:.06em}
+.mo ul{list-style:none;margin-top:14px}
+.mo li{font-size:12.5px;color:rgba(255,255,255,.65);padding:5px 0;display:flex;gap:8px}
+.mo li::before{content:"✓";color:#14b8a6;font-weight:700}
+.mo .tag{display:inline-block;margin-top:14px;font-size:10.5px;color:rgba(255,255,255,.45)}
+
+/* box structure */
+.boxdiag{margin-top:22px;background:#0f172a;border-radius:14px;padding:22px;border:1px solid rgba(255,255,255,.06);text-align:center}
+.boxdiag pre{font-family:ui-monospace,Consolas,monospace;font-size:13px;color:#7dd3c8;line-height:2;display:inline-block;text-align:left}
+.boxdiag .cap{font-size:12px;color:rgba(255,255,255,.5);margin-top:12px}
+
+/* why L1 */
+.why{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:22px}
+@media(max-width:700px){.why{grid-template-columns:1fr}}
+.wc{border-radius:14px;padding:20px;border:1px solid rgba(255,255,255,.08);background:#0e1628}
+.wc .wh{font-size:14px;font-weight:700;color:#fff;margin-bottom:8px}
+.wc .wd{font-size:12.5px;color:rgba(255,255,255,.6);line-height:1.7}
+.wc .wd b{color:#5eead4;font-weight:700}
+
+/* CTA */
+.cta{padding:56px 0;text-align:center}
+.cta h2{font-size:24px;font-weight:800;color:#fff}
+.cta p{font-size:13px;color:rgba(255,255,255,.55);margin-top:10px}
+.cta .btn{display:inline-block;margin-top:22px;background:#14b8a6;color:#06251f;font-size:14px;font-weight:800;padding:14px 34px;border-radius:30px}
+.foot{text-align:center;font-size:10.5px;color:rgba(255,255,255,.3);padding:20px 0 40px;line-height:1.7}
+</style>
+</head>
+<body>
+
+<div class="bar"><div class="wrap">
+  <a class="brand" href="/">True<span class="t">Layer1</span></a>
+  <div class="nav">
+    <a href="/">Home</a>
+    <a href="/products-list/">Products</a>
+    <a href="/scan/">Tokens</a>
+  </div>
+</div></div>
+
+<div class="hero"><div class="wrap">
+  <div class="kicker">LOGISTICS PROOF ON LAYER1</div>
+  <h1>ハイブランド物流の<span class="t">電子証明</span></h1>
+  <div class="sub">既存の物流システムはそのまま。その上に、改ざん不可能な「証明レイヤー」を追加。<br>商品が「何であるか」だけでなく、「どう運ばれたか」までブロックチェーンで証明します。</div>
+</div></div>
+
+<!-- LIVE DEMOS -->
+<div class="demos"><div class="wrap">
+  <div class="demos-h">▼ すべて実機・稼働中のデモです。タップしてブロックチェーンから直接ご確認ください ▼</div>
+  <div class="demo-grid">
+    <a class="demo ok" href="/JIP-DLX-001847">
+      <div class="ico">✅</div>
+      <div class="dt">正常な配送ジャーニー</div>
+      <div class="dd">製造 → 集荷 → ハブ → 配達完了。<br>全工程で封印OK・チェーンに記録済み</div>
+      <span class="go">実物を見る →</span>
+    </a>
+    <a class="demo warn" href="/JIP-DLX-001848">
+      <div class="ico">🚨</div>
+      <div class="dt">封印異常の検知例</div>
+      <div class="dd">輸送中に封印破損を検知。<br>異常が改ざん不可能な記録として残る</div>
+      <span class="go">検知例を見る →</span>
+    </a>
+    <a class="demo bad" href="/FAKE-DEMO-999">
+      <div class="ico">❌</div>
+      <div class="dt">偽造品の判定</div>
+      <div class="dd">未登録IDはブロックチェーン照合で<br>即座に「未登録」と判定</div>
+      <span class="go">判定を見る →</span>
+    </a>
+  </div>
+  <div class="demo-note">スマートフォンでも同じ画面が開きます。QRコードを読むだけで、誰でも検証できます。</div>
+</div></div>
+
+<!-- TWO IDS -->
+<div class="sec"><div class="wrap">
+  <div class="sec-k">CONCEPT</div>
+  <h2>2つのIDが、2つのことを証明する</h2>
+  <p class="lead">本システムの中核は、「商品ID」と「物流ID」を分けて管理し、両者を紐づけることです。</p>
+  <div class="ids">
+    <div class="idc">
+      <div class="ih">🏷️ 商品ID <span class="b">Product ID</span></div>
+      <div class="id-d">正規品であること、シリアル番号、ブランド、DPP、ライセンス情報。ブランド側の既存デジタルID（RFID / NFC / QR）をそのまま参照でき、新規発行は不要です。</div>
+      <div class="one">＝ 何であるか（Identity）</div>
+    </div>
+    <div class="idc">
+      <div class="ih">🚚 物流ID <span class="b">Logistics ID</span></div>
+      <div class="id-d">集荷・拠点到着・積込・配達完了の各チェックポイント、封印状態、（必要に応じて温度・衝撃）。輸送の全過程を証跡として記録します。</div>
+      <div class="one">＝ どう運ばれたか（Journey）</div>
+    </div>
+  </div>
+  <div class="flow">
+<pre>出荷登録 → 集荷 → 物流拠点到着 → 積込 → 配達完了
+   ↓        ↓         ↓          ↓        ↓
+ 各チェックポイントの証跡を Layer1 に記録（改ざん不可）
+   ↓
+<span class="r">例外（封印異常・破損・ルート逸脱）も、隠せない記録として残る</span></pre>
+  </div>
+</div></div>
+
+<!-- BOX STRUCTURE -->
+<div class="sec"><div class="wrap">
+  <div class="sec-k">OPERATION</div>
+  <h2>1箱に複数商品でも、スキャンは1回</h2>
+  <p class="lead">商品・箱・出荷を親子関係で管理。現場は箱を1回スキャンするだけで、中の全商品に同じ物流イベントが紐づきます。担当者が秘密鍵やウォレットを扱うことはありません。</p>
+  <div class="boxdiag">
+<pre>商品ID A ／ 商品ID B ／ 商品ID C
+        ↓
+   Box ID / Carton ID
+        ↓
+  Shipment ID / 物流ID</pre>
+    <div class="cap">RFID一括読取（将来フェーズ）では、期待数と検出数の照合により、開梱せずに欠品・混入を自動検知できます。</div>
+  </div>
+</div></div>
+
+<!-- MODELS -->
+<div class="sec"><div class="wrap">
+  <div class="sec-k">SERVICE MODELS</div>
+  <h2>2つの補完的な追跡モデル</h2>
+  <div class="models">
+    <div class="mo">
+      <div class="mh">Model A — 標準物流証明</div>
+      <div class="ms">CHECKPOINT PROOF</div>
+      <ul>
+        <li>QR / 2Dコードによるチェックポイント記録</li>
+        <li>スマホまたは一般的なハンディで運用</li>
+        <li>重要イベントのみ Layer1 に記録</li>
+        <li>既存の業務フローに追加するだけ</li>
+      </ul>
+      <span class="tag">通常出荷・全商品向け</span>
+    </div>
+    <div class="mo premium">
+      <div class="mh">Model B — プレミアム・スマート追跡</div>
+      <div class="ms">RFID × IoT × GPS × L1</div>
+      <ul>
+        <li>固定式RFIDで通過を自動検知（手動スキャン不要）</li>
+        <li>IoTセンサーで温度・衝撃・開封を監視</li>
+        <li>GPSでルート逸脱をリアルタイム検知</li>
+        <li>例外イベントを即時アラート＋チェーン証明</li>
+      </ul>
+      <span class="tag">高価値品・ハイブランド向け</span>
+    </div>
+  </div>
+</div></div>
+
+<!-- WHY L1 -->
+<div class="sec"><div class="wrap">
+  <div class="sec-k">WHY LAYER1</div>
+  <h2>「追跡」ではなく「証明」</h2>
+  <p class="lead">荷物の現在地表示だけなら従来システムで十分です。Layer1が加えるのは、複数の会社をまたいで共有できる、改ざん不可能な証明です。</p>
+  <div class="why">
+    <div class="wc">
+      <div class="wh">従来システム（Web2）</div>
+      <div class="wd">「当社のデータベースにそう書いてあります」— 記録した会社が後から変更でき、取引先はその会社を<b>信じるしかない</b>構造。</div>
+    </div>
+    <div class="wc">
+      <div class="wh">TrueLayer1（証明レイヤー）</div>
+      <div class="wd">「この時刻に記録され、その後変更されていないことを<b>誰でも検証できます</b>」— ブランド・保険・監査・二次流通が独立して確認可能。</div>
+    </div>
+    <div class="wc">
+      <div class="wh">世界の潮流</div>
+      <div class="wd">大手物流各社はRFID自動検知・IoT監視を既に実装。ただし記録は各社の<b>非公開データベース</b>にあり、独立検証可能な証明は提供されていません。</div>
+    </div>
+    <div class="wc">
+      <div class="wh">その先へ</div>
+      <div class="wd">検証済みの配達完了イベントを条件に、規制対応型の決済と接続する<b>「証明→自動決済」</b>まで拡張可能。支払いの前に、仕事の完了が証明される世界です。</div>
+    </div>
+  </div>
+</div></div>
+
+<div class="cta"><div class="wrap">
+  <h2>実機で動くPoCを、そのままお見せできます</h2>
+  <p>このページのデモはすべて本番稼働中のブロックチェーンから読み込んでいます。<br>貴社の商品・ルートでの検証（PoC）について、お気軽にご相談ください。</p>
+  <a class="btn" href="/">TrueLayer1 について詳しく →</a>
+</div></div>
+
+<div class="foot">
+  TrueLayer1 &middot; Powered by FME Layer1<br>
+  Digital Product Passport &amp; Logistics Proof Infrastructure
+</div>
+
+</body>
+</html>
