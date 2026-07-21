@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TrueLayer1 — 配送スキャン / Courier Scan</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:system-ui,-apple-system,"Hiragino Kaku Gothic ProN","Noto Sans JP",Meiryo,sans-serif;background:#0B1435;color:#fff;line-height:1.6;min-height:100vh}
+.bar{background:#0B1435;padding:15px 18px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(255,255,255,.08)}
+.brand{font-size:17px;font-weight:700}
+.brand .t{color:#0D9488}
+.brand-sub{font-size:10px;color:rgba(255,255,255,.55)}
+.nav a{color:rgba(255,255,255,.6);font-size:12px;text-decoration:none;margin-left:12px}
+.wrap{max-width:520px;margin:0 auto;padding:20px 16px 50px}
+.card{background:#fff;color:#1e293b;border-radius:12px;padding:18px;margin-bottom:16px}
+.card h2{font-size:15px;color:#0B1435;margin-bottom:3px}
+.card .hint{font-size:11px;color:#94a3b8;margin-bottom:14px}
+#reader{width:100%;border-radius:10px;overflow:hidden;background:#000;min-height:60px}
+.scan-btns{display:flex;gap:8px;margin-top:10px}
+.sbtn{flex:1;border:none;border-radius:7px;padding:10px;font-size:13px;font-weight:600;cursor:pointer}
+.sbtn.start{background:#0D9488;color:#fff}
+.sbtn.stop{background:#e2e8f0;color:#475569}
+.scanned{background:#f0fdf4;border:1px solid #86efac;border-radius:8px;padding:10px 12px;font-size:13px;color:#065f46;margin-top:10px;display:none}
+.scanned b{font-family:monospace}
+.field{margin-bottom:13px}
+.field label{display:block;font-size:11px;color:#475569;font-weight:600;margin-bottom:4px}
+.field input,.field select{width:100%;border:1px solid #cbd5e1;border-radius:7px;padding:10px 11px;font-size:14px;font-family:inherit;background:#fff}
+.field input:focus,.field select:focus{outline:none;border-color:#0D9488}
+.status-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.status-opt{border:1px solid #cbd5e1;border-radius:8px;padding:11px 10px;font-size:13px;cursor:pointer;text-align:center;transition:.12s}
+.status-opt:hover{border-color:#0D9488}
+.status-opt.sel{background:#0D9488;color:#fff;border-color:#0D9488}
+.seal-row{display:flex;align-items:center;gap:10px;margin-top:6px}
+.toggle{position:relative;width:46px;height:26px;background:#cbd5e1;border-radius:13px;cursor:pointer;transition:.15s;flex-shrink:0}
+.toggle.on{background:#059669}
+.toggle::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;background:#fff;border-radius:50%;transition:.15s}
+.toggle.on::after{left:23px}
+/* RECORD button + result */
+.rec-btn{width:100%;background:#0D9488;color:#fff;border:none;border-radius:10px;padding:15px;font-size:15px;font-weight:800;cursor:pointer;font-family:inherit;margin-top:4px}
+.rec-btn:active{transform:scale(.99)}
+.rec-btn:disabled{background:#94a3b8;cursor:wait}
+.result{display:none;border-radius:10px;padding:13px 14px;font-size:12.5px;margin-top:12px;line-height:1.7}
+.result.ok{display:block;background:#f0fdf4;border:1px solid #86efac;color:#065f46}
+.result.err{display:block;background:#fef2f2;border:1px solid #fca5a5;color:#991b1b}
+.result .tx{font-family:monospace;font-size:10.5px;word-break:break-all;color:#0f766e}
+.result a{color:#0D9488;font-weight:700;text-decoration:none}
+/* fallback command */
+.fold{margin-top:14px;border-top:1px dashed #e2e8f0;padding-top:12px}
+.fold summary{font-size:11px;color:#94a3b8;cursor:pointer;font-weight:600}
+.out-label{font-size:11px;font-weight:600;color:#475569;margin:10px 0 5px;display:flex;justify-content:space-between;align-items:center}
+.copy-btn{background:#0D9488;color:#fff;border:none;border-radius:5px;padding:4px 12px;font-size:11px;font-weight:600;cursor:pointer}
+.out{background:#0f172a;color:#7dd3c8;border-radius:8px;padding:12px;font-family:monospace;font-size:11px;white-space:pre-wrap;word-break:break-all;line-height:1.5}
+.note{background:#fef3c7;border-left:3px solid #d97706;border-radius:6px;padding:9px 12px;font-size:11px;color:#78350f;margin-top:12px;line-height:1.5}
+</style>
+</head>
+<body>
+<div class="bar">
+  <div>
+    <div class="brand">True<span class="t">Layer1</span> · 配送スキャン</div>
+    <div class="brand-sub">Courier Checkpoint Scan</div>
+  </div>
+  <div class="nav"><a href="/products-list/">Products</a></div>
+</div>
+
+<div class="wrap">
+  <!-- 1. SCAN -->
+  <div class="card">
+    <h2>1. 製品をスキャン / Scan Product</h2>
+    <div class="hint">製品のQRコードをスキャンするか、製品IDを直接入力してください。</div>
+    <div id="reader"></div>
+    <div class="scan-btns">
+      <button class="sbtn start" onclick="startScan()">カメラ開始 / Start Camera</button>
+      <button class="sbtn stop" onclick="stopScan()">停止 / Stop</button>
+    </div>
+    <div class="scanned" id="scanned">スキャン完了: <b id="scannedId"></b></div>
+    <div class="field" style="margin-top:12px">
+      <label>製品ID / DPP ID</label>
+      <input id="dppId" placeholder="JIP-DLX-001847" oninput="update()">
+    </div>
+  </div>
+
+  <!-- 2. CHECKPOINT -->
+  <div class="card">
+    <h2>2. チェックポイント / Checkpoint</h2>
+    <div class="hint">現在のステータスと場所を選択してください。</div>
+    <div class="field">
+      <label>ステータス / Status</label>
+      <div class="status-grid" id="statusGrid"></div>
+    </div>
+    <div class="field">
+      <label>場所 / Location</label>
+      <select id="location" onchange="onLocChange()">
+        <option value="Tokyo Factory">Tokyo Factory（東京工場）</option>
+        <option value="Tokyo Hub">Tokyo Hub（東京ハブ）</option>
+        <option value="Osaka Hub">Osaka Hub（大阪ハブ）</option>
+        <option value="Nagoya Hub">Nagoya Hub（名古屋ハブ）</option>
+        <option value="Fukuoka Hub">Fukuoka Hub（福岡ハブ）</option>
+        <option value="Osaka City">Osaka City（大阪市・配達先）</option>
+        <option value="__custom">+ 自由入力 / Type custom...</option>
+      </select>
+      <input id="locCustom" placeholder="Custom location" style="display:none;margin-top:8px" oninput="update()">
+    </div>
+    <div class="field">
+      <label>封印状態 / Seal</label>
+      <div class="seal-row">
+        <div class="toggle on" id="sealToggle" onclick="toggleSeal()"></div>
+        <span id="sealLabel" style="font-size:13px;color:#065f46;font-weight:600">未開封 / Intact</span>
+      </div>
+    </div>
+    <div class="field">
+      <label>メモ / Note（任意）</label>
+      <input id="note" placeholder="例: 配達完了・受領確認" oninput="update()">
+    </div>
+  </div>
+
+  <!-- 3. RECORD -->
+  <div class="card">
+    <h2>3. ブロックチェーンに記録 / Record</h2>
+    <div class="hint">ボタンひとつで、このチェックポイントが FME Layer1 に記録されます。</div>
+    <button class="rec-btn" id="recBtn" onclick="recordNow()">⛓ 今すぐ記録 / Record Now</button>
+    <div class="result" id="result"></div>
+
+    <details class="fold">
+      <summary>手動フォールバック（SSHコマンド） / Manual fallback</summary>
+      <div class="out-label"><span>サーバーで実行するコマンド</span><button class="copy-btn" onclick="copyText()">Copy</button></div>
+      <div class="out" id="cmdOut">製品IDを入力してください...</div>
+    </details>
+
+    <div class="note"><b>Security:</b> This page never holds your private key. Recording is signed on the server, behind this page's password.</div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
+<script>
+const STATUSES = [
+  {key:"manufactured", label:"📦 製造完了"},
+  {key:"shipped",      label:"🚚 出荷・集荷"},
+  {key:"hub_arrived",  label:"🏢 ハブ到着"},
+  {key:"out_delivery", label:"🚛 配達中"},
+  {key:"delivered",    label:"✓ 配達完了"},
+  {key:"inspected",    label:"🔍 検品"}
+];
+let selStatus = "shipped";
+let sealIntact = true;
+let qr = null;
+
+const grid = document.getElementById("statusGrid");
+STATUSES.forEach(s=>{
+  const d = document.createElement("div");
+  d.className = "status-opt" + (s.key===selStatus ? " sel" : "");
+  d.textContent = s.label;
+  d.onclick = ()=>{ selStatus = s.key; document.querySelectorAll(".status-opt").forEach(x=>x.classList.remove("sel")); d.classList.add("sel"); update(); };
+  grid.appendChild(d);
+});
+
+function toggleSeal(){
+  sealIntact = !sealIntact;
+  const t = document.getElementById("sealToggle");
+  const l = document.getElementById("sealLabel");
+  t.classList.toggle("on", sealIntact);
+  l.textContent = sealIntact ? "未開封 / Intact" : "開封済み / Broken";
+  l.style.color = sealIntact ? "#065f46" : "#b91c1c";
+  update();
+}
+function onLocChange(){
+  const sel = document.getElementById("location").value;
+  document.getElementById("locCustom").style.display = (sel==="__custom") ? "block" : "none";
+  update();
+}
+function getLocation(){
+  const sel = document.getElementById("location").value;
+  if (sel === "__custom") return document.getElementById("locCustom").value.trim();
+  return sel;
+}
+function update(){
+  const id = document.getElementById("dppId").value.trim();
+  const loc = getLocation();
+  const note = document.getElementById("note").value.trim();
+  if (!id){ document.getElementById("cmdOut").textContent = "製品IDを入力してください..."; return; }
+  const cmd =
+'cd /opt/FME/contracts/truelayer1-dpp\n' +
+'HARDHAT_NETWORK=fme node scripts/add-logistics.js "' + id + '" "' + selStatus + '" "' + loc + '" ' + (sealIntact?'true':'false') + ' "' + note + '"';
+  document.getElementById("cmdOut").textContent = cmd;
+}
+function copyText(){
+  navigator.clipboard.writeText(document.getElementById("cmdOut").textContent);
+}
+
+// ===== ONE-TAP RECORD =====
+async function recordNow(){
+  const id = document.getElementById("dppId").value.trim();
+  const loc = getLocation();
+  const note = document.getElementById("note").value.trim();
+  const box = document.getElementById("result");
+  const btn = document.getElementById("recBtn");
+  box.className = "result"; box.innerHTML = "";
+  if (!id){ box.className="result err"; box.textContent="製品IDを入力してください / Enter a DPP ID"; return; }
+  if (!loc || loc.length < 2){ box.className="result err"; box.textContent="場所を選択してください / Choose a location"; return; }
+
+  btn.disabled = true; btn.textContent = "⏳ 記録中... / Recording on-chain...";
+  try{
+    const res = await fetch("/api/logistics/record", {
+      method:"POST",
+      headers:{ "Content-Type":"application/json" },
+      body: JSON.stringify({ dppId:id, status:selStatus, location:loc, sealIntact:sealIntact, note:note })
+    });
+    const j = await res.json().catch(()=>({ok:false,error:"bad response"}));
+    if (res.ok && j.ok){
+      box.className = "result ok";
+      box.innerHTML = "✓ <b>記録完了 / Recorded on FME Layer1</b><br>" +
+        "イベント数: " + j.count + "<br>" +
+        "<span class='tx'>tx: " + j.tx + "</span><br>" +
+        "<a href='" + j.passport + "' target='_blank' rel='noopener'>→ パスポートで確認 / View passport</a>";
+    } else {
+      box.className = "result err";
+      box.textContent = "エラー / Error: " + (j.error || ("HTTP " + res.status));
+    }
+  }catch(e){
+    box.className = "result err";
+    box.textContent = "通信エラー / Network error: " + e;
+  }
+  btn.disabled = false; btn.textContent = "⛓ 今すぐ記録 / Record Now";
+}
+
+// QR scanner
+function startScan(){
+  if (qr) return;
+  qr = new Html5Qrcode("reader");
+  qr.start({ facingMode: "environment" }, { fps:10, qrbox:200 },
+    (decoded)=>{
+      let id = decoded;
+      try { const u = new URL(decoded); id = u.pathname.replace(/^\/+/,"").replace(/\/+$/,""); } catch(e){}
+      id = decodeURIComponent(id);
+      document.getElementById("dppId").value = id;
+      document.getElementById("scannedId").textContent = id;
+      document.getElementById("scanned").style.display = "block";
+      update();
+      stopScan();
+    },
+    ()=>{}
+  ).catch(e=>{ alert("カメラを起動できません: " + e); qr=null; });
+}
+function stopScan(){
+  if (qr){ qr.stop().then(()=>{ qr.clear(); qr=null; }).catch(()=>{ qr=null; }); }
+}
+update();
+</script>
+</body>
+</html>
